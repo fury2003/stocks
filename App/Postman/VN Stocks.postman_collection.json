@@ -1,0 +1,2247 @@
+{
+	"info": {
+		"_postman_id": "179f4efa-92a9-4c88-9079-01fb85f76f87",
+		"name": "VN Stocks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2576550"
+	},
+	"item": [
+		{
+			"name": "Symbols current date",
+			"item": [
+				{
+					"name": "VND",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Get the current date",
+									"const currentDate = new Date();",
+									"",
+									"// Get the components of the date",
+									"const year = currentDate.getFullYear();",
+									"const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed",
+									"const day = String(currentDate.getDate()).padStart(2, '0');",
+									"",
+									"// Format the date as \"YYYY-MM-DD\"",
+									"const formattedDate = `${year}-${month}-${day}`;",
+									"",
+									"// Log the formatted date",
+									"console.log(\"Current Date:\", formattedDate);",
+									"",
+									"pm.environment.set(\"currentDate\", formattedDate);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VND/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VND",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SSI",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/SSI/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"SSI",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VCB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VCB/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VCB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VPB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VPB/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VPB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "STB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/STB/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"STB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HPG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/HPG/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"HPG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NKG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/NKG/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"NKG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MWG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/MWG/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"MWG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VRE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VRE/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VRE",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FRT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/FRT/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"FRT",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VHM",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VHM/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VHM",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DXG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/DXG/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"DXG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PDR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/PDR/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"PDR",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NVL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/NVL/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"NVL",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KBC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/KBC/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"KBC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GMD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/GMD/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"GMD",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HAH",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/HAH/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"HAH",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CTD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/CTD/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"CTD",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VCG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VCG/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VCG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GEX",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/GEX/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"GEX",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DGC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/DGC/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"DGC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VHC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VHC/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VHC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Symbols specific date",
+			"item": [
+				{
+					"name": "VND",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const updatedDate = `2023-12-04`;",
+									"",
+									"pm.environment.set(\"updatedDate\", updatedDate);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VND/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VND",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SSI",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/SSI/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"SSI",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VCB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VCB/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VCB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VPB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VPB/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VPB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "STB",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/STB/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"STB",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HPG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/HPG/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"HPG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NKG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/NKG/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"NKG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MWG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/MWG/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"MWG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VRE",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VRE/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VRE",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FRT",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/FRT/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"FRT",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VHM",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VHM/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VHM",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DXG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/DXG/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"DXG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PDR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/PDR/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"PDR",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NVL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/NVL/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"NVL",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KBC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/KBC/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"KBC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GMD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/GMD/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"GMD",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HAH",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/HAH/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"HAH",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CTD",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/CTD/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"CTD",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VCG",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VCG/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VCG",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GEX",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/GEX/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"GEX",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DGC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/DGC/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"DGC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VHC",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/symbols/VHC/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"symbols",
+								"VHC",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VNIndex",
+			"item": [
+				{
+					"name": "VNIndex current date",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Get the current date",
+									"const currentDate = new Date();",
+									"",
+									"// Get the components of the date",
+									"const year = currentDate.getFullYear();",
+									"const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed",
+									"const day = String(currentDate.getDate()).padStart(2, '0');",
+									"",
+									"// Format the date as \"YYYY-MM-DD\"",
+									"const formattedDate = `${year}-${month}-${day}`;",
+									"",
+									"// Log the formatted date",
+									"console.log(\"Current Date:\", formattedDate);",
+									"",
+									"pm.environment.set(\"currentDate\", formattedDate);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/index/VNINDEX/historical-quotes?date={{currentDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"index",
+								"VNINDEX",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{currentDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VNIndex specific date",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const updatedDate = `2023-11-16`;",
+									"",
+									"pm.environment.set(\"updatedDate\", updatedDate);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTk1MDA3Nzk1LCJuYmYiOjE2OTUwMDc3OTUsImNsaWVudF9pZCI6ImZpcmVhbnQud2ViIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiI3NjRhZTNmMy02YjgwLTQ4OWYtYjRmMC1lZjU0Nzc0MWJiM2IiLCJhdXRoX3RpbWUiOjE2OTUwMDc3OTQsImlkcCI6Ikdvb2dsZSIsIm5hbWUiOiJjb25jaGltbm9uLmh0aHBAZ21haWwuY29tIiwic2VjdXJpdHlfc3RhbXAiOiI5MzdkYjVmZi1mYTNmLTQ1ZWEtODBjNC04MWEwNGM4OWM2MGUiLCJqdGkiOiIwNjJkOWFkYTllODZmYjQ4NDJkZmU5NWU4NDcyNmNjYSIsImFtciI6WyJleHRlcm5hbCJdfQ.te41wC6GwaI4ZiHhqfJb3uvmkYwq3bcSmoJVmp9Lp78hjTUUCNl7u8tODZDuneT11rnJ1oLq9Z-mxTLf38t4zXpCOuxgsfvxhKoWB3g8egDtUdxnx7jNtzlDrhIwXHrbwjCPOfTDshU8qmCDZzXNDv3FRYLtDDvMFmLvMasGvjfASNCGrx1LVLw-mbC1wK2CZvV3xwnM6hAmQDOrFNXMroqjJh78qIdIxrEbKELgZiWf2FEldUzyHo9kCUtMDQmNZiVtrrjAF9cX4YDF0G8ONfBzIR0eXtY6Z6ibXqeNBiZACLJqSqslyxC7F6zkJbbYt1fFO_hgzMnn-hdG_mAYvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:18080/index/VNINDEX/historical-quotes?date={{updatedDate}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "18080",
+							"path": [
+								"index",
+								"VNINDEX",
+								"historical-quotes"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{updatedDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
