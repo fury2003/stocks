@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <property resource="application.properties"/>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="cash-flow" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logging.dir:-.}/${application.name}/cash-flow.log</file>
+
+<!--        <file>${logging.dir:-.}/${application.name}/cash-flow.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${logging.dir:-.}/${application.name}/cash-flow.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${maxDaysLogsToKeep:-15}</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d ${LOG_LEVEL_PATTERN:-%5p} [%t] %c:%L %M - %m%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="INFO">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="cash-flow"/>
+    </root>
+
+</configuration>
