@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -38,6 +37,18 @@ public class StockServiceImpl implements StockService {
 
     @Value("${stockPrice.api.host.baseurl}")
     private String stockPriceAPIHost;
+
+    @Value("${statistics.date.column.index}")
+    private int columnIndex;
+
+    @Value("${statistics.date.row.index.start}")
+    private int rowIndexStart;
+
+    @Value("${statistics.date.row.index.end}")
+    private int rowIndexEnd;
+
+    @Value("${statistics.file.path}")
+    private String filePath;
 
     @Autowired
     Environment env;
@@ -66,16 +77,10 @@ public class StockServiceImpl implements StockService {
         }
 
         List<StockPrice> items = latestPriceDataResponse.getData();
-
-        String statisticFilePath = env.getProperty(StockContants.STATISTIC_FILE_PATH);
-        int columnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_COLUMN_INDEX));
-        int rowIndexStart = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_START_INDEX));
-        int rowIndexEnd = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_END_INDEX));
-
         LocalDateTime now = LocalDateTime.now();
         String quarter = DateHelper.determineQuarter(now.getMonthValue());
         String sheetName = String.join("-", symbol, quarter);
-        excelHelper.updatePercentageCell(statisticFilePath , sheetName,  columnIndex, rowIndexStart, rowIndexEnd, items);
+        excelHelper.updatePercentageCell(filePath , sheetName,  columnIndex, rowIndexStart, rowIndexEnd, items);
 
         log.info("Ket thuc lay du lieu giao dich ma chung khoan");
     }
@@ -98,10 +103,6 @@ public class StockServiceImpl implements StockService {
             throw ex;
         }
 
-        String statisticFilePath = env.getProperty(StockContants.STATISTIC_FILE_PATH);
-        int columnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_COLUMN_INDEX));
-        int startRowIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_START_INDEX));
-        int endRowIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_END_INDEX));
 
         Date firstDate = data[data.length-1].getDate();
         Instant instant = firstDate.toInstant();
@@ -109,7 +110,7 @@ public class StockServiceImpl implements StockService {
         String quarter = DateHelper.determineQuarter(firstDateLocalDate.getMonthValue());
         String sheetName = String.join("-", symbol, quarter);
 
-        excelHelper.updateForeignCell(statisticFilePath, sheetName, columnIndex, startRowIndex, endRowIndex, data);
+        excelHelper.updateForeignCell(filePath, sheetName, columnIndex, rowIndexStart, rowIndexEnd, data);
 
         log.info("Cap nhat du lieu khoi ngoai tu ngay: {} den ngay {} thanh cong", startDate, endDate);
         log.info("Ket thuc cap nhat du lieu khoi ngoai cho ma chung khoan: {}", symbol);

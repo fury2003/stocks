@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ExcelHelper {
@@ -67,44 +68,6 @@ public class ExcelHelper {
         }
     }
 
-    public void excelIndexWriter(String filePath, String sheetName, int rowIndex, Index data) {
-        ZipSecureFile.setMinInflateRatio(0);
-        try (FileInputStream fileInputStream = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-
-            Sheet sheet = workbook.getSheet(sheetName);
-
-            // Get or create the row
-            Row row = sheet.getRow(rowIndex);
-
-            int priceCloseColumnIndex = Integer.parseInt(env.getProperty(StockContants.INDEX_PRICE_CLOSE_COLUMN_INDEX));
-            int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.INDEX_TOTAL_FOREIGN_VALUE_COLUMN_INDEX));
-            int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.INDEX_TOTAL_VOLUME_COLUMN_INDEX));
-            int percentageOfFVOnTV = Integer.parseInt(env.getProperty(StockContants.INDEX_PERCENTAGE_OF_FV_ON_TV_COLUMN_INDEX));
-
-            double priceClose = data.getPriceClose();
-            updateCellValue(workbook, row, priceCloseColumnIndex, priceClose, false);
-
-            double totalForeignValue = data.getBuyForeignValue() - data.getSellForeignValue();
-            updateCellValue(workbook, row, totalForeignValueColumnIndex, totalForeignValue, false);
-
-            double totalVolume = data.getTotalVolume();
-            updateCellValue(workbook, row, totalVolumeColumnIndex, totalVolume, false);
-
-            double percentageOfForeignVolumnOnTotalVolumn = (data.getBuyForeignQuantity() + data.getSellForeignQuantity()) / data.getTotalVolume();
-            updateCellValue(workbook, row, percentageOfFVOnTV, percentageOfForeignVolumnOnTotalVolumn, true);
-
-            // Save the workbook to a file
-            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
-                workbook.write(fileOut);
-                log.info("Cap nhat du lieu vao file Excel thanh cong.");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("Loi trong qua trinh cap nhat file. {}", filePath);
-        }
-    }
-
     public void updateForeignCell(String filePath, String sheetName, int columnIndex, int startRowIndex, int endRowIndex, Symbol[] data) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -141,8 +104,9 @@ public class ExcelHelper {
 
                 int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
                 int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_SELL_FOREIGN_QUANTITY_COLUMN_INDEX));
-                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_FOREIGN_QUANTITY_COLUMN_INDEX));
-                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_FOREIGN_VALUE_COLUMN_INDEX));
+                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_NET_FOREIGN_QUANTITY_COLUMN_INDEX));
+                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_NET_FOREIGN_VALUE_COLUMN_INDEX));
+
                 int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_TOTAL_VOLUME_COLUMN_INDEX));
 
                 double buyForeignQuantity = sym.getBuyForeignQuantity();
@@ -239,16 +203,16 @@ public class ExcelHelper {
 
                 int totalBuyTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_BUY_QUANTITY_COLUMN_INDEX));
                 int totalSellTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_SELL_QUANTITY_COLUMN_INDEX));
-                int totalNetTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_QUANTITY_COLUMN_INDEX));
-                int totalNetBuyTradeValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_VALUE_COLUMN_INDEX));
+                int totalNetTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_NET_QUANTITY_COLUMN_INDEX));
+                int totalNetTradeValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX));
 
                 double totalBuyTradeValue = trade.getTotalBuyTradeValue();
                 double totalSellTradeValue = trade.getTotalSellTradeValue();
                 double totalBuyTradeVolume = trade.getTotalBuyTradeVolume();
                 double totalSellTradeVolume = trade.getTotalSellTradeVolume();
 
-                double totalNetTradeVolume = totalBuyTradeVolume >= totalSellTradeVolume ? totalBuyTradeVolume - totalSellTradeVolume : totalSellTradeVolume - totalBuyTradeVolume;
-                double totalNetBuyTradeValue = totalBuyTradeValue >= totalSellTradeValue ? totalBuyTradeValue - totalSellTradeValue : totalSellTradeValue - totalBuyTradeValue;
+                double totalNetTradeVolume = trade.getTotalNetBuyTradeVolume();
+                double totalNetTradeValue = trade.getTotalNetBuyTradeValue();
 
                 updateCellValue(workbook, row, totalBuyTradeVolumeColumnIndex, totalBuyTradeVolume, false);
 
@@ -256,7 +220,7 @@ public class ExcelHelper {
 
                 updateCellValue(workbook, row, totalNetTradeVolumeColumnIndex, totalNetTradeVolume, false);
 
-                updateCellValue(workbook, row, totalNetBuyTradeValueColumnIndex, totalNetBuyTradeValue, false);
+                updateCellValue(workbook, row, totalNetTradeValueColumnIndex, totalNetTradeValue, false);
 
             });
 
@@ -380,6 +344,73 @@ public class ExcelHelper {
             updateCellValue(workbook, row, sellOrderColumnIndex, sellOrder, false);
             updateCellValue(workbook, row, buyVolumeColumnIndex, buyVolume, false);
             updateCellValue(workbook, row, sellVolumeColumnIndex, sellVolume, false);
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh cap nhat file. {}", filePath);
+        }
+    }
+
+    public void updateDerivatives(String filePath, String sheetName, int columnIndex, int startRowIndex, int endRowIndex, Symbol[] data) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            Arrays.stream(data).forEach(sym -> {
+                // Get or create the row
+                Row row = null;
+                for (int rowIndex = startRowIndex - 1; rowIndex <= endRowIndex  ; rowIndex++) {
+                    Row loopRow = sheet.getRow(rowIndex);
+
+                    if (loopRow != null) {
+                        Cell cell = loopRow.getCell(columnIndex - 1);
+
+                        if (cell != null) {
+                            try {
+                                String cellValue = cell.getLocalDateTimeCellValue().toLocalDate().toString();
+                                Instant instant = sym.getDate().toInstant();
+                                LocalDate lastDateLocalDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+                                String dateValue = lastDateLocalDate.toString();
+                                if (dateValue.equals(cellValue)) {
+                                    row = sheet.getRow(rowIndex);
+                                    log.info("Cap nhat du lieu ngay {} vao dong {}", cellValue, rowIndex);
+                                    break;
+                                }
+                            } catch (IllegalStateException ex) {
+                                log.error("Format date khong dung o cot date trong file Excel. {}", cell.getStringCellValue());
+                                throw new BadRequestException("Format date khong dung o cot date trong file Excel.");
+                            }
+                        }
+                    }
+                }
+
+                int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
+                int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_SELL_QUANTITY_COLUMN_INDEX));
+                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_TOTAL_NET_QUANTITY_COLUMN_INDEX));
+                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_TOTAL_NET_VALUE_COLUMN_INDEX));
+                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_TOTAL_VOLUME_COLUMN_INDEX));
+
+                double buyForeignQuantity = sym.getBuyForeignQuantity();
+                updateCellValue(workbook, row, buyQuantityColumnIndex, buyForeignQuantity, false);
+
+                double sellForeignQuantity = sym.getSellForeignQuantity();
+                updateCellValue(workbook, row, sellQuantityColumnIndex, sellForeignQuantity, false);
+
+                double totalForeignQuantity = sym.getBuyForeignQuantity() - sym.getSellForeignQuantity();
+                updateCellValue(workbook, row, totalForeignQuantityColumnIndex, totalForeignQuantity, false);
+
+                double totalForeignValue = sym.getBuyForeignValue() - sym.getSellForeignValue();
+                updateCellValue(workbook, row, totalForeignValueColumnIndex, totalForeignValue, false);
+
+                double totalVolume = sym.getTotalVolume();
+                updateCellValue(workbook, row, totalVolumeColumnIndex, totalVolume, false);
+            });
 
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(filePath)) {

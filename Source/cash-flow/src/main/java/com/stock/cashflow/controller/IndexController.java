@@ -17,15 +17,6 @@ public class IndexController {
         this.indexService = indexService;
     }
 
-    @GetMapping("/{index}/historical-quotes")
-    public String getIndexHistoricalData(@PathVariable String index, @RequestParam String date, @RequestHeader(value = "Authorization") String header) {
-        log.info("Bat dau cap nhat du lieu cho {}", index);
-
-        indexService.process(index, date, header);
-
-        log.info("Ket thuc cap nhat du lieu cho {} ", index);
-        return "Cap nhat du lieu cho index thanh cong";
-    }
 
     @GetMapping("/{index}/proprietary-trading-value")
     public String getProprietaryTradingValue(@PathVariable String index) {
