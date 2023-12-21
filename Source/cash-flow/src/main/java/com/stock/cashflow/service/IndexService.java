@@ -2,6 +2,6 @@ package com.stock.cashflow.service;
 
 public interface IndexService {
 
-    void processProprietaryTradingValue(String index, String quarter);
+    void processIndexHistoricalQuotes(String index, String startDate, String endDate);
 
 }

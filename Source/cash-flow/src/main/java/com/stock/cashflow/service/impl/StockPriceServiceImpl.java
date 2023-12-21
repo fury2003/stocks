@@ -68,7 +68,7 @@ public class StockPriceServiceImpl implements StockPriceService {
     @Override
     public void processAll(String startDate, String endDate) {
         String[] symbols = SymbolConstant.SYMBOLS;
-        for (int i = 1; i < symbols.length; i++) {
+        for (int i = 0; i < symbols.length; i++) {
             StockPriceDataResponse latestPriceDataResponse;
             try{
                 latestPriceDataResponse = getStockPriceDataResponse(symbols[i], startDate, endDate);

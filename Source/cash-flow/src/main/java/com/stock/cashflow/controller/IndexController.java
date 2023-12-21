@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/proprietary")
+@RequestMapping("/index")
 public class IndexController {
 
     private static final Logger log = LoggerFactory.getLogger(IndexController.class);
@@ -18,14 +18,14 @@ public class IndexController {
     }
 
 
-    @GetMapping("/{index}/proprietary-trading-value")
-    public String getProprietaryTradingValue(@PathVariable String index) {
-        log.info("Bat dau cap nhat du lieu tu doanh");
+    @GetMapping("/{index}/historical-quotes")
+    public String getIndexHistoricalQuotes(@PathVariable String index, @RequestParam String startDate, @RequestParam String endDate) {
+        log.info("Bat dau cap nhat du lieu index");
 
-        indexService.processProprietaryTradingValue(index, "");
+        indexService.processIndexHistoricalQuotes(index, startDate, endDate);
 
-        log.info("Ket thuc cap nhat du lieu tu doanh");
-        return "Cap nhat du lieu tu doanh thanh cong";
+        log.info("Ket thuc cap nhat du lieu index");
+        return "Cap nhat du lieu index thanh cong";
     }
 
 }

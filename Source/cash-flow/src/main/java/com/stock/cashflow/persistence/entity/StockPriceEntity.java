@@ -29,10 +29,10 @@ public class StockPriceEntity implements Serializable {
     @Column(name = "close_price", nullable = false)
     private Double closePrice;
 
-    @Column(name = "price_change", nullable = false)
+    @Column(name = "price_change", nullable = true)
     private Double priceChange;
 
-    @Column(name = "percentage_change", nullable = false)
+    @Column(name = "percentage_change", nullable = true)
     private String percentageChange;
 
     @Column(name = "total_volume", nullable = false)
