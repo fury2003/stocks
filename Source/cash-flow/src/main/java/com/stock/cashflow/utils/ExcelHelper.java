@@ -1,6 +1,6 @@
 package com.stock.cashflow.utils;
 
-import com.stock.cashflow.constants.StockContants;
+import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.exception.BadRequestException;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
@@ -9,26 +9,34 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class ExcelHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelHelper.class);
+
+    @Value("${statistics.file.path}")
+    private String statisticFile;
+
+    @Value("${begin.column.index}")
+    private int beginColumnIndex;
+
+    @Value("${begin.row.index}")
+    private int beginRowIndex;
 
     @Autowired
     Environment env;
@@ -102,27 +110,27 @@ public class ExcelHelper {
                     }
                 }
 
-                int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
-                int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_SELL_FOREIGN_QUANTITY_COLUMN_INDEX));
-                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_NET_FOREIGN_QUANTITY_COLUMN_INDEX));
-                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_TOTAL_NET_FOREIGN_VALUE_COLUMN_INDEX));
-
-                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_TOTAL_VOLUME_COLUMN_INDEX));
-
-                double buyForeignQuantity = sym.getBuyForeignQuantity();
-                updateCellValue(workbook, row, buyQuantityColumnIndex, buyForeignQuantity, false);
-
-                double sellForeignQuantity = sym.getSellForeignQuantity();
-                updateCellValue(workbook, row, sellQuantityColumnIndex, sellForeignQuantity, false);
-
-                double totalForeignQuantity = sym.getBuyForeignQuantity() - sym.getSellForeignQuantity();
-                updateCellValue(workbook, row, totalForeignQuantityColumnIndex, totalForeignQuantity, false);
-
-                double totalForeignValue = sym.getBuyForeignValue() - sym.getSellForeignValue();
-                updateCellValue(workbook, row, totalForeignValueColumnIndex, totalForeignValue, false);
-
-                double totalVolume = sym.getTotalVolume();
-                updateCellValue(workbook, row, totalVolumeColumnIndex, totalVolume, false);
+//                int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
+//                int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_SELL_FOREIGN_QUANTITY_COLUMN_INDEX));
+//                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_FOREIGN_QUANTITY_COLUMN_INDEX));
+//                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_FOREIGN_VALUE_COLUMN_INDEX));
+//
+//                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_TOTAL_VOLUME_COLUMN_INDEX));
+//
+//                double buyForeignQuantity = sym.getBuyForeignQuantity();
+//                updateCellValue(workbook, row, buyQuantityColumnIndex, buyForeignQuantity, false);
+//
+//                double sellForeignQuantity = sym.getSellForeignQuantity();
+//                updateCellValue(workbook, row, sellQuantityColumnIndex, sellForeignQuantity, false);
+//
+//                double totalForeignQuantity = sym.getBuyForeignQuantity() - sym.getSellForeignQuantity();
+//                updateCellValue(workbook, row, totalForeignQuantityColumnIndex, totalForeignQuantity, false);
+//
+//                double totalForeignValue = sym.getBuyForeignValue() - sym.getSellForeignValue();
+//                updateCellValue(workbook, row, totalForeignValueColumnIndex, totalForeignValue, false);
+//
+//                double totalVolume = sym.getTotalVolume();
+//                updateCellValue(workbook, row, totalVolumeColumnIndex, totalVolume, false);
             });
 
             // Save the workbook to a file
@@ -144,7 +152,7 @@ public class ExcelHelper {
             List<String> sheetNames = getSheetNames(workbook);
             List<String> output = new ArrayList<>();
             for (String sheetName : sheetNames) {
-                if(!sheetName.contains(StockContants.STATISTIC_INGORE_SHEET)){
+                if(!sheetName.contains(StockConstant.STATISTIC_INGORE_SHEET)){
                     output.add(sheetName.replace("-Q4", ""));
                 }
             }
@@ -156,7 +164,7 @@ public class ExcelHelper {
         }
     }
 
-    private static List<String> getSheetNames(Workbook workbook) {
+    public static List<String> getSheetNames(Workbook workbook) {
         List<String> sheetNames = new ArrayList<>();
         int numberOfSheets = workbook.getNumberOfSheets();
 
@@ -201,26 +209,26 @@ public class ExcelHelper {
                     }
                 }
 
-                int totalBuyTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_BUY_QUANTITY_COLUMN_INDEX));
-                int totalSellTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_SELL_QUANTITY_COLUMN_INDEX));
-                int totalNetTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_NET_QUANTITY_COLUMN_INDEX));
-                int totalNetTradeValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX));
-
-                double totalBuyTradeValue = trade.getTotalBuyTradeValue();
-                double totalSellTradeValue = trade.getTotalSellTradeValue();
-                double totalBuyTradeVolume = trade.getTotalBuyTradeVolume();
-                double totalSellTradeVolume = trade.getTotalSellTradeVolume();
-
-                double totalNetTradeVolume = trade.getTotalNetBuyTradeVolume();
-                double totalNetTradeValue = trade.getTotalNetBuyTradeValue();
-
-                updateCellValue(workbook, row, totalBuyTradeVolumeColumnIndex, totalBuyTradeVolume, false);
-
-                updateCellValue(workbook, row, totalSellTradeVolumeColumnIndex, totalSellTradeVolume, false);
-
-                updateCellValue(workbook, row, totalNetTradeVolumeColumnIndex, totalNetTradeVolume, false);
-
-                updateCellValue(workbook, row, totalNetTradeValueColumnIndex, totalNetTradeValue, false);
+//                int totalBuyTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_BUY_QUANTITY_COLUMN_INDEX));
+//                int totalSellTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_SELL_QUANTITY_COLUMN_INDEX));
+//                int totalNetTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_QUANTITY_COLUMN_INDEX));
+//                int totalNetTradeValueColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX));
+//
+//                double totalBuyTradeValue = trade.getTotalBuyTradeValue();
+//                double totalSellTradeValue = trade.getTotalSellTradeValue();
+//                double totalBuyTradeVolume = trade.getTotalBuyTradeVolume();
+//                double totalSellTradeVolume = trade.getTotalSellTradeVolume();
+//
+//                double totalNetTradeVolume = trade.getTotalNetBuyTradeVolume();
+//                double totalNetTradeValue = trade.getTotalNetBuyTradeValue();
+//
+//                updateCellValue(workbook, row, totalBuyTradeVolumeColumnIndex, totalBuyTradeVolume, false);
+//
+//                updateCellValue(workbook, row, totalSellTradeVolumeColumnIndex, totalSellTradeVolume, false);
+//
+//                updateCellValue(workbook, row, totalNetTradeVolumeColumnIndex, totalNetTradeVolume, false);
+//
+//                updateCellValue(workbook, row, totalNetTradeValueColumnIndex, totalNetTradeValue, false);
 
             });
 
@@ -270,29 +278,29 @@ public class ExcelHelper {
                     }
                 }
 
-                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_TOTAL_VOLUME_COLUMN_INDEX));
-                int percentagePOnTotalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_PERCENTAGE_OF_PV_ON_TV_COLUMN_INDEX));
-                int percentageFOnTotalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_PERCENTAGE_OF_FV_ON_TV_COLUMN_INDEX));
-                int percentagePriceChangeColumnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_PRICE_CHANGE_COLUMN_INDEX));
-                int proprietaryTotalBuyTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_BUY_QUANTITY_COLUMN_INDEX));
-                int proprietaryTotalSellTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.PROPRIETARY_SELL_QUANTITY_COLUMN_INDEX));
-                int foreignBuyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
-                int foreignSellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.FOREIGN_SELL_FOREIGN_QUANTITY_COLUMN_INDEX));
-
-                double totalVolume = row.getCell(totalVolumeColumnIndex - 1).getNumericCellValue();
-
-                // khoi ngoai
-                double foreignTotalBuyTradeVolume = row.getCell(foreignBuyQuantityColumnIndex - 1).getNumericCellValue();
-                double foreignTotalSellTradeVolume = row.getCell(foreignSellQuantityColumnIndex - 1).getNumericCellValue();
-                updateCellValue(workbook, row, percentageFOnTotalVolumeColumnIndex, (foreignTotalBuyTradeVolume + foreignTotalSellTradeVolume)/totalVolume, true);
-
-                // tu doanh
-                double proprietaryTotalBuyTradeVolume = row.getCell(proprietaryTotalBuyTradeVolumeColumnIndex - 1).getNumericCellValue();
-                double proprietaryTotalSellTradeVolume = row.getCell(proprietaryTotalSellTradeVolumeColumnIndex - 1).getNumericCellValue();
-                updateCellValue(workbook, row, percentagePOnTotalVolumeColumnIndex, (proprietaryTotalBuyTradeVolume + proprietaryTotalSellTradeVolume)/totalVolume, true);
-
-                double percentPriceChange = Double.parseDouble(price.getPerPriceChange());
-                updateCellValue(workbook, row, percentagePriceChangeColumnIndex, percentPriceChange, true);
+//                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_TOTAL_VOLUME_COLUMN_INDEX));
+//                int percentagePOnTotalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_PERCENTAGE_OF_PV_ON_TV_COLUMN_INDEX));
+//                int percentageFOnTotalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_PERCENTAGE_OF_FV_ON_TV_COLUMN_INDEX));
+//                int percentagePriceChangeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_PRICE_CHANGE_COLUMN_INDEX));
+//                int proprietaryTotalBuyTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_BUY_QUANTITY_COLUMN_INDEX));
+//                int proprietaryTotalSellTradeVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_SELL_QUANTITY_COLUMN_INDEX));
+//                int foreignBuyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
+//                int foreignSellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_SELL_FOREIGN_QUANTITY_COLUMN_INDEX));
+//
+//                double totalVolume = row.getCell(totalVolumeColumnIndex - 1).getNumericCellValue();
+//
+//                // khoi ngoai
+//                double foreignTotalBuyTradeVolume = row.getCell(foreignBuyQuantityColumnIndex - 1).getNumericCellValue();
+//                double foreignTotalSellTradeVolume = row.getCell(foreignSellQuantityColumnIndex - 1).getNumericCellValue();
+//                updateCellValue(workbook, row, percentageFOnTotalVolumeColumnIndex, (foreignTotalBuyTradeVolume + foreignTotalSellTradeVolume)/totalVolume, true);
+//
+//                // tu doanh
+//                double proprietaryTotalBuyTradeVolume = row.getCell(proprietaryTotalBuyTradeVolumeColumnIndex - 1).getNumericCellValue();
+//                double proprietaryTotalSellTradeVolume = row.getCell(proprietaryTotalSellTradeVolumeColumnIndex - 1).getNumericCellValue();
+//                updateCellValue(workbook, row, percentagePOnTotalVolumeColumnIndex, (proprietaryTotalBuyTradeVolume + proprietaryTotalSellTradeVolume)/totalVolume, true);
+//
+//                double percentPriceChange = Double.parseDouble(price.getPerPriceChange());
+//                updateCellValue(workbook, row, percentagePriceChangeColumnIndex, percentPriceChange, true);
 
             });
 
@@ -319,10 +327,10 @@ public class ExcelHelper {
             // Get or create the row
             Row row = sheet.getRow(rowIndex);
 
-            int buyOrderColumnIndex = Integer.parseInt(env.getProperty(StockContants.INTRADAY_BUY_ORDER_COLUMN_INDEX));
-            int sellOrderColumnIndex = Integer.parseInt(env.getProperty(StockContants.INTRADAY_SELL_ORDER_COLUMN_INDEX));
-            int buyVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
-            int sellVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
+            int buyOrderColumnIndex = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX));
+            int sellOrderColumnIndex = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX));
+            int buyVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
+            int sellVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
 
             double buyOrder = 0;
             double sellOrder = 0;
@@ -390,11 +398,11 @@ public class ExcelHelper {
                     }
                 }
 
-                int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
-                int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_SELL_QUANTITY_COLUMN_INDEX));
-                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_TOTAL_NET_QUANTITY_COLUMN_INDEX));
-                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_FOREIGN_TOTAL_NET_VALUE_COLUMN_INDEX));
-                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockContants.DERIVATIVES_TOTAL_VOLUME_COLUMN_INDEX));
+                int buyQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_FOREIGN_BUY_QUANTITY_COLUMN_INDEX));
+                int sellQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_FOREIGN_SELL_QUANTITY_COLUMN_INDEX));
+                int totalForeignQuantityColumnIndex = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_FOREIGN_TOTAL_NET_QUANTITY_COLUMN_INDEX));
+                int totalForeignValueColumnIndex = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_FOREIGN_TOTAL_NET_VALUE_COLUMN_INDEX));
+                int totalVolumeColumnIndex = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_TOTAL_VOLUME_COLUMN_INDEX));
 
                 double buyForeignQuantity = sym.getBuyForeignQuantity();
                 updateCellValue(workbook, row, buyQuantityColumnIndex, buyForeignQuantity, false);
@@ -424,6 +432,92 @@ public class ExcelHelper {
         }
     }
 
+    public void writeDataOfSymbolToFile(String sheetName, StockStatisticsDTO data) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            insertNewRow(sheet, beginRowIndex);
+            Row row = sheet.getRow(beginRowIndex);
+
+            int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
+
+            int foreignBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_BUY_VOL_COLUMN_INDEX));
+            int foreignSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX));
+            int foreignNetVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX));
+            int foreignNetValIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX));
+
+            int proprietaryBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX));
+            int proprietarySellVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX));
+            int proprietaryNetVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX));
+            int proprietaryNetValIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX));
+
+            int orderBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX));
+            int orderSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX));
+            int orderBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
+            int orderSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
+
+            int totalVolumeIdx = Integer.parseInt(env.getProperty(StockConstant.TOTAL_VOL_COLUMN_INDEX));
+            int percenChangeIdx = Integer.parseInt(env.getProperty(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX));
+
+            double foreignBuyVolume = data.getForeignBuyVolume();
+            double foreignSellVolume = data.getForeignSellVolume();
+            double foreignBuyValue = data.getForeignBuyValue();
+            double foreignSellValue = data.getForeignSellValue();
+
+            if(!Objects.isNull(data.getProprietaryBuyVolume())){
+                double proprietaryBuyVolume = data.getProprietaryBuyVolume();
+                double proprietarySellVolume = data.getProprietarySellVolume();
+                double proprietaryBuyValue = data.getProprietaryBuyValue();
+                double proprietarySellValue = data.getProprietarySellValue();
+                updateCellValue(workbook, row, proprietaryBuyVolIdx, proprietaryBuyVolume, false);
+                updateCellValue(workbook, row, proprietarySellVolIdx, proprietarySellVolume, false);
+                updateCellValue(workbook, row, proprietaryNetVolIdx, proprietaryBuyVolume - proprietarySellVolume, false);
+                updateCellValue(workbook, row, proprietaryNetValIdx, proprietaryBuyValue - proprietarySellValue, false);
+            }
+
+            if(!Objects.isNull(data.getBuyOrder())){
+                double buyOrder = data.getBuyOrder();
+                double sellOrder = data.getSellOrder();
+                double buyOrderVol = data.getBuyOrderVolume();
+                double sellOrderVol = data.getSellOrderVolume();
+                updateCellValue(workbook, row, orderBuyIdx, buyOrder, false);
+                updateCellValue(workbook, row, orderSellIdx, sellOrder, false);
+                updateCellValue(workbook, row, orderBuyVolIdx, buyOrderVol, false);
+                updateCellValue(workbook, row, orderSellVolIdx, sellOrderVol, false);
+            }
+
+            double totalVolume = data.getTotalVolume();
+            String percenChange = data.getPercentageChange().replace("%", "");
+
+
+            updateCellDate(workbook, row, tradingDateIdx, data.getTradingDate());
+            updateCellValue(workbook, row, foreignBuyVolIdx, foreignBuyVolume, false);
+            updateCellValue(workbook, row, foreignSellVolIdx, foreignSellVolume, false);
+            updateCellValue(workbook, row, foreignNetVolIdx, foreignBuyVolume - foreignSellVolume, false);
+            updateCellValue(workbook, row, foreignNetValIdx, foreignBuyValue - foreignSellValue, false);
+
+            updateCellValue(workbook, row, totalVolumeIdx, totalVolume, false);
+            updateCellValue(workbook, row, percenChangeIdx, Double.parseDouble(percenChange)/100, true);
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public static void insertNewRow(Sheet sheet, int rowIndex) {
+        // Shift existing rows down to make space for the new row
+        sheet.shiftRows(rowIndex, sheet.getLastRowNum(), 1, false, true);
+        sheet.createRow(rowIndex);
+
+    }
+
     public static void updateCellValue(Workbook workbook, Row row, int columnIndex, Double value, boolean isPercentage) {
         Cell cell = row.getCell(columnIndex - 1);
         if (cell == null) {
@@ -438,7 +532,45 @@ public class ExcelHelper {
             return;
         }
 
+        CellStyle numberStyle = workbook.createCellStyle();
+        DataFormat format = workbook.createDataFormat();
+        numberStyle.setDataFormat(format.getFormat("#,##0"));
+        cell.setCellValue(value);
+        cell.setCellStyle(numberStyle);
+    }
+
+    public static void updateCellString(Row row, int columnIndex, String value) {
+        Cell cell = row.getCell(columnIndex - 1);
+        if (cell == null) {
+            cell = row.createCell(columnIndex - 1);
+        }
+
         cell.setCellValue(value);
     }
 
+    public static void updateCellDate(Workbook workbook, Row row, int columnIndex, String value) {
+        Cell cell = row.getCell(columnIndex - 1);
+        if (cell == null) {
+            cell = row.createCell(columnIndex - 1);
+        }
+
+        CellStyle dateStyle = workbook.createCellStyle();
+        dateStyle.setAlignment(HorizontalAlignment.RIGHT);
+        CreationHelper creationHelper = workbook.getCreationHelper();
+        dateStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = inputFormat.parse(value);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = outputFormat.format(date);
+            cell.setCellValue(formattedDate);
+        }catch (Exception ex){
+            log.error("Can not parse date");
+            cell.setCellValue(value);
+
+        }
+        cell.setCellStyle(dateStyle);
+
+    }
 }

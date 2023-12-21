@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/proprietary")
 public class IndexController {
 
     private static final Logger log = LoggerFactory.getLogger(IndexController.class);

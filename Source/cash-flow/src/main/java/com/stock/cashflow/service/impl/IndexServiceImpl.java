@@ -23,21 +23,6 @@ public class IndexServiceImpl implements IndexService {
 
     private static final Logger log = LoggerFactory.getLogger(IndexServiceImpl.class);
 
-    @Value("${proprietary.api.host.baseurl}")
-    private String proprietaryAPIHost;
-
-    @Value("${statistics.file.path}")
-    private String statisticFilePath;
-
-    @Value("${statistics.date.column.index}")
-    private int columnIndex;
-
-    @Value("${statistics.date.row.index.start}")
-    private int rowIndexStart;
-
-    @Value("${statistics.date.row.index.end}")
-    private int rowIndexEnd;
-
     @Autowired
     Environment env;
 
@@ -53,38 +38,38 @@ public class IndexServiceImpl implements IndexService {
 
     @Override
     public void processProprietaryTradingValue(String index, String quarter) {
-        log.info("Bat dau lay du lieu tu doanh tren san: {}", index);
-        long epochTime = Instant.now().toEpochMilli();
-
-        String url = proprietaryAPIHost + "ComGroupCode=" + index + "&time=" + epochTime;
-
-        ProprietaryDataResponse proprietaryDataResponse = null;
-        try{
-            ResponseEntity<ProprietaryDataResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ProprietaryDataResponse.class);
-            proprietaryDataResponse = response.getBody();
-        }catch (Exception ex){
-            throw ex;
-        }
-
-        List<ProprietaryItems> items = proprietaryDataResponse.getItems();
-        Optional<ProprietaryItems> proprietaryDataOptional = items.stream().findFirst();
-        if(proprietaryDataOptional.isPresent()){
-            ProprietaryToday proprietaryToday = proprietaryDataOptional.get().getToday();
-            List<ProprietaryTrade> proprietaryTrades = proprietaryToday.getBuy();
-            List<String> sheetNames = excelHelper.getsheetNames(statisticFilePath);
-
-            List<ProprietaryTrade> filterData = proprietaryTrades.stream()
-                    .filter(proprietaryTrade ->
-                            sheetNames.stream().anyMatch(sheet -> sheet.equals(proprietaryTrade.getOrganCode())))
-                    .collect(Collectors.toList());
-
-            excelHelper.updateProprietaryCell(statisticFilePath, columnIndex, rowIndexStart, rowIndexEnd, filterData);
-            log.info("Ket thuc cap nhat du lieu tu doanh cho sheet");
-        }else
-            log.info("Khong tim thay du lieu");
-
-
-        log.info("Ket thuc lay du lieu tu doanh tren san: {}", index);
+//        log.info("Bat dau lay du lieu tu doanh tren san: {}", index);
+//        long epochTime = Instant.now().toEpochMilli();
+//
+//        String url = proprietaryAPIHost + "ComGroupCode=" + index + "&time=" + epochTime;
+//
+//        ProprietaryDataResponse proprietaryDataResponse = null;
+//        try{
+//            ResponseEntity<ProprietaryDataResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ProprietaryDataResponse.class);
+//            proprietaryDataResponse = response.getBody();
+//        }catch (Exception ex){
+//            throw ex;
+//        }
+//
+//        List<ProprietaryItems> items = proprietaryDataResponse.getItems();
+//        Optional<ProprietaryItems> proprietaryDataOptional = items.stream().findFirst();
+//        if(proprietaryDataOptional.isPresent()){
+//            ProprietaryToday proprietaryToday = proprietaryDataOptional.get().getToday();
+//            List<ProprietaryTrade> proprietaryTrades = proprietaryToday.getBuy();
+//            List<String> sheetNames = excelHelper.getsheetNames(statisticFilePath);
+//
+//            List<ProprietaryTrade> filterData = proprietaryTrades.stream()
+//                    .filter(proprietaryTrade ->
+//                            sheetNames.stream().anyMatch(sheet -> sheet.equals(proprietaryTrade.getOrganCode())))
+//                    .collect(Collectors.toList());
+//
+//            excelHelper.updateProprietaryCell(statisticFilePath, columnIndex, rowIndexStart, rowIndexEnd, filterData);
+//            log.info("Ket thuc cap nhat du lieu tu doanh cho sheet");
+//        }else
+//            log.info("Khong tim thay du lieu");
+//
+//
+//        log.info("Ket thuc lay du lieu tu doanh tren san: {}", index);
     }
 
 }

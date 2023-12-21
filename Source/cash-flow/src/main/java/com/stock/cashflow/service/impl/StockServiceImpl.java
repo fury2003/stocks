@@ -1,7 +1,8 @@
 package com.stock.cashflow.service.impl;
 
 
-import com.stock.cashflow.constants.StockContants;
+import com.stock.cashflow.constants.StockConstant;
+import com.stock.cashflow.constants.SymbolConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.service.StockService;
 import com.stock.cashflow.utils.DateHelper;
@@ -32,23 +33,8 @@ public class StockServiceImpl implements StockService {
     @Value("${foreign.api.host.baseurl}")
     private String foreignAPIHostAPIHost;
 
-    @Value("${intraday.latest.api.host.baseurl}")
+    @Value("${intraday.api.host.baseurl}")
     private String intradayAPIHost;
-
-    @Value("${stockPrice.api.host.baseurl}")
-    private String stockPriceAPIHost;
-
-    @Value("${statistics.date.column.index}")
-    private int columnIndex;
-
-    @Value("${statistics.date.row.index.start}")
-    private int rowIndexStart;
-
-    @Value("${statistics.date.row.index.end}")
-    private int rowIndexEnd;
-
-    @Value("${statistics.file.path}")
-    private String filePath;
 
     @Autowired
     Environment env;
@@ -62,58 +48,46 @@ public class StockServiceImpl implements StockService {
         this.excelHelper = excelHelper;
     }
 
+
     @Override
     public void processStockPrice(String symbol, String startDate, String endDate) {
-        log.info("Bat dau lay du lieu giao dich ma chung khoan: {}", symbol);
-        String url = stockPriceAPIHost + symbol + "&fromDate=" + startDate + "&toDate=" + endDate;
 
-        StockPriceDataResponse latestPriceDataResponse;
-        try{
-            ResponseEntity<StockPriceDataResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, StockPriceDataResponse.class);
-            latestPriceDataResponse = response.getBody();
-        }catch (Exception ex){
-            log.error("Loi trong qua trinh truy xuat du lieu tu SSI");
-            throw ex;
-        }
+    }
 
-        List<StockPrice> items = latestPriceDataResponse.getData();
-        LocalDateTime now = LocalDateTime.now();
-        String quarter = DateHelper.determineQuarter(now.getMonthValue());
-        String sheetName = String.join("-", symbol, quarter);
-        excelHelper.updatePercentageCell(filePath , sheetName,  columnIndex, rowIndexStart, rowIndexEnd, items);
+    @Override
+    public void processStockPriceAll(String startDate, String endDate) {
 
-        log.info("Ket thuc lay du lieu giao dich ma chung khoan");
     }
 
     @Override
     public void processForeign(String symbol, String startDate, String endDate, String token) {
-        log.info("Bat dau cap nhat du lieu khoi ngoai cho ma chung khoan: {}", symbol);
-
-        String url = foreignAPIHostAPIHost + "symbols/" + symbol + "/historical-quotes?startDate=" + startDate + "&endDate=" + endDate + "&offset=0&limit=100";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(StockContants.AUTHORIZATION, token);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        Symbol[] data = null;
-        try{
-            ResponseEntity<Symbol[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, Symbol[].class);
-            data = response.getBody();
-        }catch (Exception ex){
-            log.error("Loi trong qua trinh truy xuat du lieu tu fireant");
-            throw ex;
-        }
-
-
-        Date firstDate = data[data.length-1].getDate();
-        Instant instant = firstDate.toInstant();
-        LocalDate firstDateLocalDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-        String quarter = DateHelper.determineQuarter(firstDateLocalDate.getMonthValue());
-        String sheetName = String.join("-", symbol, quarter);
-
-        excelHelper.updateForeignCell(filePath, sheetName, columnIndex, rowIndexStart, rowIndexEnd, data);
-
-        log.info("Cap nhat du lieu khoi ngoai tu ngay: {} den ngay {} thanh cong", startDate, endDate);
-        log.info("Ket thuc cap nhat du lieu khoi ngoai cho ma chung khoan: {}", symbol);
+//        log.info("Bat dau cap nhat du lieu khoi ngoai cho ma chung khoan: {}", symbol);
+//
+//        String url = foreignAPIHostAPIHost + "symbols/" + symbol + "/historical-quotes?startDate=" + startDate + "&endDate=" + endDate + "&offset=0&limit=100";
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set(StockConstant.AUTHORIZATION, token);
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//
+//        Symbol[] data = null;
+//        try{
+//            ResponseEntity<Symbol[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, Symbol[].class);
+//            data = response.getBody();
+//        }catch (Exception ex){
+//            log.error("Loi trong qua trinh truy xuat du lieu tu fireant");
+//            throw ex;
+//        }
+//
+//
+//        Date firstDate = data[data.length-1].getDate();
+//        Instant instant = firstDate.toInstant();
+//        LocalDate firstDateLocalDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+//        String quarter = DateHelper.determineQuarter(firstDateLocalDate.getMonthValue());
+//        String sheetName = String.join("-", symbol, quarter);
+//
+//        excelHelper.updateForeignCell(filePath, sheetName, columnIndex, rowIndexStart, rowIndexEnd, data);
+//
+//        log.info("Cap nhat du lieu khoi ngoai tu ngay: {} den ngay {} thanh cong", startDate, endDate);
+//        log.info("Ket thuc cap nhat du lieu khoi ngoai cho ma chung khoan: {}", symbol);
     }
 
     @Override
@@ -130,10 +104,10 @@ public class StockServiceImpl implements StockService {
             throw ex;
         }
 
-        String statisticFilePath = env.getProperty(StockContants.STATISTIC_FILE_PATH);
-        int columnIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_COLUMN_INDEX));
-        int startRowIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_START_INDEX));
-        int endRowIndex = Integer.parseInt(env.getProperty(StockContants.STATISTIC_DATE_ROW_END_INDEX));
+        String statisticFilePath = env.getProperty(StockConstant.STATISTIC_FILE_PATH);
+        int columnIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_DATE_COLUMN_INDEX));
+        int startRowIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_DATE_ROW_START_INDEX));
+        int endRowIndex = Integer.parseInt(env.getProperty(StockConstant.STATISTIC_DATE_ROW_END_INDEX));
 
         LocalDateTime today = LocalDateTime.now();
         String quarter = DateHelper.determineQuarter(today.getMonthValue());
