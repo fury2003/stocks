@@ -17,7 +17,7 @@ public class StatisticsController {
         this.statisticsService = statisticsService;
     }
 
-    @PostMapping("/{symbol}/writer/specific-date")
+    @PostMapping("/{symbol}/stock/specific-date")
     public String updateStatisticSpecificDate(@PathVariable String symbol, @RequestParam String tradingDate) {
         log.info("Bat dau xu ly so lieu cho ma : {}", symbol);
 
@@ -28,7 +28,7 @@ public class StatisticsController {
     }
 
 
-    @PostMapping("/{symbol}/writer/date-to-date")
+    @PostMapping("/{symbol}/stock/date-to-date")
     public String updateStatisticDateToDate(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) {
         log.info("Bat dau xu ly cho ma chung khoan: {}", symbol);
 
@@ -38,7 +38,7 @@ public class StatisticsController {
         return "Cap nhat du lieu cho ma chung khoan thanh cong";
     }
 
-    @PostMapping("/all/writer/specific-date")
+    @PostMapping("/all/stock/specific-date")
     public String updateStatisticForAll(@RequestParam String tradingDate) {
         log.info("Bat dau ghi du lieu cho tat ca ma chung khoan");
 
@@ -46,6 +46,16 @@ public class StatisticsController {
 
         log.info("Ket thuc xu ly cho ma chung khoan");
         return "Ghi du lieu cho tat ca ma chung khoan thanh cong";
+    }
+
+    @PostMapping("/{symbol}/derivatives/date-to-date")
+    public String updateDerivativesStatisticDateToDate(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) {
+        log.info("Bat dau xu ly cho ma phai sinh: {}", symbol);
+
+        statisticsService.writeDerivativesDateToDate(symbol, startDate, endDate);
+
+        log.info("Ket thuc xu ly cho ma phai sinh: {}", symbol);
+        return "Cap nhat du lieu cho ma phai sinh thanh cong";
     }
 
 }

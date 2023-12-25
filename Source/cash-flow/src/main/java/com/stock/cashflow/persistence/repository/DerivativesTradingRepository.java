@@ -13,5 +13,4 @@ public interface DerivativesTradingRepository extends JpaSpecificationExecutor<D
     DerivativesTradingEntity findDerivativesTradingEntitiesBySymbolAndHashDate(String symbol, String hashDate);
 
     DerivativesTradingEntity findDerivativesTradingEntitiesByHashDate(String hashDate);
-
 }

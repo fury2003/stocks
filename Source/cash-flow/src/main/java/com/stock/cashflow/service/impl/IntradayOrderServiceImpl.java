@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
     public void processAll() {
         String[] symbols = SymbolConstant.SYMBOLS;
 
-        for (int i = 1; i < symbols.length; i++) {
+        for (int i = 0; i < symbols.length; i++) {
             IntradayData intradayData = null;
             try{
                 intradayData = getIntradayDataResponse(symbols[i]);
@@ -101,6 +102,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         int sellVolume = 0;
 
         String floor = intradayData.get(0).getFloor();
+        String tradingDate = String.valueOf(intradayData.get(0).getTradingDate());
         if(floor.equals("UPCOM") || floor.equals("HNX")){
             log.info("Khong tim thay thong ke giao dich cho ma chung khoan tren san UPCOM va HNX");
             return;
@@ -128,10 +130,10 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         entity.setBuyVolume(buyVolume);
         entity.setSellVolume(sellVolume);
 
-        Instant instant = new Date().toInstant();
-        LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-        entity.setTradingDate(today);
-        entity.setHashDate(DigestUtils.sha256Hex(today.toString() + symbol));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(tradingDate, formatter);
+        entity.setTradingDate(date);
+        entity.setHashDate(DigestUtils.sha256Hex(tradingDate + symbol));
 
         intradayOrderRepository.save(entity);
         log.info("Luu thong tin so lenh giao dich cua ma {} thanh cong", entity.getSymbol());

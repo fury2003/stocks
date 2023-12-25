@@ -1,6 +1,7 @@
 package com.stock.cashflow.service.impl;
 
 import com.stock.cashflow.constants.StockConstant;
+import com.stock.cashflow.dto.IndexDTO;
 import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
 import com.stock.cashflow.persistence.repository.StockPriceRepository;
@@ -80,7 +81,6 @@ public class IndexServiceImpl implements IndexService {
                     entity.setFloorPrice(sym.getPriceLow());
                     entity.setCeilingPrice(sym.getPriceHigh());
                     entity.setTotalVolume(sym.getTotalVolume());
-
                     Instant instant = sym.getDate().toInstant();
                     LocalDate tradingDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 

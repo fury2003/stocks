@@ -27,7 +27,7 @@ public class ForeignServiceImpl implements ForeignService {
     private static final Logger log = LoggerFactory.getLogger(ForeignServiceImpl.class);
 
     @Value("${foreign.api.host.baseurl}")
-    private String foreignAPIHostAPIHost;
+    private String foreignAPIHost;
 
     @Value("${fireant.token}")
     private String fireantToken;
@@ -113,7 +113,7 @@ public class ForeignServiceImpl implements ForeignService {
     }
 
     private Symbol[] getForeignTradingData(String symbol, String startDate, String endDate){
-        String url = foreignAPIHostAPIHost + "symbols/" + symbol + "/historical-quotes?startDate=" + startDate + "&endDate=" + endDate + "&offset=0&limit=100";
+        String url = foreignAPIHost + "symbols/" + symbol + "/historical-quotes?startDate=" + startDate + "&endDate=" + endDate + "&offset=0&limit=100";
         HttpHeaders headers = new HttpHeaders();
         headers.set(StockConstant.AUTHORIZATION, fireantToken);
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);

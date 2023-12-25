@@ -1,11 +1,14 @@
 package com.stock.cashflow.controller;
 
+import com.stock.cashflow.dto.DerivativesDTO;
 import com.stock.cashflow.dto.DerivativesProprietaryDTO;
 import com.stock.cashflow.service.DerivativesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/derivatives")
@@ -20,14 +23,24 @@ public class DerivativesController {
     }
 
 
-    @GetMapping("{symbol}/historical-quotes")
-    public String getDerivativesData(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) {
-        log.info("Bat dau cap nhat du lieu phai sinh {} tu ngay {} den ngay {}", symbol, startDate, endDate);
+    @PostMapping("/market/historical-quotes")
+    public String getMarketDerivativesData(@RequestBody List<DerivativesDTO> dto) {
+        log.info("Bat dau cap nhat du lieu phai sinh");
 
-        derivativesService.process(symbol, startDate, endDate);
+        derivativesService.processMarketData(dto);
 
-        log.info("Ket thuc cap nhat du lieu phai sinh {} tu ngay {} den ngay {}", symbol, startDate, endDate);
-        return "Ket thuc cap nhat du lieu phai sinh tu ngay " + startDate + " den ngay " + endDate;
+        log.info("Ket thuc cap nhat du lieu phai sinh");
+        return "Ket thuc cap nhat du lieu phai sinh";
+    }
+
+    @PostMapping("/foreign/{symbol}")
+    public String getForeignDerivativesData(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) {
+        log.info("Bat dau cap nhat du lieu phai sinh cua khoi ngoai");
+
+        derivativesService.processForeignData(symbol, startDate, endDate);
+
+        log.info("Ket thuc cap nhat du lieu phai sinh cua khoi ngoai");
+        return "Ket thuc cap nhat du lieu phai sinh cua khoi ngoai";
     }
 
     @PostMapping(value = "{symbol}/proprietary", produces = MediaType.APPLICATION_JSON_VALUE)

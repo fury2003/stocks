@@ -7,4 +7,7 @@ public interface StatisticsService {
     void writeDateToDate(String symbol, String startDate, String endDate);
 
     void writeAllForSpecificDate(String tradingDate);
+
+    void writeDerivativesDateToDate(String symbol, String startDate, String endDate);
+
 }

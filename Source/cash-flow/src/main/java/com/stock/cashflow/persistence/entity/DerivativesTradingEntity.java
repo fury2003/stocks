@@ -17,23 +17,32 @@ public class DerivativesTradingEntity {
     @Column(name = "symbol", nullable = false, length = 10)
     private String symbol;
 
-    @Column(name = "foreign_buy_volume", nullable = false)
-    private Double foreignBuyVolume;
+    @Column(name = "foreign_buy_volume")
+    private int foreignBuyVolume;
 
-    @Column(name = "foreign_sell_volume", nullable = false)
-    private Double foreignSellVolume;
+    @Column(name = "foreign_sell_volume")
+    private int foreignSellVolume;
 
-    @Column(name = "foreign_buy_value", nullable = false)
+    @Column(name = "foreign_net_volume")
+    private int foreignNetVolume;
+
+    @Column(name = "foreign_buy_value")
     private Double foreignBuyValue;
 
-    @Column(name = "foreign_sell_value", nullable = false)
+    @Column(name = "foreign_sell_value")
     private Double foreignSellValue;
 
+    @Column(name = "foreign_net_value")
+    private Double foreignNetValue;
+
     @Column(name = "proprietary_buy_volume")
-    private Double proprietaryBuyVolume;
+    private int proprietaryBuyVolume;
 
     @Column(name = "proprietary_sell_volume")
-    private Double proprietarySellVolume;
+    private int proprietarySellVolume;
+
+    @Column(name = "proprietary_net_volume")
+    private int proprietaryNetVolume;
 
     @Column(name = "proprietary_buy_value")
     private Double proprietaryBuyValue;
@@ -41,11 +50,14 @@ public class DerivativesTradingEntity {
     @Column(name = "proprietary_sell_value")
     private Double proprietarySellValue;
 
+    @Column(name = "proprietary_net_value")
+    private Double proprietaryNetValue;
+
     @Column(name = "total_volume", nullable = false)
     private Double totalVolume;
 
     @Column(name = "open_interest")
-    private Long openInterest;
+    private int openInterest;
 
     @Column(name = "percentage_change", nullable = false, length = 10)
     private String percentageChange;
@@ -75,19 +87,19 @@ public class DerivativesTradingEntity {
         this.symbol = symbol;
     }
 
-    public Double getForeignBuyVolume() {
+    public int getForeignBuyVolume() {
         return foreignBuyVolume;
     }
 
-    public void setForeignBuyVolume(Double foreignBuyVolume) {
+    public void setForeignBuyVolume(int foreignBuyVolume) {
         this.foreignBuyVolume = foreignBuyVolume;
     }
 
-    public Double getForeignSellVolume() {
+    public int getForeignSellVolume() {
         return foreignSellVolume;
     }
 
-    public void setForeignSellVolume(Double foreignSellVolume) {
+    public void setForeignSellVolume(int foreignSellVolume) {
         this.foreignSellVolume = foreignSellVolume;
     }
 
@@ -107,19 +119,19 @@ public class DerivativesTradingEntity {
         this.foreignSellValue = foreignSellValue;
     }
 
-    public Double getProprietaryBuyVolume() {
+    public int getProprietaryBuyVolume() {
         return proprietaryBuyVolume;
     }
 
-    public void setProprietaryBuyVolume(Double proprietaryBuyVolume) {
+    public void setProprietaryBuyVolume(int proprietaryBuyVolume) {
         this.proprietaryBuyVolume = proprietaryBuyVolume;
     }
 
-    public Double getProprietarySellVolume() {
+    public int getProprietarySellVolume() {
         return proprietarySellVolume;
     }
 
-    public void setProprietarySellVolume(Double proprietarySellVolume) {
+    public void setProprietarySellVolume(int proprietarySellVolume) {
         this.proprietarySellVolume = proprietarySellVolume;
     }
 
@@ -147,11 +159,11 @@ public class DerivativesTradingEntity {
         this.totalVolume = totalVolume;
     }
 
-    public Long getOpenInterest() {
+    public int getOpenInterest() {
         return openInterest;
     }
 
-    public void setOpenInterest(Long openInterest) {
+    public void setOpenInterest(int openInterest) {
         this.openInterest = openInterest;
     }
 
@@ -185,5 +197,37 @@ public class DerivativesTradingEntity {
 
     public void setHashDate(String hashDate) {
         this.hashDate = hashDate;
+    }
+
+    public int getForeignNetVolume() {
+        return foreignNetVolume;
+    }
+
+    public void setForeignNetVolume(int foreignNetVolume) {
+        this.foreignNetVolume = foreignNetVolume;
+    }
+
+    public Double getForeignNetValue() {
+        return foreignNetValue;
+    }
+
+    public void setForeignNetValue(Double foreignNetValue) {
+        this.foreignNetValue = foreignNetValue;
+    }
+
+    public int getProprietaryNetVolume() {
+        return proprietaryNetVolume;
+    }
+
+    public void setProprietaryNetVolume(int proprietaryNetVolume) {
+        this.proprietaryNetVolume = proprietaryNetVolume;
+    }
+
+    public Double getProprietaryNetValue() {
+        return proprietaryNetValue;
+    }
+
+    public void setProprietaryNetValue(Double proprietaryNetValue) {
+        this.proprietaryNetValue = proprietaryNetValue;
     }
 }

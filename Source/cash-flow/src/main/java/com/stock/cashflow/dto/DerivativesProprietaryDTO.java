@@ -12,10 +12,13 @@ import lombok.ToString;
 public class DerivativesProprietaryDTO {
 
     @JsonProperty("proprietaryBuyVol")
-    private Double proprietaryBuyVol;
+    private int proprietaryBuyVol;
 
     @JsonProperty("proprietarySellVol")
-    private Double proprietarySellVol;
+    private int proprietarySellVol;
+
+    @JsonProperty("proprietaryNetVol")
+    private int proprietaryNetVol;
 
     @JsonProperty("proprietaryBuyValue")
     private Double proprietaryBuyValue;
@@ -23,6 +26,7 @@ public class DerivativesProprietaryDTO {
     @JsonProperty("proprietarySellValue")
     private Double proprietarySellValue;
 
-    @JsonProperty("openInterest")
-    private Long openInterest;
+    @JsonProperty("proprietaryNetValue")
+    private Double proprietaryNetValue;
+
 }
