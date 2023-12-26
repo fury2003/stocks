@@ -1,5 +1,6 @@
 package com.stock.cashflow.controller;
 
+import com.stock.cashflow.dto.IndexDTO;
 import com.stock.cashflow.service.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,11 @@ public class IndexController {
     }
 
 
-    @GetMapping("/{index}/historical-quotes")
-    public String getIndexHistoricalQuotes(@PathVariable String index, @RequestParam String startDate, @RequestParam String endDate) {
+    @PostMapping("/{index}/historical-quotes")
+    public String getIndexHistoricalQuotes(@PathVariable String index, @RequestParam String startDate, @RequestParam String endDate, @RequestBody IndexDTO dto) {
         log.info("Bat dau cap nhat du lieu index");
 
-        indexService.processIndexHistoricalQuotes(index, startDate, endDate);
+        indexService.processIndexHistoricalQuotes(index, startDate, endDate, dto);
 
         log.info("Ket thuc cap nhat du lieu index");
         return "Cap nhat du lieu index thanh cong";

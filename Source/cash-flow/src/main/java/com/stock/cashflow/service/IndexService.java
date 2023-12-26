@@ -4,6 +4,6 @@ import com.stock.cashflow.dto.IndexDTO;
 
 public interface IndexService {
 
-    void processIndexHistoricalQuotes(String index, String startDate, String endDate);
+    void processIndexHistoricalQuotes(String index, String startDate, String endDate, IndexDTO dto);
 
 }

@@ -3,10 +3,11 @@ package com.stock.cashflow.service.impl;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.dto.IndexDTO;
 import com.stock.cashflow.dto.Symbol;
+import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
+import com.stock.cashflow.persistence.repository.ForeignTradingRepository;
 import com.stock.cashflow.persistence.repository.StockPriceRepository;
 import com.stock.cashflow.service.IndexService;
-import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,21 +42,20 @@ public class IndexServiceImpl implements IndexService {
 
     Environment env;
     private final RestTemplate restTemplate;
-    private final ExcelHelper excelHelper;
     private final StockPriceRepository stockPriceRepository;
-
+    private final ForeignTradingRepository foreignTradingRepository;
 
     @Autowired
-    public IndexServiceImpl(RestTemplate restTemplate, ExcelHelper excelHelper, Environment env, StockPriceRepository stockPriceRepository){
+    public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository, ForeignTradingRepository foreignTradingRepository){
         this.restTemplate = restTemplate;
-        this.excelHelper = excelHelper;
         this.env = env;
         this.stockPriceRepository = stockPriceRepository;
+        this.foreignTradingRepository = foreignTradingRepository;
     }
 
 
     @Override
-    public void processIndexHistoricalQuotes(String index, String startDate, String endDate) {
+    public void processIndexHistoricalQuotes(String index, String startDate, String endDate, IndexDTO dto) {
         Symbol[] data = null;
         try{
             String url = foreignAPIHostAPIHost + "symbols/" + index + "/historical-quotes?startDate=" + startDate + "&endDate=" + endDate + "&offset=0&limit=100";
@@ -81,13 +81,25 @@ public class IndexServiceImpl implements IndexService {
                     entity.setFloorPrice(sym.getPriceLow());
                     entity.setCeilingPrice(sym.getPriceHigh());
                     entity.setTotalVolume(sym.getTotalVolume());
+                    entity.setPercentageChange(dto.getPercentageChange());
+                    entity.setPriceChange(dto.getPriceChange());
                     Instant instant = sym.getDate().toInstant();
                     LocalDate tradingDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-
                     entity.setTradingDate(tradingDate);
                     entity.setHashDate(DigestUtils.sha256Hex(tradingDate + sym.getSymbol()));
 
                     stockPriceRepository.save(entity);
+
+                    ForeignTradingEntity foreignTradingEntity = new ForeignTradingEntity();
+                    foreignTradingEntity.setSymbol(sym.getSymbol());
+                    foreignTradingEntity.setBuyValue(sym.getBuyForeignValue());
+                    foreignTradingEntity.setBuyVolume(sym.getBuyForeignQuantity());
+                    foreignTradingEntity.setSellVolume(sym.getSellForeignQuantity());
+                    foreignTradingEntity.setSellValue(sym.getSellForeignValue());
+                    foreignTradingEntity.setTradingDate(tradingDate);
+                    foreignTradingEntity.setHashDate(DigestUtils.sha256Hex(tradingDate + sym.getSymbol()));
+                    foreignTradingRepository.save(foreignTradingEntity);
+
                     log.info("Luu du lieu cua {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
                 });
             }
