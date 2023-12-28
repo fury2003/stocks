@@ -29,8 +29,6 @@ public class ProprietaryServiceImpl implements ProprietaryService {
     @Value("${proprietary.api.host.baseurl}")
     private String proprietaryAPIHost;
 
-//    Environment env;
-
     private final RestTemplate restTemplate;
 
     private final ProprietaryTradingRepository proprietaryTradingRepository;
@@ -97,6 +95,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                 List<ProprietaryItems> items = proprietaryDataResponse.getItems();
                 Optional<ProprietaryItems> proprietaryDataOptional = items.stream().findFirst();
                 if(proprietaryDataOptional.isPresent()){
+                    log.info("Cap nhat du lieu mua ban cua tu doanh tren san {}", floors[i]);
                     String[] symbols = SymbolConstant.SYMBOLS;
                     ProprietaryToday proprietaryToday = proprietaryDataOptional.get().getToday();
                     List<ProprietaryTrade> proprietaryTrades = proprietaryToday.getBuy();
@@ -124,8 +123,8 @@ public class ProprietaryServiceImpl implements ProprietaryService {
     }
 
     private ProprietaryDataResponse getProprietaryTradingDate(String floor){
-        long epochTime = Instant.now().toEpochMilli();
-        String url = proprietaryAPIHost + "ComGroupCode=" + floor + "&time=" + epochTime;
+//        long epochTime = Instant.now().toEpochMilli();
+        String url = proprietaryAPIHost + floor;
         ResponseEntity<ProprietaryDataResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ProprietaryDataResponse.class);
         return response.getBody();
 

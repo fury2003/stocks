@@ -108,7 +108,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         data.setPercentageChange(stockPriceEntity.getPercentageChange());
 
         log.info("Ghi du lieu cho ma {}", symbol);
-        excelHelper.writeDataOfSymbolToFile(symbol, data);
+        excelHelper.writeIntradayTradingStatisticsToFile(symbol, data);
 
     }
 

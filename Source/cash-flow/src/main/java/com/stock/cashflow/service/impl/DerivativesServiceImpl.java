@@ -114,7 +114,7 @@ public class DerivativesServiceImpl implements DerivativesService {
         String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
 
         try{
-                DerivativesTradingEntity entity = derivativesTradingRepository.findDerivativesTradingEntitiesByHashDate(hashDate);
+            DerivativesTradingEntity entity = derivativesTradingRepository.findDerivativesTradingEntitiesByHashDate(hashDate);
             entity.setProprietaryBuyValue(derivativesProprietaryDTO.getProprietaryBuyValue());
             entity.setProprietaryBuyVolume(derivativesProprietaryDTO.getProprietaryBuyVol());
             entity.setProprietarySellValue(derivativesProprietaryDTO.getProprietarySellValue());

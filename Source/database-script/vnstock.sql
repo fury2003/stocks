@@ -119,3 +119,79 @@ AUTO_INCREMENT=1;
 
 CREATE INDEX idx_symbol_hash_date ON derivatives_trading (symbol, hash_date);
 CREATE UNIQUE INDEX index_hash_date ON derivatives_trading (hash_date);  
+
+CREATE TABLE income_sheet (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	ticker VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	net_revenue BIGINT NOT NULL,
+	gross_profit BIGINT NOT NULL,
+	cogs BIGINT NOT NULL,
+	finance_charge BIGINT NULL,
+	interest_cost BIGINT NULL,
+	selling_expenses BIGINT NULL,
+	operating_expenses BIGINT NULL,
+	financial_activities_income BIGINT NULL,
+	other_income BIGINT NULL,
+	earnings_before_taxes BIGINT NOT NULL,
+	corporate_income_tax BIGINT NOT NULL,
+	profit_after_taxes BIGINT NOT NULL,
+	net_income_attributable_to_parent BIGINT NOT NULL,
+	quarter VARCHAR(10) NOT NULL,
+	hash_quarter varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+CREATE INDEX idx_ticker_hash_quarter ON income_sheet (ticker, hash_quarter);
+CREATE UNIQUE INDEX index_hash_quarter ON income_sheet (hash_quarter);  
+
+CREATE TABLE balance_sheet (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	ticker VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	equity BIGINT UNSIGNED NOT NULL,
+	total_assets BIGINT UNSIGNED NOT NULL,
+	short_term_assets BIGINT UNSIGNED NOT NULL,
+	long_term_assets BIGINT UNSIGNED NOT NULL,
+	liabilities BIGINT UNSIGNED NOT NULL,
+	current_liabilities BIGINT UNSIGNED NOT NULL,
+	long_term_liabilities BIGINT UNSIGNED NOT NULL,
+	cash_and_cash_equivalents BIGINT UNSIGNED NOT NULL,
+	short_term_investments BIGINT UNSIGNED NOT NULL,
+	accounts_receivable BIGINT UNSIGNED NOT NULL,
+	inventory BIGINT UNSIGNED NOT NULL,
+	quarter VARCHAR(10) NOT NULL,
+	hash_quarter varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+CREATE INDEX idx_ticker_hash_quarter ON balance_sheet (ticker, hash_quarter);
+CREATE UNIQUE INDEX index_hash_quarter ON balance_sheet (hash_quarter);  
+
+
+CREATE TABLE cash_flow (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	ticker VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	net_cash_flow_from_operating_activities BIGINT NOT NULL,
+	net_cash_flow_from_investing_activities BIGINT NOT NULL,
+	net_cash_flow_from_financing_activities BIGINT NOT NULL,
+	net_cash_flow_for_the_period BIGINT NOT NULL,
+	beginning_cash_and_cash_equivalents BIGINT NOT NULL,
+	ending_cash_and_cash_equivalents BIGINT NOT NULL,
+	quarter VARCHAR(10) NOT NULL,
+	hash_quarter varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+CREATE INDEX idx_ticker_hash_quarter ON cash_flow (ticker, hash_quarter);
+CREATE UNIQUE INDEX index_hash_quarter ON cash_flow (hash_quarter);  
