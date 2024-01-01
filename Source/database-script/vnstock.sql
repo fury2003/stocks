@@ -65,6 +65,29 @@ CREATE INDEX idx_symbol_hash_date ON intraday_order (symbol, hash_date);
 CREATE UNIQUE INDEX index_hash_date ON intraday_order (hash_date);  
 
 
+CREATE TABLE order_book (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	symbol VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	buy_order BIGINT UNSIGNED NOT NULL,
+	sell_order BIGINT UNSIGNED NOT NULL,
+	buy_volume BIGINT UNSIGNED NOT NULL,
+	sell_volume	 BIGINT UNSIGNED NOT NULL,
+	big_buy_order BIGINT UNSIGNED NOT NULL,
+	big_sell_order BIGINT UNSIGNED NOT NULL,
+	trading_date DATE NOT NULL,
+	hash_date varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+
+CREATE INDEX idx_symbol_hash_date ON order_book (symbol, hash_date);
+CREATE UNIQUE INDEX index_hash_date ON order_book (hash_date);  
+
+
 CREATE TABLE stock_trading (
 	id BIGINT UNSIGNED auto_increment NOT NULL,
 	symbol VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,

@@ -69,4 +69,11 @@ public class StockConstant {
 
     public static final String STATISTIC_INGORE_SHEET = "Summary,Template-Q4,VN30F1M,Shortcuts";
 
+    public static final String BUY_ORDER = "BuyOrder";
+    public static final String SELL_ORDER = "SellOrder";
+    public static final String BUY_VOLUME = "BuyVolume";
+    public static final String SELL_VOLUME = "SellVolume";
+    public static final String BIG_BUY_ORDER = "BigBuyOrder";
+    public static final String BIG_SELL_ORDER = "BigSellOrder";
+
 }

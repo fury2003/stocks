@@ -17,7 +17,6 @@ public class IntradayOrderController {
         this.intradayOrderService = intradayOrderService;
     }
 
-
     @GetMapping("/{symbol}/order-latest")
     public String getIntradayOrder(@PathVariable String symbol) {
         log.info("Bat dau cap nhat so lenh mua ban cho ma chung khoan: {}", symbol);
@@ -36,5 +35,25 @@ public class IntradayOrderController {
 
         log.info("Ket thuc cap nhat so lenh mua ban cho tat ca");
         return "Ket thuc cap nhat so lenh mua ban cho tat ca";
+    }
+
+    @GetMapping("/{symbol}/download-order-report")
+    public String downloadStatisticOrderFile(@PathVariable String symbol) {
+        log.info("Bat dau tai file so lenh");
+
+        intradayOrderService.downloadOrderReport(symbol);
+
+        log.info("Ket thuc tai file so lenh");
+        return "Tai file so lenh thanh cong";
+    }
+
+    @GetMapping("/all/analyze-orders")
+    public String analyzeOrders(@RequestParam String tradingDate) {
+        log.info("Bat dau phan tich so lenh");
+
+        intradayOrderService.analyzeOrder(tradingDate);
+
+        log.info("Ket thuc phan tich so lenh");
+        return "Hoan thanh phan tich so lenh";
     }
 }
