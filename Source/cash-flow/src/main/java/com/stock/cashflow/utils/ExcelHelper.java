@@ -57,10 +57,8 @@ public class ExcelHelper {
 
                     if (cell != null) {
                         try {
-                            String cellValue = cell.getLocalDateTimeCellValue().toLocalDate().toString();
-                            if (targetValue.equals(cellValue)) {
+                            if (targetValue.equals(cell.getStringCellValue()))
                                 return rowIndex;
-                            }
                         } catch (IllegalStateException ex) {
                             log.error("Format date khong dung o cot date trong file Excel. {}", cell.getStringCellValue());
                             throw new BadRequestException("Format date khong dung o cot date trong file Excel.");
@@ -109,7 +107,7 @@ public class ExcelHelper {
         return sheetNames;
     }
 
-    public void writeIntradayTradingStatisticsToFile(String sheetName, StockStatisticsDTO data) {
+    public void writeIntradayTradingStatisticsToFile(String sheetName, TradingStatistics data) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
@@ -136,16 +134,21 @@ public class ExcelHelper {
             if(!Objects.isNull(data.getBuyOrder())){
                 double buyOrder = data.getBuyOrder();
                 double sellOrder = data.getSellOrder();
+                double bigBuyOrderVol = data.getBigBuyOrder();
+                double bigSellOrderVol = data.getBigSellOrder();
                 double buyOrderVol = data.getBuyOrderVolume();
                 double sellOrderVol = data.getSellOrderVolume();
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX), buyOrder, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX), sellOrder, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX), bigBuyOrderVol, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX), bigSellOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
             }
 
             double totalVolume = data.getTotalVolume();
             String percenChange = data.getPercentageChange().replace("%", "");
+            String priceRange = data.getPriceRange().replace("%", "");
 
 
             updateCellDate(workbook, row, getExcelColumnIndex(StockConstant.TRADING_DATE_COLUMN_INDEX), data.getTradingDate());
@@ -156,6 +159,7 @@ public class ExcelHelper {
 
             updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
             updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
+            updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
 
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
@@ -223,6 +227,7 @@ public class ExcelHelper {
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheets.get(i).getNetRevenue());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheets.get(i).getCogs());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheets.get(i).getGrossProfit());
+                    updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_SELLING_EXPENSES_COL_IDX), incomeSheets.get(i).getSellingExpenses());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheets.get(i).getInterestCost());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_PROFIT_AFTER_TAXES_COL_IDX), incomeSheets.get(i).getProfitAfterTaxes());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_EQUITY_COL_IDX), balanceSheets.get(i).getEquity());

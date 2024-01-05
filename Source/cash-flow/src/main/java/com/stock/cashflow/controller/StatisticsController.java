@@ -59,4 +59,13 @@ public class StatisticsController {
     }
 
 
+    @PostMapping("/all/stock/update-data")
+    public String updateStatisticForSpecificColumn(@RequestParam String tradingDate, @RequestParam String column) {
+        log.info("Bat dau cap nhat du lieu cho {}", column);
+
+        statisticsService.writeSpecificColumn(tradingDate, column);
+
+        log.info("Ket thuc cap nhat du lieu cho {}", column);
+        return "Cap nhat du lieu cho ma chung khoan thanh cong";
+    }
 }

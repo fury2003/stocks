@@ -87,16 +87,16 @@ AUTO_INCREMENT=1;
 CREATE INDEX idx_symbol_hash_date ON order_book (symbol, hash_date);
 CREATE UNIQUE INDEX index_hash_date ON order_book (hash_date);  
 
-
-CREATE TABLE stock_trading (
+CREATE TABLE stock_price (
 	id BIGINT UNSIGNED auto_increment NOT NULL,
 	symbol VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-	ceiling_price INT UNSIGNED NOT NULL,
-	floor_price INT UNSIGNED NOT NULL,
+	highest_price INT UNSIGNED NOT NULL,
+	lowest_price INT UNSIGNED NOT NULL,
 	open_price INT UNSIGNED NOT NULL,
 	close_price INT UNSIGNED NOT NULL,
 	percentage_change VARCHAR(10) NOT NULL,
-	price_change INT NOT NULL,
+	price_change INT NULL,
+	price_range VARCHAR(10) NULL,
 	total_volume BIGINT UNSIGNED NOT NULL,
 	trading_date DATE NOT NULL,
 	hash_date varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -108,9 +108,8 @@ COLLATE=utf8mb4_unicode_ci
 AUTO_INCREMENT=1;
 
 
-CREATE INDEX idx_symbol_hash_date ON stock_trading (symbol, hash_date);
-CREATE UNIQUE INDEX index_hash_date ON stock_trading (hash_date);  
-
+CREATE INDEX idx_symbol_hash_date ON stock_price (symbol, hash_date);
+CREATE UNIQUE INDEX index_hash_date ON stock_price (hash_date);
 
 CREATE TABLE derivatives_trading (
 	id BIGINT UNSIGNED auto_increment NOT NULL,

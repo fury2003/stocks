@@ -2,10 +2,11 @@ package com.stock.cashflow.service.impl;
 
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.constants.SymbolConstant;
-import com.stock.cashflow.dto.StockStatisticsDTO;
+import com.stock.cashflow.dto.TradingStatistics;
 import com.stock.cashflow.persistence.entity.*;
 import com.stock.cashflow.persistence.repository.*;
 import com.stock.cashflow.service.StatisticsService;
+import com.stock.cashflow.utils.DateHelper;
 import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
@@ -25,15 +26,34 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
 
     private static final Logger log = LoggerFactory.getLogger(StatisticsServiceImpl.class);
+
+    private final Map<String, Integer> columnIdx =
+            Map.of(
+//                    "trading-date", 2,
+//                    "foreign-buy-volume", 3,
+//                    "foreign-sell-volume", 4,
+//                    "foreign-total-volume", 5,
+//                    "foreign-total-value", 6,
+                    "proprietary-buy-volume", 7,
+                    "proprietary-sell-volume", 8,
+                    "proprietary-total-volume", 9,
+                    "proprietary-total-value", 10,
+                    "intraday-buy-order", 12,
+                    "intraday-sell-order", 13,
+                    "intraday-big-buy-order", 14,
+                    "intraday-big-sell-order", 15,
+                    "intraday-buy-volume", 16
+//                    "percentage-change", 17,
+//                    "total-volume", 18
+            );
+
 
     private final ExcelHelper excelHelper;
     private final ProprietaryTradingRepository proprietaryTradingRepository;
@@ -41,6 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final IntradayOrderRepository intradayOrderRepository;
     private final StockPriceRepository stockPriceRepository;
     private final DerivativesTradingRepository derivativesTradingRepository;
+    private final OrderBookRepository orderBookRepository;
     private final Environment env;
 
     @Value("${statistics.file.path}")
@@ -52,7 +73,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Value("${statistics.insert.new.row.index}")
     private int statisticInsertRow;
 
-
     @Value("${derivatives.insert.row.index}")
     private int derivativesInsertRow;
 
@@ -63,6 +83,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                                  ForeignTradingRepository foreignTradingRepository,
                                  IntradayOrderRepository intradayOrderRepository,
                                  DerivativesTradingRepository derivativesTradingRepository,
+                                 OrderBookRepository orderBookRepository,
                                  Environment env
                                  ){
         this.excelHelper = excelHelper;
@@ -71,6 +92,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         this.foreignTradingRepository = foreignTradingRepository;
         this.stockPriceRepository = stockPriceRepository;
         this.derivativesTradingRepository = derivativesTradingRepository;
+        this.orderBookRepository = orderBookRepository;
         this.env = env;
     }
 
@@ -79,11 +101,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     public void writeSpecificDate(String symbol, String tradingDate) {
         String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
         ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
-        IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
+//        IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
+        OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
         ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
         StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
 
-        StockStatisticsDTO data = new StockStatisticsDTO();
+        TradingStatistics data = new TradingStatistics();
         data.setTradingDate(foreignTradingEntity.getTradingDate().toString());
         data.setForeignBuyValue(foreignTradingEntity.getBuyValue());
         data.setForeignSellValue(foreignTradingEntity.getSellValue());
@@ -97,15 +120,18 @@ public class StatisticsServiceImpl implements StatisticsService {
             data.setProprietarySellValue(proprietaryTradingEntity.getSellValue());
         }
 
-        if(!Objects.isNull(intradayOrderEntity)){
-            data.setBuyOrder(intradayOrderEntity.getBuyOrder());
-            data.setSellOrder(intradayOrderEntity.getSellOrder());
-            data.setBuyOrderVolume(intradayOrderEntity.getBuyVolume());
-            data.setSellOrderVolume(intradayOrderEntity.getSellVolume());
+        if(!Objects.isNull(orderBookEntity)){
+            data.setBuyOrder(orderBookEntity.getBuyOrder());
+            data.setSellOrder(orderBookEntity.getSellOrder());
+            data.setBigBuyOrder(orderBookEntity.getBigBuyOrder());
+            data.setBigSellOrder(orderBookEntity.getBigSellOrder());
+            data.setBuyOrderVolume(orderBookEntity.getBuyVolume());
+            data.setSellOrderVolume(orderBookEntity.getSellVolume());
         }
 
         data.setTotalVolume(stockPriceEntity.getTotalVolume());
         data.setPercentageChange(stockPriceEntity.getPercentageChange());
+        data.setPriceRange(stockPriceEntity.getPriceRange());
 
         log.info("Ghi du lieu cho ma {}", symbol);
         excelHelper.writeIntradayTradingStatisticsToFile(symbol, data);
@@ -134,6 +160,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int orderBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX));
         int orderSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX));
+        int orderBigBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX));
+        int orderBigSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX));
         int orderBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
         int orderSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
 
@@ -151,7 +179,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                     continue;
                 }
 
-                IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
+                OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
+//                IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
                 ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
                 StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
 
@@ -173,13 +202,17 @@ public class StatisticsServiceImpl implements StatisticsService {
                     excelHelper.updateCellDouble(workbook, row, proprietaryNetValIdx, proprietaryBuyValue - proprietarySellValue, false);
                 }
 
-                if (!Objects.isNull(intradayOrderEntity)) {
-                    double buyOrder = intradayOrderEntity.getBuyOrder();
-                    double sellOrder = intradayOrderEntity.getSellOrder();
-                    double buyOrderVol = intradayOrderEntity.getBuyVolume();
-                    double sellOrderVol = intradayOrderEntity.getSellVolume();
+                if (!Objects.isNull(orderBookEntity)) {
+                    double buyOrder = orderBookEntity.getBuyOrder();
+                    double sellOrder = orderBookEntity.getSellOrder();
+                    double bigBuyOrder = orderBookEntity.getBigBuyOrder();
+                    double bigSellOrder = orderBookEntity.getBigSellOrder();
+                    double buyOrderVol = orderBookEntity.getBuyVolume();
+                    double sellOrderVol = orderBookEntity.getSellVolume();
                     excelHelper.updateCellDouble(workbook, row, orderBuyIdx, buyOrder, false);
                     excelHelper.updateCellDouble(workbook, row, orderSellIdx, sellOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderBigBuyIdx, bigBuyOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderBigSellIdx, bigSellOrder, false);
                     excelHelper.updateCellDouble(workbook, row, orderBuyVolIdx, buyOrderVol, false);
                     excelHelper.updateCellDouble(workbook, row, orderSellVolIdx, sellOrderVol, false);
                 }
@@ -218,57 +251,16 @@ public class StatisticsServiceImpl implements StatisticsService {
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
 
-            int foreignBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_BUY_VOL_COLUMN_INDEX));
-            int foreignSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX));
-            int foreignNetVolIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX));
-            int foreignNetValIdx = Integer.parseInt(env.getProperty(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX));
-
-            int proprietaryBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX));
-            int proprietarySellVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX));
-            int proprietaryNetVolIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX));
-            int proprietaryNetValIdx = Integer.parseInt(env.getProperty(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX));
-
-            int orderBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX));
-            int orderSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX));
-            int orderBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
-            int orderSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
-
-            int totalVolumeIdx = Integer.parseInt(env.getProperty(StockConstant.TOTAL_VOL_COLUMN_INDEX));
-            int percenChangeIdx = Integer.parseInt(env.getProperty(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX));
-
             List<String> sheetNames = excelHelper.getSheetNames(workbook);
             for (String symbol : sheetNames) {
                 if(Arrays.asList(symbols).contains(symbol)){
                     log.info("Luu du lieu vao Sheet name {}", symbol);
                     String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
                     ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
-                    IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
+//                    IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
+                    OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
                     ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
                     StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
-
-                    StockStatisticsDTO data = new StockStatisticsDTO();
-                    data.setTradingDate(foreignTradingEntity.getTradingDate().toString());
-                    data.setForeignBuyValue(foreignTradingEntity.getBuyValue());
-                    data.setForeignSellValue(foreignTradingEntity.getSellValue());
-                    data.setForeignBuyVolume(foreignTradingEntity.getBuyVolume());
-                    data.setForeignSellVolume(foreignTradingEntity.getSellVolume());
-
-                    if(!Objects.isNull(proprietaryTradingEntity)){
-                        data.setProprietaryBuyVolume(proprietaryTradingEntity.getBuyVolume());
-                        data.setProprietarySellVolume(proprietaryTradingEntity.getSellVolume());
-                        data.setProprietaryBuyValue(proprietaryTradingEntity.getBuyValue());
-                        data.setProprietarySellValue(proprietaryTradingEntity.getSellValue());
-                    }
-
-                    if(!Objects.isNull(intradayOrderEntity)){
-                        data.setBuyOrder(intradayOrderEntity.getBuyOrder());
-                        data.setSellOrder(intradayOrderEntity.getSellOrder());
-                        data.setBuyOrderVolume(intradayOrderEntity.getBuyVolume());
-                        data.setSellOrderVolume(intradayOrderEntity.getSellVolume());
-                    }
-
-                    data.setTotalVolume(stockPriceEntity.getTotalVolume());
-                    data.setPercentageChange(stockPriceEntity.getPercentageChange());
 
                     log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
 
@@ -276,45 +268,45 @@ public class StatisticsServiceImpl implements StatisticsService {
                     excelHelper.insertNewRow(sheet, statisticInsertRow);
                     Row row = sheet.getRow(statisticInsertRow);
 
-                    double foreignBuyVolume = data.getForeignBuyVolume();
-                    double foreignSellVolume = data.getForeignSellVolume();
-                    double foreignBuyValue = data.getForeignBuyValue();
-                    double foreignSellValue = data.getForeignSellValue();
-
-                    if(!Objects.isNull(data.getProprietaryBuyVolume())){
-                        double proprietaryBuyVolume = data.getProprietaryBuyVolume();
-                        double proprietarySellVolume = data.getProprietarySellVolume();
-                        double proprietaryBuyValue = data.getProprietaryBuyValue();
-                        double proprietarySellValue = data.getProprietarySellValue();
-                        excelHelper.updateCellDouble(workbook, row, proprietaryBuyVolIdx, proprietaryBuyVolume, false);
-                        excelHelper.updateCellDouble(workbook, row, proprietarySellVolIdx, proprietarySellVolume, false);
-                        excelHelper.updateCellDouble(workbook, row, proprietaryNetVolIdx, proprietaryBuyVolume - proprietarySellVolume, false);
-                        excelHelper.updateCellDouble(workbook, row, proprietaryNetValIdx, proprietaryBuyValue - proprietarySellValue, false);
+                    if(!Objects.isNull(proprietaryTradingEntity)){
+                        double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume();
+                        double proprietarySellVolume = proprietaryTradingEntity.getSellVolume();
+                        double proprietaryBuyValue = proprietaryTradingEntity.getBuyValue();
+                        double proprietarySellValue = proprietaryTradingEntity.getSellValue();
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX), proprietaryBuyVolume, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), proprietarySellVolume, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), proprietaryBuyVolume - proprietarySellVolume, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), proprietaryBuyValue - proprietarySellValue, false);
                     }
 
-                    if(!Objects.isNull(data.getBuyOrder())){
-                        double buyOrder = data.getBuyOrder();
-                        double sellOrder = data.getSellOrder();
-                        double buyOrderVol = data.getBuyOrderVolume();
-                        double sellOrderVol = data.getSellOrderVolume();
-                        excelHelper.updateCellDouble(workbook, row, orderBuyIdx, buyOrder, false);
-                        excelHelper.updateCellDouble(workbook, row, orderSellIdx, sellOrder, false);
-                        excelHelper.updateCellDouble(workbook, row, orderBuyVolIdx, buyOrderVol, false);
-                        excelHelper.updateCellDouble(workbook, row, orderSellVolIdx, sellOrderVol, false);
+                    if(!Objects.isNull(orderBookEntity)){
+                        double buyOrder = orderBookEntity.getBuyOrder();
+                        double sellOrder = orderBookEntity.getSellOrder();
+                        double bigBuyOrder = orderBookEntity.getBigBuyOrder();
+                        double bigSellOrder = orderBookEntity.getBigSellOrder();
+                        double buyOrderVol = orderBookEntity.getBuyVolume();
+                        double sellOrderVol = orderBookEntity.getSellVolume();
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX), buyOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX), sellOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX), bigBuyOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX), bigSellOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
                     }
 
-                    double totalVolume = data.getTotalVolume();
-                    String percenChange = data.getPercentageChange().replace("%", "");
+                    double totalVolume = stockPriceEntity.getTotalVolume();
+                    String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
+                    String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
 
+                    excelHelper.updateCellDate(workbook, row, tradingDateIdx, foreignTradingEntity.getTradingDate().toString());
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_BUY_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume(), false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX), foreignTradingEntity.getSellVolume(), false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume() - foreignTradingEntity.getSellVolume(), false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX), foreignTradingEntity.getBuyValue() - foreignTradingEntity.getSellValue(), false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
 
-                    excelHelper.updateCellDate(workbook, row, tradingDateIdx, data.getTradingDate());
-                    excelHelper.updateCellDouble(workbook, row, foreignBuyVolIdx, foreignBuyVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, foreignSellVolIdx, foreignSellVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, foreignNetVolIdx, foreignBuyVolume - foreignSellVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, foreignNetValIdx, foreignBuyValue - foreignSellValue, false);
-
-                    excelHelper.updateCellDouble(workbook, row, totalVolumeIdx, totalVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, percenChangeIdx, Double.parseDouble(percenChange)/100, true);
 
                 }
             }
@@ -329,6 +321,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             e.printStackTrace();
             log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
         }
+    }
+
+    private int getExcelColumnIndex(String columnName){
+        return Integer.parseInt(env.getProperty(columnName));
     }
 
     @Override
@@ -418,6 +414,74 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         log.info("Ghi du lieu giao dich tu ngay {} den ngay {} vao file thanh cong", start, end);
+    }
+
+
+    @Override
+    public void writeSpecificColumn(String tradingDate, String column) {
+        String[] symbols = SymbolConstant.SYMBOLS;
+
+        int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_TRADING_DATE_COLUMN_INDEX));
+        String dateToFind = DateHelper.parseDateFormat(tradingDate);
+        int cellUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbols[0], tradingDateIdx, statisticInsertRow + 1, 10,  dateToFind);
+
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            List<String> sheetNames = excelHelper.getSheetNames(workbook);
+            for (String symbol : sheetNames) {
+                if(Arrays.asList(symbols).contains(symbol)){
+                    log.info("Luu du lieu vao Sheet name {}", symbol);
+                    String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
+
+                    int cidx = columnIdx.get(column);
+                    if(cidx > 11 && cidx < 19){
+                        OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
+                        log.info("Ghi du lieu {} ma {} cho ngay {}", column, symbol, tradingDate);
+                        Sheet sheet = workbook.getSheet(symbol);
+                        Row row = sheet.getRow(cellUpdated);
+
+                        if(!Objects.isNull(orderBookEntity)){
+                            switch (cidx){
+                                case 12:
+                                    double buyOrder = orderBookEntity.getBuyOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, buyOrder, false);
+                                    break;
+
+                                case 13:
+                                    double sellOrder = orderBookEntity.getSellOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, sellOrder, false);
+                                    break;
+
+                                case 14:
+                                    double bigBuyOrder = orderBookEntity.getBigBuyOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, bigBuyOrder, false);
+                                    break;
+
+                                case 15:
+                                    double bigSellOrder = orderBookEntity.getBigSellOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, bigSellOrder, false);
+                                    break;
+
+                                default:
+                                    log.info("Khong tim thay gia tri cot tuong ung cua {}", column);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
+        }
+
     }
 
     private static ArrayList<String> daysInRange(LocalDate startDate, LocalDate endDate) {

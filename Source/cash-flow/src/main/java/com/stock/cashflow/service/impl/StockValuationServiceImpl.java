@@ -41,8 +41,10 @@ public class StockValuationServiceImpl implements StockValuationService {
         CashFlowEntity cashFlowEntity = cashFlowRepository.findCashFlowEntitiesByHashQuarter(hashQuarter);
         if(!Objects.isNull(incomeSheetEntity) && !Objects.isNull(balanceSheetEntity) && !Objects.isNull(cashFlowEntity))
             excelHelper.writeQuarterFinancialStatementToFile(ticker, balanceSheetEntity, incomeSheetEntity, cashFlowEntity);
-        else
-            log.warn("Ko tim thay bao cao tai chinh cho {} cua cong ty {}", quarter, ticker);
+        else{
+            throw new RuntimeException("Ko tim thay bao cao tai chinh cua cong ty " + ticker);
+        }
+
         log.info("Ghi du lieu bao cao tai chinh cho {} cua cong ty {} thanh cong", quarter, ticker);
     }
 

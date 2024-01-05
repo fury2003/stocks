@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -78,11 +80,17 @@ public class IndexServiceImpl implements IndexService {
                     entity.setSymbol(sym.getSymbol());
                     entity.setOpenPrice(sym.getPriceOpen());
                     entity.setClosePrice(sym.getPriceClose());
-                    entity.setFloorPrice(sym.getPriceLow());
-                    entity.setCeilingPrice(sym.getPriceHigh());
+                    entity.setLowestPrice(sym.getPriceLow());
+                    entity.setHighestPrice(sym.getPriceHigh());
                     entity.setTotalVolume(sym.getTotalVolume());
                     entity.setPercentageChange(dto.getPercentageChange());
                     entity.setPriceChange(dto.getPriceChange());
+
+                    double priceRange = (sym.getPriceHigh() - sym.getPriceLow()) / sym.getPriceHigh() * 100;
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    df.setRoundingMode(RoundingMode.CEILING);
+                    entity.setPriceRange(df.format(priceRange) + "%");
+
                     Instant instant = sym.getDate().toInstant();
                     LocalDate tradingDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
                     entity.setTradingDate(tradingDate);

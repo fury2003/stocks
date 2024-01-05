@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "stock_trading", schema = "vnstock")
+@Table(name = "stock_price", schema = "vnstock")
 public class StockPriceEntity implements Serializable {
 
     @Id
@@ -17,11 +17,11 @@ public class StockPriceEntity implements Serializable {
     @Column(name = "symbol", length = 10, nullable = false)
     private String symbol;
 
-    @Column(name = "ceiling_price", nullable = false)
-    private Double ceilingPrice;
+    @Column(name = "highest_price", nullable = false)
+    private Double highestPrice;
 
-    @Column(name = "floor_price", nullable = false)
-    private Double floorPrice;
+    @Column(name = "lowest_price", nullable = false)
+    private Double lowestPrice;
 
     @Column(name = "open_price", nullable = false)
     private Double openPrice;
@@ -37,6 +37,9 @@ public class StockPriceEntity implements Serializable {
 
     @Column(name = "total_volume", nullable = false)
     private Double totalVolume;
+
+    @Column(name = "price_range", nullable = true)
+    private String priceRange;
 
     @Column(name = "trading_date", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -85,20 +88,20 @@ public class StockPriceEntity implements Serializable {
         this.hashDate = hashDate;
     }
 
-    public Double getCeilingPrice() {
-        return ceilingPrice;
+    public Double getHighestPrice() {
+        return highestPrice;
     }
 
-    public void setCeilingPrice(Double ceilingPrice) {
-        this.ceilingPrice = ceilingPrice;
+    public void setHighestPrice(Double highestPrice) {
+        this.highestPrice = highestPrice;
     }
 
-    public Double getFloorPrice() {
-        return floorPrice;
+    public Double getLowestPrice() {
+        return lowestPrice;
     }
 
-    public void setFloorPrice(Double floorPrice) {
-        this.floorPrice = floorPrice;
+    public void setLowestPrice(Double lowestPrice) {
+        this.lowestPrice = lowestPrice;
     }
 
     public Double getOpenPrice() {
@@ -139,5 +142,13 @@ public class StockPriceEntity implements Serializable {
 
     public void setTotalVolume(Double totalVolume) {
         this.totalVolume = totalVolume;
+    }
+
+    public String getPriceRange() {
+        return priceRange;
+    }
+
+    public void setPriceRange(String priceRange) {
+        this.priceRange = priceRange;
     }
 }

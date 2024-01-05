@@ -96,19 +96,22 @@ public class StockPriceServiceImpl implements StockPriceService {
     private void saveStockPrice(List<StockPrice> prices){
         prices.forEach(price -> {
             StockPriceEntity entity = new StockPriceEntity();
+            double high = Double.parseDouble(price.getHighestPrice());
+            double low = Double.parseDouble(price.getLowestPrice());
             entity.setSymbol(price.getSymbol());
-            entity.setCeilingPrice(Double.parseDouble(price.getCeilingPrice()));
-            entity.setFloorPrice(Double.parseDouble(price.getFloorPrice()));
+            entity.setHighestPrice(high);
+            entity.setLowestPrice(low);
             entity.setOpenPrice(Double.parseDouble(price.getOpenPrice()));
             entity.setClosePrice(Double.parseDouble(price.getClosePrice()));
             entity.setPriceChange(Double.parseDouble(price.getPriceChange()));
             entity.setTotalVolume(Double.parseDouble(price.getTotalMatchVol()));
 
+            double priceRange = ((high - low) / high) *100;
             double percentageChange = Double.parseDouble(price.getPerPriceChange()) * 100;
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.CEILING);
             entity.setPercentageChange(df.format(percentageChange) + "%");
-
+            entity.setPriceRange(df.format(priceRange) + "%");
 
             SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date formatStart = null;

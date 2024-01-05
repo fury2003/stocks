@@ -10,4 +10,6 @@ public interface StatisticsService {
 
     void writeDerivativesDateToDate(String symbol, String startDate, String endDate);
 
+    void writeSpecificColumn(String tradingDate, String column);
+
 }
