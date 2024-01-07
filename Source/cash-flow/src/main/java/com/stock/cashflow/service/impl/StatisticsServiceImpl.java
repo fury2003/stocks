@@ -24,9 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -41,27 +39,28 @@ public class StatisticsServiceImpl implements StatisticsService {
 //                    "foreign-sell-volume", 4,
 //                    "foreign-total-volume", 5,
 //                    "foreign-total-value", 6,
-                    "proprietary-buy-volume", 7,
-                    "proprietary-sell-volume", 8,
-                    "proprietary-total-volume", 9,
-                    "proprietary-total-value", 10,
-                    "intraday-buy-order", 12,
-                    "intraday-sell-order", 13,
-                    "intraday-big-buy-order", 14,
-                    "intraday-big-sell-order", 15,
-                    "intraday-buy-volume", 16
+//                    "proprietary-buy-volume", 7,
+//                    "proprietary-sell-volume", 8,
+//                    "proprietary-total-volume", 9,
+//                    "proprietary-total-value", 10,
+//                    "intraday-buy-order", 12,
+//                    "intraday-sell-order", 13,
+//                    "intraday-big-buy-order", 14,
+//                    "intraday-big-sell-order", 15,
+//                    "intraday-buy-volume", 16
 //                    "percentage-change", 17,
-//                    "total-volume", 18
+//                    "total-volume", 18,
+                    "price-range", 22
             );
 
 
     private final ExcelHelper excelHelper;
     private final ProprietaryTradingRepository proprietaryTradingRepository;
     private final ForeignTradingRepository foreignTradingRepository;
-    private final IntradayOrderRepository intradayOrderRepository;
     private final StockPriceRepository stockPriceRepository;
     private final DerivativesTradingRepository derivativesTradingRepository;
     private final OrderBookRepository orderBookRepository;
+    private final IndexStatisticRepository indexStatisticRepository;
     private final Environment env;
 
     @Value("${statistics.file.path}")
@@ -81,18 +80,18 @@ public class StatisticsServiceImpl implements StatisticsService {
                                  ProprietaryTradingRepository proprietaryTradingRepository,
                                  StockPriceRepository stockPriceRepository,
                                  ForeignTradingRepository foreignTradingRepository,
-                                 IntradayOrderRepository intradayOrderRepository,
                                  DerivativesTradingRepository derivativesTradingRepository,
                                  OrderBookRepository orderBookRepository,
+                                 IndexStatisticRepository indexStatisticRepository,
                                  Environment env
                                  ){
         this.excelHelper = excelHelper;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
-        this.intradayOrderRepository = intradayOrderRepository;
         this.foreignTradingRepository = foreignTradingRepository;
         this.stockPriceRepository = stockPriceRepository;
         this.derivativesTradingRepository = derivativesTradingRepository;
         this.orderBookRepository = orderBookRepository;
+        this.indexStatisticRepository = indexStatisticRepository;
         this.env = env;
     }
 
@@ -144,7 +143,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
 
-        ArrayList<String> tradingDates = daysInRange(startDate, endDate);
+        ArrayList<String> tradingDates = DateHelper.daysInRange(startDate, endDate);
 
         int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
 
@@ -219,6 +218,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
                 double totalVolume = stockPriceEntity.getTotalVolume();
                 String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
+                String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
 
                 excelHelper.updateCellDate(workbook, row, tradingDateIdx, foreignTradingEntity.getTradingDate().toString());
                 excelHelper.updateCellDouble(workbook, row, foreignBuyVolIdx, foreignTradingEntity.getBuyVolume(), false);
@@ -227,6 +227,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 excelHelper.updateCellDouble(workbook, row, foreignNetValIdx, foreignTradingEntity.getBuyValue() - foreignTradingEntity.getSellValue(), false);
                 excelHelper.updateCellDouble(workbook, row, totalVolumeIdx, totalVolume, false);
                 excelHelper.updateCellDouble(workbook, row, percenChangeIdx, Double.parseDouble(percenChange) / 100, true);
+                excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
 
             }
 
@@ -307,7 +308,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                     excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
                     excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
 
-
                 }
             }
 
@@ -332,7 +332,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
 
-        ArrayList<String> tradingDates = daysInRange(startDate, endDate);
+        ArrayList<String> tradingDates = DateHelper.daysInRange(startDate, endDate);
 
         if(!tradingDates.isEmpty()){
             int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_TRADING_DATE_COLUMN_INDEX));
@@ -418,12 +418,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     @Override
-    public void writeSpecificColumn(String tradingDate, String column) {
+    public void writeSpecificDataAllSymbolSpecificDate(String tradingDate, String column) {
         String[] symbols = SymbolConstant.SYMBOLS;
 
-        int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.DERIVATIVES_TRADING_DATE_COLUMN_INDEX));
+        int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
         String dateToFind = DateHelper.parseDateFormat(tradingDate);
-        int cellUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbols[0], tradingDateIdx, statisticInsertRow + 1, 10,  dateToFind);
+        int cellUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbols[0], tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
 
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -484,20 +484,118 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     }
 
-    private static ArrayList<String> daysInRange(LocalDate startDate, LocalDate endDate) {
-        LocalDate currentDate = startDate;
+    @Override
+    public void writeSpecificDataSpecificSymbolFromTo(String symbol, String start, String end, String column) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        ArrayList<String> tradingDates = DateHelper.daysInRange(startDate, endDate);
 
-        ArrayList<String> daysBetween = new ArrayList<>();
-        endDate = endDate.plusDays(1);
-        while (!currentDate.isEqual(endDate)) {
-            DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-            if(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY){
-                log.info("Bo qua ngay cuoi tuan {} ", currentDate);
-                continue;
+        int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
+
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            log.info("Opened filed");
+            boolean fileIsChanged = false;
+            for (String tradingDate : tradingDates) {
+                int cidx = columnIdx.get(column);
+                String dateToFind = DateHelper.parseDateFormat(tradingDate);
+                int rowUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbol, tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
+
+                if(cidx > 17 && cidx < 23 && rowUpdated != -1){
+                    String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
+                    StockPriceEntity entity = stockPriceRepository.findStockPriceEntitiesByHashDate(hashDate);
+                    if(!Objects.isNull(entity)){
+                        switch (cidx){
+                            case 22:
+                                double high = entity.getHighestPrice();
+                                double low = entity.getLowestPrice();
+                                double volatility = ((high - low) / high) *100;
+                                Sheet sheet = workbook.getSheet(symbol);
+                                Row row = sheet.getRow(rowUpdated);
+                                excelHelper.updateCellDouble(workbook, row, cidx, volatility/100, true);
+                                fileIsChanged = true;
+                                log.info("Gia tri cua cot {}:{} vao sheet {} cho ngay {} thanh cong", column, volatility, symbol, tradingDate);
+                                break;
+
+                            default:
+                                log.info("Khong tim thay gia tri cot tuong ung cua {}", column);
+                                break;
+                        }
+                    }
+                }
             }
-            daysBetween.add(currentDate.toString());
-            currentDate = currentDate.plusDays(1);
+
+            if(fileIsChanged){
+                // Save the workbook to a file
+                try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                    workbook.write(fileOut);
+                    log.info("Cap nhat du lieu cua column {} vao file Excel thanh cong.", column);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
         }
-        return daysBetween;
     }
+
+    @Override
+    public void writeIndexAnalyzedDateToDate(String from, String to) {
+        LocalDate startDate = LocalDate.parse(from);
+        LocalDate endDate = LocalDate.parse(to);
+        ArrayList<String> tradingDates = DateHelper.daysInRange(startDate, endDate);
+
+        String sheetName = "MoneyFlow";
+        if(!tradingDates.isEmpty()){
+            try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+                for (String tradingDate : tradingDates) {
+                    String vn30HashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.VN30);
+                    String bluechipHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.BLUE_CHIP);
+                    String midcapHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.MID_CAP);
+                    String smallcapHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.SMALL_CAP);
+
+                    String vn30Percentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(vn30HashDate);
+                    String bluechipPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bluechipHashDate);
+                    String midcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(midcapHashDate);
+                    String smallcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(smallcapHashDate);
+
+                    // xu ly cho truong hop nghi le
+                    if (vn30Percentage.isEmpty()) {
+                        log.info("Khong tim thay du lieu giao dich trong ngay {}", tradingDate);
+                        continue;
+                    }
+
+                    log.info("Ghi du lieu phan tich index cho ngay {}", tradingDate);
+                    ZipSecureFile.setMinInflateRatio(0);
+
+                    Sheet sheet = workbook.getSheet(sheetName);
+                    excelHelper.insertNewRow(sheet, statisticInsertRow);
+                    Row row = sheet.getRow(statisticInsertRow);
+
+                    String vn30String = vn30Percentage.replace("%", "");
+                    String bluechipString = bluechipPercentage.replace("%", "");
+                    String midcapString = midcapPercentage.replace("%", "");
+                    String smallcapString = smallcapPercentage.replace("%", "");
+
+                    excelHelper.updateCellDate(workbook, row, 1, tradingDate);
+                    excelHelper.updateCellDouble(workbook, row, 2, Double.parseDouble(vn30String) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 3, Double.parseDouble(bluechipString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 4, Double.parseDouble(midcapString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 5, Double.parseDouble(smallcapString) / 100, true);
+
+                }
+
+                // Save the workbook to a file
+                try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                    workbook.write(fileOut);
+                    log.info("Cap nhat du lieu vao file Excel thanh cong.");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error("Loi trong qua trinh xu ly file. {}", derivativesFile);
+            }
+        }
+
+        log.info("Ghi du lieu phan tich index tu ngay {} den ngay {} vao file thanh cong", from , to);
+    }
+
 }

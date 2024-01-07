@@ -41,7 +41,6 @@ public class StockConstant {
     public static final String DERIVATIVES_FOREIGN_SELL_VALUE_COLUMN_INDEX = "derivatives.foreign.sell.value.column.index";
     public static final String DERIVATIVES_FOREIGN_NET_VALUE_COLUMN_INDEX = "derivatives.foreign.net.value.column.index";
 
-
     public static final String DERIVATIVES_PROPRIETARY_BUY_VOLUME_COLUMN_INDEX = "derivatives.proprietary.buy.volume.column.index";
     public static final String DERIVATIVES_PROPRIETARY_SELL_VOLUME_COLUMN_INDEX = "derivatives.proprietary.sell.volume.column.index";
     public static final String DERIVATIVES_PROPRIETARY_NET_VOLUME_COLUMN_INDEX = "derivatives.proprietary.net.volume.column.index";
@@ -68,5 +67,12 @@ public class StockConstant {
     public static final String SELL_VOLUME = "SellVolume";
     public static final String BIG_BUY_ORDER = "BigBuyOrder";
     public static final String BIG_SELL_ORDER = "BigSellOrder";
+
+    public static final String VNINDEX = "VNINDEX";
+    public static final String VN30 = "VN30";
+    public static final String BLUE_CHIP = "BLUECHIP";
+    public static final String MID_CAP = "MIDCAP";
+    public static final String SMALL_CAP = "SMALLCAP";
+
 
 }

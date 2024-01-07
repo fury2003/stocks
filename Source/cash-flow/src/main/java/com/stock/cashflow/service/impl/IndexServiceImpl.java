@@ -1,14 +1,20 @@
 package com.stock.cashflow.service.impl;
 
 import com.stock.cashflow.constants.StockConstant;
+import com.stock.cashflow.constants.StockGroupsConstant;
+import com.stock.cashflow.constants.SymbolConstant;
 import com.stock.cashflow.dto.IndexDTO;
 import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
+import com.stock.cashflow.persistence.entity.IndexStatisticEntity;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
 import com.stock.cashflow.persistence.repository.ForeignTradingRepository;
+import com.stock.cashflow.persistence.repository.IndexStatisticRepository;
 import com.stock.cashflow.persistence.repository.StockPriceRepository;
 import com.stock.cashflow.service.IndexService;
+import com.stock.cashflow.utils.DateHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.RoundingMode;
@@ -27,7 +34,9 @@ import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -46,16 +55,19 @@ public class IndexServiceImpl implements IndexService {
     private final RestTemplate restTemplate;
     private final StockPriceRepository stockPriceRepository;
     private final ForeignTradingRepository foreignTradingRepository;
+    private final IndexStatisticRepository indexStatisticRepository;
 
     @Autowired
-    public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository, ForeignTradingRepository foreignTradingRepository){
+    public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository,
+                            ForeignTradingRepository foreignTradingRepository, IndexStatisticRepository indexStatisticRepository){
         this.restTemplate = restTemplate;
         this.env = env;
         this.stockPriceRepository = stockPriceRepository;
         this.foreignTradingRepository = foreignTradingRepository;
+        this.indexStatisticRepository = indexStatisticRepository;
     }
 
-
+    @Transactional
     @Override
     public void processIndexHistoricalQuotes(String index, String startDate, String endDate, IndexDTO dto) {
         Symbol[] data = null;
@@ -124,6 +136,81 @@ public class IndexServiceImpl implements IndexService {
         }else{
             log.error("Khong tim thay thong tin giao dich");
         }
+    }
+
+    @Transactional
+    @Override
+    public void analyzeIndex(String startDate, String endDate) {
+
+        ArrayList<String> tradingDates = DateHelper.daysInRange(LocalDate.parse(startDate), LocalDate.parse(endDate));
+
+        for (String date : tradingDates) {
+            log.info("Phan tich index ngay {}", date);
+            LocalDate tradingDate = LocalDate.parse(date);
+            String vnindexHashDate = DigestUtils.sha256Hex(date + StockConstant.VNINDEX);
+            String vn30HashDate = DigestUtils.sha256Hex(date + StockConstant.VN30);
+
+            Double vnindexTotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndHashDate(StockConstant.VNINDEX, vnindexHashDate);
+            Double vn30TotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndHashDate(StockConstant.VN30, vn30HashDate);
+
+            try{
+                saveIndexAnalyze(tradingDate, StockConstant.VN30,  vn30TotalVolume, vnindexTotalVolume);
+                log.info("Saved VN30 ");
+            } catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich VN30/VNINDEX");
+            }
+
+            try{
+                String[] bluechip = StockGroupsConstant.BLUECHIP;
+                long bluechipTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(bluechip), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.BLUE_CHIP,  bluechipTotalVolume, vnindexTotalVolume);
+                log.info("Saved BLUE_CHIP ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich BLUECHIP/VNINDEX");
+            }
+
+            try{
+                String[] midcap = StockGroupsConstant.MIDCAP_NO_BANK;
+                long bluechipTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(midcap), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.MID_CAP,  bluechipTotalVolume, vnindexTotalVolume);
+                log.info("Saved MID_CAP ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich MIDCAP/VNINDEX");
+            }
+
+            try{
+                String[] smallcap = StockGroupsConstant.SMALLCAP;
+                long bluechipTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(smallcap), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.SMALL_CAP,  bluechipTotalVolume, vnindexTotalVolume);
+                log.info("Saved SMALL_CAP ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich SMALLCAP/VNINDEX");
+            }
+        }
+
+    }
+
+    private void saveIndexAnalyze(LocalDate tradingDate, String symbol, double groupVolume, double totalVolume){
+        String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
+        IndexStatisticEntity entity = new IndexStatisticEntity();
+        entity.setSymbol(symbol);
+        entity.setVolume(groupVolume);
+        entity.setTotalVolume(totalVolume);
+        double percentageTaken = groupVolume / totalVolume * 100;
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        entity.setPercentageTakenOnIndex(df.format(percentageTaken) + "%");
+        entity.setTradingDate(tradingDate);
+        entity.setHashDate(hashDate);
+        indexStatisticRepository.save(entity);
     }
 
 }

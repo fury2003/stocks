@@ -217,3 +217,21 @@ AUTO_INCREMENT=1;
 
 CREATE INDEX idx_ticker_hash_quarter ON cash_flow (ticker, hash_quarter);
 CREATE UNIQUE INDEX index_hash_quarter ON cash_flow (hash_quarter);  
+
+CREATE TABLE index_statistic (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	symbol VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	percentage_taken_on_index VARCHAR(10) NULL,
+	volume BIGINT UNSIGNED NOT NULL,
+	total_volume BIGINT UNSIGNED NOT NULL,
+	trading_date DATE NOT NULL,
+	hash_date varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+CREATE INDEX idx_symbol_hash_date ON index_statistic (symbol, hash_date);
+CREATE UNIQUE INDEX index_hash_date ON index_statistic (hash_date);

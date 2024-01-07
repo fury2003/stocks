@@ -249,7 +249,8 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                         buyVol += volCell.getNumericCellValue();
 
                         Cell priceCell = row.getCell(priceColumnIdx - 1);
-                        String price = priceCell.getStringCellValue();
+                        String priceString = priceCell.getStringCellValue();
+                        String price = priceString.substring(0, priceString.indexOf(".")).replace(",", ".") ;
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
                         log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
                         log.info("Gia tri giao dich: {}", value);
@@ -262,7 +263,8 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                         sellVol += volCell.getNumericCellValue();
 
                         Cell priceCell = row.getCell(priceColumnIdx - 1);
-                        String price = priceCell.getStringCellValue();
+                        String priceString = priceCell.getStringCellValue();
+                        String price = priceString.substring(0, priceString.indexOf(".")).replace(",", ".") ;
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
                         log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
                         log.info("Gia tri giao dich: {}", value);
