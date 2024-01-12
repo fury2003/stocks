@@ -73,6 +73,20 @@ public class StockConstant {
     public static final String BLUE_CHIP = "BLUECHIP";
     public static final String MID_CAP = "MIDCAP";
     public static final String SMALL_CAP = "SMALLCAP";
-
+    public static final String BANKS = "BANKS";
+    public static final String STOCKS = "STOCKS";
+    public static final String BDS = "BDS";
+    public static final String BDS_KCN = "BDS_KCN";
+    public static final String RETAIL = "RETAIL";
+    public static final String SEAFOOD = "SEAFOOD";
+    public static final String WOOD = "WOOD";
+    public static final String ELECTRIC = "ELECTRIC";
+    public static final String METARIAL = "METARIAL";
+    public static final String LOGISTICS = "LOGISTICS";
+    public static final String OIL_GAS = "OIL_GAS";
+    public static final String CONSTRUCTION = "CONSTRUCTION";
+    public static final String TEXTILE = "TEXTILE";
+    public static final String STEEL = "STEEL";
+    public static final String CHEMISTRY_FERTILIZER = "CHEMISTRY_FERTILIZER";
 
 }

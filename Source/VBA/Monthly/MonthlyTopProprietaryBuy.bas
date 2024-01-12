@@ -1,12 +1,12 @@
 Attribute VB_Name = "MonthlyTopProprietaryBuy"
 Function GetMonthlyTopProprietaryBuySheets() As Variant
     Dim ws As Worksheet
-    Dim sheetNames(1 To 5) As String
-    Dim sumValues(1 To 5) As Double
+    Dim sheetNames(1 To 10) As String
+    Dim sumValues(1 To 10) As Double
     Dim i As Integer
 
     ' Initialize sumValues to a very small number to ensure accurate comparisons
-    For i = 1 To 5
+    For i = 1 To 10
         sheetNames(i) = ""
         sumValues(i) = -1 ' Use a negative value to represent uninitialized sums
     Next i
@@ -20,7 +20,7 @@ Function GetMonthlyTopProprietaryBuySheets() As Variant
             total = WorksheetFunction.Sum(ws.Range("J3:J25"))
     
             ' Compare the sum value with the top 5
-            For i = 1 To 5
+            For i = 1 To 10
                 If total > sumValues(i) Or sumValues(i) = -1 Then
                     ' Shift existing values down
                     For j = 4 To i Step -1

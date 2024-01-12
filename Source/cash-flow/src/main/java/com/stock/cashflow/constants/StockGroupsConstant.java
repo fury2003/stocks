@@ -185,7 +185,10 @@ public class StockGroupsConstant {
             "GDT",
             "BMI",
             "VPG",
-            "PVC"
-
+            "PVC",
+            "NBB",
+            "TDH",
+            "SMC",
+            "TLH"
     };
 }

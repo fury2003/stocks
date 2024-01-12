@@ -1,12 +1,12 @@
 Attribute VB_Name = "WeeklyTopForeignBuy"
 Function GetWeeklyTopForeignBuySheets() As Variant
     Dim ws As Worksheet
-    Dim sheetNames(1 To 5) As String
-    Dim sumValues(1 To 5) As Double
+    Dim sheetNames(1 To 10) As String
+    Dim sumValues(1 To 10) As Double
     Dim i As Integer
 
     ' Initialize sumValues to a very small number to ensure accurate comparisons
-    For i = 1 To 5
+    For i = 1 To 10
         sheetNames(i) = ""
         sumValues(i) = -1 ' Use a negative value to represent uninitialized sums
     Next i
@@ -19,8 +19,8 @@ Function GetWeeklyTopForeignBuySheets() As Variant
             ' Calculate sum for range E3:E7
             total = WorksheetFunction.Sum(ws.Range("E3:E7"))
     
-            ' Compare the sum value with the top 5
-            For i = 1 To 5
+            ' Compare the sum value with the top 10
+            For i = 1 To 10
                 If total > sumValues(i) Or sumValues(i) = -1 Then
                     ' Shift existing values down
                     For j = 4 To i Step -1

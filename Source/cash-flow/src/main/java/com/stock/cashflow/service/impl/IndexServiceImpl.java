@@ -1,5 +1,6 @@
 package com.stock.cashflow.service.impl;
 
+import com.stock.cashflow.constants.IndustryConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.constants.StockGroupsConstant;
 import com.stock.cashflow.constants.SymbolConstant;
@@ -194,8 +195,173 @@ public class IndexServiceImpl implements IndexService {
                 log.error(ex.getMessage());
                 throw new RuntimeException("Loi trong qua trinh phan tich SMALLCAP/VNINDEX");
             }
-        }
 
+            try{
+                String[] banks = IndustryConstant.BANKS;
+                long bankTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(banks), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.BANKS,  bankTotalVolume, vnindexTotalVolume);
+                log.info("Saved BANKS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich BANKS/VNINDEX");
+            }
+
+            try{
+                String[] stocks = IndustryConstant.STOCKS;
+                long stockTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(stocks), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.STOCKS,  stockTotalVolume, vnindexTotalVolume);
+                log.info("Saved STOCKS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich STOCKS/VNINDEX");
+            }
+
+            try{
+                String[] bds = IndustryConstant.BDS;
+                long bdsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(bds), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.BDS,  bdsTotalVolume, vnindexTotalVolume);
+                log.info("Saved BDS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich BDS/VNINDEX");
+            }
+
+            try{
+                String[] bdsKcn = IndustryConstant.BDS_KCN;
+                long bdskcnTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(bdsKcn), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.BDS_KCN,  bdskcnTotalVolume, vnindexTotalVolume);
+                log.info("Saved BDS_KCN ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich BDS_KCN/VNINDEX");
+            }
+
+            try{
+                String[] retail = IndustryConstant.RETAIL;
+                long retailTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(retail), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.RETAIL,  retailTotalVolume, vnindexTotalVolume);
+                log.info("Saved RETAIL ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich RETAIL/VNINDEX");
+            }
+
+            try{
+                String[] logistics = IndustryConstant.LOGISTICS;
+                long logisticsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(logistics), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.LOGISTICS,  logisticsTotalVolume, vnindexTotalVolume);
+                log.info("Saved LOGISTICS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich LOGISTICS/VNINDEX");
+            }
+
+            try{
+                String[] textile = IndustryConstant.TEXTILE;
+                long textileTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(textile), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.TEXTILE,  textileTotalVolume, vnindexTotalVolume);
+                log.info("Saved TEXTILE ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich TEXTILE/VNINDEX");
+            }
+
+            try{
+                String[] wood = IndustryConstant.WOOD;
+                long woodTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(wood), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.WOOD,  woodTotalVolume, vnindexTotalVolume);
+                log.info("Saved WOOD ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich WOOD/VNINDEX");
+            }
+
+            try{
+                String[] oilGas = IndustryConstant.OIL_GAS;
+                long oilGasTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(oilGas), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.OIL_GAS,  oilGasTotalVolume, vnindexTotalVolume);
+                log.info("Saved OIL_GAS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich OIL_GAS/VNINDEX");
+            }
+
+            try{
+                String[] seafood = IndustryConstant.SEAFOOD;
+                long seafoodTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(seafood), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.SEAFOOD,  seafoodTotalVolume, vnindexTotalVolume);
+                log.info("Saved SEAFOOD ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich SEAFOOD/VNINDEX");
+            }
+
+            try{
+                String[] metarials = IndustryConstant.METARIALS;
+                long metarialsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(metarials), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.METARIAL,  metarialsTotalVolume, vnindexTotalVolume);
+                log.info("Saved METARIALS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich METARIALS/VNINDEX");
+            }
+
+            try{
+                String[] construction = IndustryConstant.CONSTRUCTION;
+                long constructionTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(construction), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.CONSTRUCTION,  constructionTotalVolume, vnindexTotalVolume);
+                log.info("Saved CONSTRUCTION ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich CONSTRUCTION/VNINDEX");
+            }
+
+            try{
+                String[] steels = IndustryConstant.STEELS;
+                long steelsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(steels), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.STEEL,  steelsTotalVolume, vnindexTotalVolume);
+                log.info("Saved STEELS ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich STEELS/VNINDEX");
+            }
+
+            try{
+                String[] electric = IndustryConstant.ELECTRIC;
+                long electricTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(electric), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.ELECTRIC,  electricTotalVolume, vnindexTotalVolume);
+                log.info("Saved ELECTRIC ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich ELECTRIC/VNINDEX");
+            }
+
+            try{
+                String[] chemistryFertilizer = IndustryConstant.CHEMISTRY_FERTILIZER;
+                long chemistryFertilizerTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(chemistryFertilizer), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.CHEMISTRY_FERTILIZER,  chemistryFertilizerTotalVolume, vnindexTotalVolume);
+                log.info("Saved CHEMISTRY_FERTILIZER ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich CHEMISTRY_FERTILIZER/VNINDEX");
+            }
+
+        }
     }
 
     private void saveIndexAnalyze(LocalDate tradingDate, String symbol, double groupVolume, double totalVolume){

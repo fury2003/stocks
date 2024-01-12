@@ -1,11 +1,11 @@
 Attribute VB_Name = "DailyTopBigSellOrder"
 Function GetTopBigSellOrderSheets() As Variant
     Dim ws As Worksheet
-    Dim sheetNames(1 To 5) As String
-    Dim values(1 To 5) As Double
+    Dim sheetNames(1 To 10) As String
+    Dim values(1 To 10) As Double
     Dim i As Integer
 
-    For i = 1 To 5
+    For i = 1 To 10
         sheetNames(i) = ""
         values(i) = 0
     Next i
@@ -13,7 +13,7 @@ Function GetTopBigSellOrderSheets() As Variant
     For Each ws In ThisWorkbook.Sheets
         If Not ShouldSkipSheet(ws.Name) Then
             If IsNumeric(ws.Range("O3").Value) Then
-                For i = 1 To 5
+                For i = 1 To 10
                     If ws.Range("O3").Value > values(i) Then
                         ' Shift existing values down
                         For j = 4 To i Step -1

@@ -220,7 +220,7 @@ CREATE UNIQUE INDEX index_hash_quarter ON cash_flow (hash_quarter);
 
 CREATE TABLE index_statistic (
 	id BIGINT UNSIGNED auto_increment NOT NULL,
-	symbol VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	symbol VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
 	percentage_taken_on_index VARCHAR(10) NULL,
 	volume BIGINT UNSIGNED NOT NULL,
 	total_volume BIGINT UNSIGNED NOT NULL,

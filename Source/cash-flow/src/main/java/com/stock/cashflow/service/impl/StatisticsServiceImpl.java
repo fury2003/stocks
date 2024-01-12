@@ -72,6 +72,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Value("${statistics.insert.new.row.index}")
     private int statisticInsertRow;
 
+    @Value("${statistics.moneyflow.insert.new.row.index}")
+    private int moneyflowInsertRow;
+
     @Value("${derivatives.insert.row.index}")
     private int derivativesInsertRow;
 
@@ -551,11 +554,42 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String bluechipHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.BLUE_CHIP);
                     String midcapHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.MID_CAP);
                     String smallcapHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.SMALL_CAP);
+                    String bankHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.BANKS);
+                    String stockHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.STOCKS);
+                    String bdsHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.BDS);
+                    String kcnHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.BDS_KCN);
+                    String retailHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.RETAIL);
+                    String logisticsHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.LOGISTICS);
+                    String textileHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.TEXTILE);
+                    String woodHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.WOOD);
+                    String oilHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.OIL_GAS);
+                    String seadfoodHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.SEAFOOD);
+                    String materialsHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.METARIAL);
+                    String steelHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.STEEL);
+                    String constructionHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.CONSTRUCTION);
+                    String eletricHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.ELECTRIC);
+                    String chemistryHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.CHEMISTRY_FERTILIZER);
 
                     String vn30Percentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(vn30HashDate);
                     String bluechipPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bluechipHashDate);
                     String midcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(midcapHashDate);
                     String smallcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(smallcapHashDate);
+                    String bankPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bankHashDate);
+                    String stockPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(stockHashDate);
+                    String bdsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bdsHashDate);
+                    String kcnPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(kcnHashDate);
+                    String retailPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(retailHashDate);
+                    String logisticsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(logisticsHashDate);
+                    String textilePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(textileHashDate);
+                    String woodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(woodHashDate);
+                    String oilPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(oilHashDate);
+                    String seafoodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(seadfoodHashDate);
+                    String materialsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(materialsHashDate);
+                    String steelPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(steelHashDate);
+                    String constructionPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(constructionHashDate);
+                    String eletricPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(eletricHashDate);
+                    String chemistryPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(chemistryHashDate);
+
 
                     // xu ly cho truong hop nghi le
                     if (vn30Percentage.isEmpty()) {
@@ -567,19 +601,49 @@ public class StatisticsServiceImpl implements StatisticsService {
                     ZipSecureFile.setMinInflateRatio(0);
 
                     Sheet sheet = workbook.getSheet(sheetName);
-                    excelHelper.insertNewRow(sheet, statisticInsertRow);
-                    Row row = sheet.getRow(statisticInsertRow);
+                    excelHelper.insertNewRow(sheet, moneyflowInsertRow);
+                    Row row = sheet.getRow(moneyflowInsertRow);
 
                     String vn30String = vn30Percentage.replace("%", "");
                     String bluechipString = bluechipPercentage.replace("%", "");
                     String midcapString = midcapPercentage.replace("%", "");
                     String smallcapString = smallcapPercentage.replace("%", "");
+                    String bankString = bankPercentage.replace("%", "");
+                    String stockString = stockPercentage.replace("%", "");
+                    String bdsString = bdsPercentage.replace("%", "");
+                    String kcnString = kcnPercentage.replace("%", "");
+                    String retailString = retailPercentage.replace("%", "");
+                    String logisticsString = logisticsPercentage.replace("%", "");
+                    String woodString = woodPercentage.replace("%", "");
+                    String oilString = oilPercentage.replace("%", "");
+                    String seafoodString = seafoodPercentage.replace("%", "");
+                    String steelString = steelPercentage.replace("%", "");
+                    String materialString = materialsPercentage.replace("%", "");
+                    String constructionString = constructionPercentage.replace("%", "");
+                    String textileString = textilePercentage.replace("%", "");
+                    String electricString = eletricPercentage.replace("%", "");
+                    String chemistryString = chemistryPercentage.replace("%", "");
 
                     excelHelper.updateCellDate(workbook, row, 1, tradingDate);
                     excelHelper.updateCellDouble(workbook, row, 2, Double.parseDouble(vn30String) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 3, Double.parseDouble(bluechipString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 4, Double.parseDouble(midcapString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 5, Double.parseDouble(smallcapString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 6, Double.parseDouble(bankString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 7, Double.parseDouble(stockString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 8, Double.parseDouble(bdsString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 9, Double.parseDouble(kcnString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 10, Double.parseDouble(steelString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 11, Double.parseDouble(retailString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 12, Double.parseDouble(oilString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 13, Double.parseDouble(constructionString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 14, Double.parseDouble(logisticsString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 15, Double.parseDouble(textileString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 16, Double.parseDouble(seafoodString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 17, Double.parseDouble(woodString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 18, Double.parseDouble(materialString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 19, Double.parseDouble(electricString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 20, Double.parseDouble(chemistryString) / 100, true);
 
                 }
 
