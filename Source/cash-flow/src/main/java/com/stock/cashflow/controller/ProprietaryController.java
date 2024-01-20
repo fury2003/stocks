@@ -4,6 +4,7 @@ import com.stock.cashflow.service.IndexService;
 import com.stock.cashflow.service.ProprietaryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,24 +22,24 @@ public class ProprietaryController {
         this.proprietaryService = proprietaryService;
     }
 
-    @GetMapping("/{floor}/historical-quotes")
-    public String getProprietaryTradingValue(@PathVariable String floor) {
-        log.info("Bat dau cap nhat du lieu tu doanh tren san {}", floor);
+    @GetMapping("/all/historical-quotes-fireant")
+    public ResponseEntity<String> getProprietaryTradingFromSSI() {
+        log.info("Bat dau cap nhat du lieu tu doanh tu fireant");
 
-        proprietaryService.process(floor);
+        proprietaryService.processFireant();
 
-        log.info("Bat dau cap nhat du lieu tu doanh tren san {}", floor);
-        return "Cap nhat du lieu tu doanh thanh cong";
+        log.info("Bat dau cap nhat du lieu tu doanh tu fireant");
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/all/historical-quotes")
-    public String getProprietaryTradingValue() {
-        log.info("Bat dau cap nhat du lieu tu doanh tren tat ca san");
+    @GetMapping("/all/historical-quotes-ssi")
+    public ResponseEntity<String> getProprietaryTradingFromFireant() {
+        log.info("Bat dau cap nhat du lieu tu doanh tu ssi");
 
-        proprietaryService.processAll();
+        proprietaryService.processSSI();
 
-        log.info("Bat dau cap nhat du lieu tu doanh tren tat ca san");
-        return "Cap nhat du lieu tu doanh thanh cong";
+        log.info("Bat dau cap nhat du lieu tu doanh tu ssi");
+        return ResponseEntity.noContent().build();
     }
 
 }

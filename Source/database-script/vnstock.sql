@@ -235,3 +235,6 @@ AUTO_INCREMENT=1;
 
 CREATE INDEX idx_symbol_hash_date ON index_statistic (symbol, hash_date);
 CREATE UNIQUE INDEX index_hash_date ON index_statistic (hash_date);
+
+ALTER TABLE proprietary_trading 
+ADD total_net_value bigint(20);

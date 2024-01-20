@@ -3,6 +3,7 @@ package com.stock.cashflow.controller;
 import com.stock.cashflow.service.IntradayOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,42 +19,42 @@ public class IntradayOrderController {
     }
 
     @GetMapping("/{symbol}/order-latest")
-    public String getIntradayOrder(@PathVariable String symbol) {
+    public ResponseEntity<String> getIntradayOrder(@PathVariable String symbol) {
         log.info("Bat dau cap nhat so lenh mua ban cho ma chung khoan: {}", symbol);
 
         intradayOrderService.process(symbol);
 
         log.info("Ket thuc cap nhat so lenh mua ban cho ma chung khoan: {}", symbol);
-        return "Cap nhat so lenh mua ban cho ma chung khoan " + symbol + " thanh cong";
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/all/order-latest")
-    public String getAllIntradayOrder() {
+    public ResponseEntity<String> getAllIntradayOrder() {
         log.info("Bat dau cap nhat so lenh mua ban cho tat ca");
 
         intradayOrderService.processAll();
 
         log.info("Ket thuc cap nhat so lenh mua ban cho tat ca");
-        return "Ket thuc cap nhat so lenh mua ban cho tat ca";
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{symbol}/download-order-report")
-    public String downloadStatisticOrderFile(@PathVariable String symbol) {
+    public ResponseEntity<String> downloadStatisticOrderFile(@PathVariable String symbol) {
         log.info("Bat dau tai file so lenh");
 
         intradayOrderService.downloadOrderReport(symbol);
 
         log.info("Ket thuc tai file so lenh");
-        return "Tai file so lenh thanh cong";
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/all/analyze-orders")
-    public String analyzeOrders(@RequestParam String tradingDate) {
+    public ResponseEntity<String> analyzeOrders(@RequestParam String tradingDate) {
         log.info("Bat dau phan tich so lenh");
 
         intradayOrderService.analyzeOrder(tradingDate);
 
         log.info("Ket thuc phan tich so lenh");
-        return "Hoan thanh phan tich so lenh";
+        return ResponseEntity.noContent().build();
     }
 }

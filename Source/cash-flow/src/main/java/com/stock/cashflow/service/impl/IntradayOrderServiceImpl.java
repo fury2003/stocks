@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.FileInputStream;
@@ -146,7 +147,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         }
 
         log.info("Tai report cho ma {}", symbol);
-        String url = orderReportAPI +  symbol;
+        String url = String.format(orderReportAPI, symbol);
         String destinationPath = parentFolder + "/" + symbol + ".xlsx";
 
         AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
@@ -195,6 +196,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         }
     }
 
+    @Transactional
     @Override
     public void analyzeOrder(String tradingDate) {
         String sourceFolder = reportFolder + tradingDate;
@@ -202,7 +204,8 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
 
         for (String filePath : allFiles) {
             log.info("Xu ly file: " + filePath);
-            String symbol = filePath.substring(filePath.length() - 8, filePath.length() - 5);
+            String symbol = filePath.substring(filePath.length() - 16, filePath.length() - 13);
+//            String symbol = filePath.substring(filePath.length() - 8, filePath.length() - 5);
             try {
                 HashMap<String, Integer> report = processExcelFile(filePath, volumeColumnIdx + 1, volumeColumnIdx, volumeColumnIdx + 4);
                 OrderBookEntity entity = new OrderBookEntity();

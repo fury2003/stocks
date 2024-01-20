@@ -4,6 +4,7 @@ import com.stock.cashflow.service.BalanceSheetService;
 import com.stock.cashflow.service.IncomeSheetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,13 +20,13 @@ public class IncomeSheetController {
     }
 
     @GetMapping("/company/{ticker}")
-    public String getMarketDerivativesData(@PathVariable String ticker, @RequestParam String period, @RequestParam String size) {
+    public ResponseEntity<String> getMarketDerivativesData(@PathVariable String ticker, @RequestParam String period, @RequestParam String size) {
         log.info("Bat dau trich xuat du lieu income sheet");
 
         incomeSheetService.crawlData(ticker, period, size);
 
         log.info("Ket thuc trich xuat du lieu income sheet");
-        return "Ket thuc trich xuat du lieu income sheet";
+        return ResponseEntity.noContent().build();
     }
 
 }

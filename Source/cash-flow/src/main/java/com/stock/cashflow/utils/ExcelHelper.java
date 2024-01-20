@@ -186,7 +186,7 @@ public class ExcelHelper {
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheet.getCogs());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheet.getGrossProfit());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheet.getInterestCost());
-            updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_PROFIT_AFTER_TAXES_COL_IDX), incomeSheet.getProfitAfterTaxes());
+            updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX), incomeSheet.getNetIncomeAttributableToParent());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_EQUITY_COL_IDX), balanceSheet.getEquity());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_TOTAL_ASSETS_COL_IDX), balanceSheet.getTotalAssets());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_LIABILITIES_COL_IDX), balanceSheet.getLiabilities());
@@ -229,7 +229,7 @@ public class ExcelHelper {
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheets.get(i).getGrossProfit());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_SELLING_EXPENSES_COL_IDX), incomeSheets.get(i).getSellingExpenses());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheets.get(i).getInterestCost());
-                    updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_PROFIT_AFTER_TAXES_COL_IDX), incomeSheets.get(i).getProfitAfterTaxes());
+                    updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX), incomeSheets.get(i).getNetIncomeAttributableToParent());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_EQUITY_COL_IDX), balanceSheets.get(i).getEquity());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_TOTAL_ASSETS_COL_IDX), balanceSheets.get(i).getTotalAssets());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_LIABILITIES_COL_IDX), balanceSheets.get(i).getLiabilities());
@@ -261,6 +261,45 @@ public class ExcelHelper {
             log.error("Loi trong qua trinh xu ly file. {}", fsFilePath);
         }
 
+    }
+
+    public void updateISSpecificColumnFromTo(String sheetName, String updatedQuarter, int columnIdx, long value) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            int tradingDateIdx = getExcelColumnIndex(StockConstant.TRADING_DATE_COLUMN_INDEX);
+            boolean isChanged = false;
+
+            for (int rowIndex = 3 - 1; rowIndex <= 100; rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+
+                if (row != null) {
+                    Cell cell = row.getCell(tradingDateIdx);
+                    if (cell != null) {
+                        try {
+                            if (updatedQuarter.equals(cell.getStringCellValue())){
+                                updateCellLong(workbook, row, columnIdx, value);
+                                isChanged = true;
+                                break;
+                            }
+                        } catch (IllegalStateException ex) {
+                            log.error("Format date khong dung o cot date trong file Excel. {}", cell.getStringCellValue());
+                            throw new BadRequestException("Format date khong dung o cot date trong file Excel.");
+                        }
+                    }
+                }
+            }
+
+            if(isChanged){
+                try (FileOutputStream fileOut = new FileOutputStream(fsFilePath)) {
+                    workbook.write(fileOut);
+                    log.info("Cap nhat du lieu vao file Excel thanh cong.");
+                }
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", fsFilePath);
+        }
     }
 
     private int getExcelColumnIndex(String columnName){

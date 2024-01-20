@@ -3,6 +3,7 @@ package com.stock.cashflow.controller;
 import com.stock.cashflow.service.StockPriceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -24,18 +25,18 @@ public class StockPriceController {
 
 
     @GetMapping("/{symbol}/stock-price")
-    public String getStockPrice(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+    public ResponseEntity<String> getStockPrice(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
         log.info("Bat dau xu ly cho ma chung khoan: {}", symbol);
         String start = convertDate(startDate);
         String end = convertDate(endDate);
         stockPriceService.process(symbol, start, end);
 
         log.info("Ket thuc xu ly cho ma chung khoan: {}", symbol);
-        return "Cap nhat du lieu cho ma chung khoan " + symbol + " thanh cong";
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/all/stock-price")
-    public String getStockPriceAll(@RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+    @GetMapping("/all/stock-price/ssi")
+    public ResponseEntity<String> getStockPriceAll(@RequestParam String startDate, @RequestParam String endDate) throws ParseException {
         log.info("Bat dau xu ly du lieu thay doi gia cho tat ca ma chung khoan");
 
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -45,10 +46,21 @@ public class StockPriceController {
         String start = outputFormat.format(formatStart);
         String end = outputFormat.format(formatEnd);
 
-        stockPriceService.processAll(start, end);
+        stockPriceService.processAllSSI(start, end);
 
         log.info("Ket thuc xu ly du lieu thay doi gia  cho tat ca ma chung khoan");
-        return "Cap nhat du lieu thay doi gia cho tat ca ma chung khoan thanh cong";
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/all/stock-price/fireant")
+    public ResponseEntity<String> getStockPriceAllFireant(@RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        log.info("Bat dau lay du lieu thay doi gia cho tat ca ma chung khoan tu fireant");
+
+        stockPriceService.processAllFireant(startDate, endDate);
+
+        log.info("Ket thuc lay du lieu thay doi gia cho tat ca ma chung khoan tu fireant");
+        return ResponseEntity.noContent().build();
     }
 
     private String convertDate(String date) throws ParseException {

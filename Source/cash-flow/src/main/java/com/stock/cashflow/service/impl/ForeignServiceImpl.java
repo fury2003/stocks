@@ -6,6 +6,7 @@ import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.repository.ForeignTradingRepository;
 import com.stock.cashflow.service.ForeignService;
+import com.stock.cashflow.utils.TimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,7 +61,7 @@ public class ForeignServiceImpl implements ForeignService {
             try{
                 Arrays.stream(data).forEach(sym -> {
                     log.info("Luu thong tin giao dich khoi ngoai cua ma {} cho ngay {}", sym.getSymbol(), sym.getDate());
-                    ForeignTradingEntity entity = sym.convertToEntity();
+                    ForeignTradingEntity entity = sym.convertToForeignEntity();
                     foreignTradingRepository.save(entity);
                     log.info("Luu thong tin giao dich khoi ngoai cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
                 });
@@ -96,7 +97,7 @@ public class ForeignServiceImpl implements ForeignService {
                 log.info("Truy xuat thong tin giao dich khoi ngoai thanh cong");
                 try{
                     Arrays.stream(data).forEach(sym -> {
-                        ForeignTradingEntity entity = sym.convertToEntity();
+                        ForeignTradingEntity entity = sym.convertToForeignEntity();
                         foreignTradingRepository.save(entity);
                         log.info("Luu thong tin giao dich khoi ngoai cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
                     });
@@ -108,6 +109,8 @@ public class ForeignServiceImpl implements ForeignService {
             }else{
                 log.error("Khong tim thay thong tin giao dich khoi ngoai");
             }
+
+            TimeHelper.randomSleep();
         }
 
     }

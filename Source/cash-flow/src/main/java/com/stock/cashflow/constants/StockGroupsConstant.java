@@ -189,6 +189,11 @@ public class StockGroupsConstant {
             "NBB",
             "TDH",
             "SMC",
-            "TLH"
+            "TLH",
+            "ACG",
+            "AGG",
+            "VIP"
     };
+
+
 }

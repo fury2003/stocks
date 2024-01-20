@@ -6,5 +6,7 @@ public interface StockPriceService {
 
     void process(String symbol, String startDate, String endDate) throws ParseException;
 
-    void processAll(String startDate, String endDate) throws ParseException;
+    void processAllSSI(String startDate, String endDate) throws ParseException;
+
+    void processAllFireant(String startDate, String endDate) throws ParseException;
 }

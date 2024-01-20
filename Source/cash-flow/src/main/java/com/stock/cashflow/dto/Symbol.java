@@ -2,10 +2,14 @@ package com.stock.cashflow.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
+import com.stock.cashflow.persistence.entity.StockPriceEntity;
 import lombok.Data;
 import lombok.ToString;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.decimal4j.util.DoubleRounder;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -45,7 +49,7 @@ public class Symbol {
         private double propTradingNetPTValue;
         private double propTradingNetValue;
 
-        public ForeignTradingEntity convertToEntity(){
+        public ForeignTradingEntity convertToForeignEntity(){
                 ForeignTradingEntity entity = new ForeignTradingEntity();
                 entity.setSymbol(this.getSymbol());
                 entity.setBuyValue(this.getBuyForeignValue());
@@ -55,9 +59,38 @@ public class Symbol {
 
                 Instant instant = this.getDate().toInstant();
                 LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-//                String today = lastDateLocalDate.toString();
-//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//                LocalDate localDate = LocalDate.parse(new Date().toString(), formatter);
+
+                entity.setTradingDate(today);
+                String hashDate = today.toString() + this.getSymbol();
+                entity.setHashDate(DigestUtils.sha256Hex(hashDate));
+
+                return entity;
+        }
+
+        public StockPriceEntity convertToStockPriceEntity(double yesterdayClosedPrice){
+                StockPriceEntity entity = new StockPriceEntity();
+                entity.setSymbol(this.getSymbol());
+                entity.setHighestPrice(this.getPriceHigh());
+                entity.setLowestPrice(this.getPriceLow());
+                entity.setOpenPrice(this.getPriceOpen());
+                entity.setClosePrice(this.getPriceClose());
+                entity.setTotalVolume(this.getTotalVolume());
+
+
+                double percentChange = this.getPriceClose() > yesterdayClosedPrice
+                        ? (this.getPriceClose() - yesterdayClosedPrice) / yesterdayClosedPrice * 100
+                        : (yesterdayClosedPrice - this.getPriceClose()) / this.getPriceClose() * 100;
+
+                double priceRange = ((this.getPriceHigh() - this.getPriceLow()) / this.getPriceHigh()) * 100;
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.CEILING);
+
+                entity.setPercentageChange(df.format(percentChange) + "%");
+                entity.setPriceRange(df.format(priceRange) + "%");
+                entity.setPriceChange(DoubleRounder.round(this.getPriceClose() - yesterdayClosedPrice, 2));
+
+                Instant instant = this.getDate().toInstant();
+                LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
                 entity.setTradingDate(today);
                 String hashDate = today.toString() + this.getSymbol();

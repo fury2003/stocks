@@ -7,7 +7,7 @@ public class IndustryConstant {
             "DXG",
             "PDR",
             "NLG",
-            "NLG",
+            "NVL",
             "KDH",
             "NTL",
             "DIG",
@@ -18,7 +18,8 @@ public class IndustryConstant {
             "SCR",
             "NHA",
             "HQC",
-            "HDG"
+            "HDG",
+            "AGG"
     };
 
     public static final String[] STOCKS = {
@@ -85,7 +86,8 @@ public class IndustryConstant {
             "POM",
             "VGS",
             "SMC",
-            "TLH"
+            "TLH",
+            "VPG"
     };
 
     public static final String[] TEXTILE = {
@@ -118,7 +120,10 @@ public class IndustryConstant {
             "CII",
             "THG",
             "CTR",
-            "DPR"
+            "DPG",
+            "PC1",
+            "TV2",
+            "LCG"
     };
 
     public static final String[] LOGISTICS = {
@@ -128,17 +133,21 @@ public class IndustryConstant {
             "VSC",
             "PVT",
             "DVP",
-            "SGP"
+            "SGP",
+            "VTP",
+            "VIP"
     };
 
-    public static final String[] CHEMISTRY_FERTILIZER = {
+    public static final String[] CHEMISTRY_FERTILIZER_PLASTIC = {
             "DGC",
             "CSV",
             "DDV",
             "DCM",
             "DPM",
             "BFC",
-            "LAS"
+            "LAS",
+            "BMP",
+            "NTP"
     };
 
     public static final String[] ELECTRIC = {
@@ -174,6 +183,8 @@ public class IndustryConstant {
             "PTB",
             "GDT",
             "VCS",
-            "TTF"
+            "TTF",
+            "ACG"
     };
+
 }

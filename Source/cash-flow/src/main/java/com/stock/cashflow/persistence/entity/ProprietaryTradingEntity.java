@@ -17,17 +17,20 @@ public class ProprietaryTradingEntity implements Serializable {
     @Column(name = "symbol", length = 10, nullable = false)
     private String symbol;
 
-    @Column(name = "buy_volume", nullable = false)
+    @Column(name = "buy_volume")
     private Double buyVolume;
 
-    @Column(name = "sell_volume", nullable = false)
+    @Column(name = "sell_volume")
     private Double sellVolume;
 
-    @Column(name = "buy_value", nullable = false)
+    @Column(name = "buy_value")
     private Double buyValue;
 
-    @Column(name = "sell_value", nullable = false)
+    @Column(name = "sell_value")
     private Double sellValue;
+
+    @Column(name = "total_net_value")
+    private Double totalNetValue;
 
     @Column(name = "trading_date", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -106,5 +109,13 @@ public class ProprietaryTradingEntity implements Serializable {
 
     public void setHashDate(String hashDate) {
         this.hashDate = hashDate;
+    }
+
+    public Double getTotalNetValue() {
+        return totalNetValue;
+    }
+
+    public void setTotalNetValue(Double totalNetValue) {
+        this.totalNetValue = totalNetValue;
     }
 }

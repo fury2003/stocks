@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -38,6 +39,7 @@ public class DerivativesServiceImpl implements DerivativesService {
         this.restTemplate = restTemplate;
     }
 
+    @Transactional
     @Override
     public void processMarketData(List<DerivativesDTO> data) {
         log.info("Bat dau sao luu du lieu phai sinh");

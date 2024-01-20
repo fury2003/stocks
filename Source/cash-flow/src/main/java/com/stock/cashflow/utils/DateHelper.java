@@ -1,9 +1,14 @@
 package com.stock.cashflow.utils;
 
+import org.springframework.cglib.core.Local;
+
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DateHelper {
 
@@ -31,6 +36,12 @@ public class DateHelper {
             currentDate = currentDate.plusDays(1);
         }
         return daysBetween;
+    }
+
+    public static LocalDate getCurrentLocalDate(){
+        Instant instant = new Date().toInstant();
+        LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        return today;
     }
 
 }

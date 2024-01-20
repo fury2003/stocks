@@ -45,12 +45,10 @@ public class ProprietaryTrade {
         entity.setBuyVolume(this.getTotalBuyTradeVolume());
         entity.setSellValue(this.getTotalSellTradeValue());
         entity.setSellVolume(this.getTotalSellTradeVolume());
+        entity.setTotalNetValue(this.getTotalBuyTradeValue() - this.getTotalSellTradeValue());
 
         Instant instant = this.getToDate().toInstant();
         LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-//                String today = lastDateLocalDate.toString();
-//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//                LocalDate localDate = LocalDate.parse(new Date().toString(), formatter);
 
         entity.setTradingDate(today);
         String hashDate = today.toString() + this.getOrganCode();

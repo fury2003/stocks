@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProprietaryTradingRepository extends JpaSpecificationExecutor<ProprietaryTradingEntity>, JpaRepository<ProprietaryTradingEntity, Long> {
 
-    @Query("select entity from ProprietaryTradingEntity entity where entity.symbol=?1 and entity.hashDate =?2")
-    ProprietaryTradingEntity findProprietaryTradingEntitiesBySymbolAndHashDate(String symbol, String hashDate);
+    @Query("select entity from ProprietaryTradingEntity entity where entity.hashDate =?1")
+    ProprietaryTradingEntity findProprietaryTradingEntitiesByHashDate(String hashDate);
 
 
 }

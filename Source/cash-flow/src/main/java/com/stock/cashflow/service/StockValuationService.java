@@ -8,4 +8,8 @@ public interface StockValuationService {
 
     void writeDataForSpecificYear(String ticker, String quarter);
 
+    void writeDataFromToForSpecificColumn(String ticker, String fromQuarter, String toQuarter, int column);
+
+    void updateLatestPrice(String tradingDate);
+
 }

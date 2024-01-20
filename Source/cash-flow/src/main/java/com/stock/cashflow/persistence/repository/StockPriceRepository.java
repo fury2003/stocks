@@ -1,6 +1,7 @@
 package com.stock.cashflow.persistence.repository;
 
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,6 @@ public interface StockPriceRepository extends JpaSpecificationExecutor<StockPric
     Long getTotalVolumeSum(@Param("symbols") List<String> symbols,
                            @Param("tradingDate") LocalDate tradingDate);
 
+    @Query("select entity.closePrice from StockPriceEntity entity where entity.hashDate=?1")
+    Long getClosedPriceByHashDate(String hashDate);
 }

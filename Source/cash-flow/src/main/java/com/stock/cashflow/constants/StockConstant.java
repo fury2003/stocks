@@ -89,4 +89,7 @@ public class StockConstant {
     public static final String STEEL = "STEEL";
     public static final String CHEMISTRY_FERTILIZER = "CHEMISTRY_FERTILIZER";
 
+    public static final String PRICE_VALUE = "PriceValue";
+    public static final String MONEY_FLOW = "MoneyFlow";
+
 }

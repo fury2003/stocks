@@ -351,7 +351,7 @@ public class IndexServiceImpl implements IndexService {
             }
 
             try{
-                String[] chemistryFertilizer = IndustryConstant.CHEMISTRY_FERTILIZER;
+                String[] chemistryFertilizer = IndustryConstant.CHEMISTRY_FERTILIZER_PLASTIC;
                 long chemistryFertilizerTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(chemistryFertilizer), tradingDate);
                 saveIndexAnalyze(tradingDate, StockConstant.CHEMISTRY_FERTILIZER,  chemistryFertilizerTotalVolume, vnindexTotalVolume);
                 log.info("Saved CHEMISTRY_FERTILIZER ");

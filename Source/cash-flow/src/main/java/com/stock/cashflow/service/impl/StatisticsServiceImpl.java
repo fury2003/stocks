@@ -105,7 +105,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
 //        IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
         OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
-        ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
+        ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
         StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
 
         TradingStatistics data = new TradingStatistics();
@@ -183,7 +183,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
                 OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
 //                IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
-                ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
+                ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
                 StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
 
                 log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
@@ -263,7 +263,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
 //                    IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
                     OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
-                    ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
+                    ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
                     StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
 
                     log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
@@ -273,14 +273,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                     Row row = sheet.getRow(statisticInsertRow);
 
                     if(!Objects.isNull(proprietaryTradingEntity)){
-                        double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume();
-                        double proprietarySellVolume = proprietaryTradingEntity.getSellVolume();
-                        double proprietaryBuyValue = proprietaryTradingEntity.getBuyValue();
-                        double proprietarySellValue = proprietaryTradingEntity.getSellValue();
+                        double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume() == null ? 0 : proprietaryTradingEntity.getBuyVolume();
+                        double proprietarySellVolume = proprietaryTradingEntity.getSellVolume() == null ? 0 : proprietaryTradingEntity.getSellVolume();
+                        double proprietaryNetValue = proprietaryTradingEntity.getTotalNetValue();
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX), proprietaryBuyVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), proprietarySellVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), proprietaryBuyVolume - proprietarySellVolume, false);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), proprietaryBuyValue - proprietarySellValue, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), proprietaryNetValue, false);
                     }
 
                     if(!Objects.isNull(orderBookEntity)){
@@ -546,7 +545,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         LocalDate endDate = LocalDate.parse(to);
         ArrayList<String> tradingDates = DateHelper.daysInRange(startDate, endDate);
 
-        String sheetName = "MoneyFlow";
+        String sheetName = StockConstant.MONEY_FLOW;
         if(!tradingDates.isEmpty()){
             try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
                 for (String tradingDate : tradingDates) {

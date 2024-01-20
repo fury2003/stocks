@@ -330,6 +330,15 @@ public class SymbolConstant {
             "NBB",
             "TDH",
             "TLH",
-            "OCB"
+            "OCB",
+            "ACG",
+            "BWE",
+            "TDM",
+            "AGG",
+            "VIP",
+            "MPC",
+            "CII",
+            "DPG",
+            "DBD"
     };
 }
