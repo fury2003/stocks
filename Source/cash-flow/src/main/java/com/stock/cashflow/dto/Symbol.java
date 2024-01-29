@@ -70,16 +70,16 @@ public class Symbol {
         public StockPriceEntity convertToStockPriceEntity(double yesterdayClosedPrice){
                 StockPriceEntity entity = new StockPriceEntity();
                 entity.setSymbol(this.getSymbol());
-                entity.setHighestPrice(this.getPriceHigh());
-                entity.setLowestPrice(this.getPriceLow());
-                entity.setOpenPrice(this.getPriceOpen());
-                entity.setClosePrice(this.getPriceClose());
+                entity.setHighestPrice(this.getPriceHigh()*1000);
+                entity.setLowestPrice(this.getPriceLow()*1000);
+                entity.setOpenPrice(this.getPriceOpen()*1000);
+                entity.setClosePrice(this.getPriceClose()*1000);
                 entity.setTotalVolume(this.getTotalVolume());
 
 
                 double percentChange = this.getPriceClose() > yesterdayClosedPrice
                         ? (this.getPriceClose() - yesterdayClosedPrice) / yesterdayClosedPrice * 100
-                        : (yesterdayClosedPrice - this.getPriceClose()) / this.getPriceClose() * 100;
+                        : -((yesterdayClosedPrice - this.getPriceClose()) / this.getPriceClose()) * 100;
 
                 double priceRange = ((this.getPriceHigh() - this.getPriceLow()) / this.getPriceHigh()) * 100;
                 DecimalFormat df = new DecimalFormat("#.##");

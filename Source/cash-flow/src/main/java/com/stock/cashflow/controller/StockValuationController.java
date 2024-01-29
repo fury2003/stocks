@@ -3,6 +3,7 @@ package com.stock.cashflow.controller;
 import com.stock.cashflow.service.StockValuationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,22 @@ public class StockValuationController {
         stockValuationService.updateLatestPrice(tradingDate);
 
         log.info("Ket thuc cap nhat gia moi nhat");
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/company/{ticker}/financial-info")
+    public ResponseEntity<String> getCompanyInfo(@PathVariable String ticker, @RequestParam String year) {
+        log.info("Bat dau cap nhat thong tin nam {}", year);
+        stockValuationService.getGeneralInfo(ticker, year);
+        log.info("Ket thuc cap nhat thong tin nam {}", year);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/company/all/financial-info")
+    public ResponseEntity<String> getCompanyInfo(@RequestParam String year) {
+        log.info("Bat dau cap nhat thong tin nam {}", year);
+        stockValuationService.getGeneralInfoForAll(year);
+        log.info("Ket thuc cap nhat thong tin nam {}", year);
         return ResponseEntity.noContent().build();
     }
 

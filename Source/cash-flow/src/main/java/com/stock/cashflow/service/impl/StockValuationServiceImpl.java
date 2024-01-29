@@ -1,7 +1,10 @@
 package com.stock.cashflow.service.impl;
 
+import com.stock.cashflow.constants.FSConstant;
 import com.stock.cashflow.constants.StockConstant;
-import com.stock.cashflow.exception.BadRequestException;
+import com.stock.cashflow.constants.SymbolConstant;
+import com.stock.cashflow.dto.FinancialInfoItem;
+import com.stock.cashflow.dto.FinancialInfoSheetResponse;
 import com.stock.cashflow.persistence.entity.BalanceSheetEntity;
 import com.stock.cashflow.persistence.entity.CashFlowEntity;
 import com.stock.cashflow.persistence.entity.IncomeSheetEntity;
@@ -20,13 +23,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class StockValuationServiceImpl implements StockValuationService {
@@ -38,6 +45,7 @@ public class StockValuationServiceImpl implements StockValuationService {
     private final BalanceSheetRepository balanceSheetRepository;
     private final CashFlowRepository cashFlowRepository;
     private final ExcelHelper excelHelper;
+    private final RestTemplate restTemplate;
 
     @Autowired
     Environment env;
@@ -45,12 +53,16 @@ public class StockValuationServiceImpl implements StockValuationService {
     @Value("${fs.file.path}")
     private String fsFilePath;
 
-    public StockValuationServiceImpl(StockPriceRepository stockPriceRepository, IncomeSheetRepository incomeSheetRepository, BalanceSheetRepository balanceSheetRepository, CashFlowRepository cashFlowRepository, ExcelHelper excelHelper){
+    @Value("${fa.api.host.baseurl}")
+    private String bsAPI;
+
+    public StockValuationServiceImpl(StockPriceRepository stockPriceRepository, IncomeSheetRepository incomeSheetRepository, BalanceSheetRepository balanceSheetRepository, CashFlowRepository cashFlowRepository, ExcelHelper excelHelper, RestTemplate restTemplate){
         this.stockPriceRepository = stockPriceRepository;
         this.incomeSheetRepository = incomeSheetRepository;
         this.balanceSheetRepository = balanceSheetRepository;
         this.cashFlowRepository = cashFlowRepository;
         this.excelHelper = excelHelper;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -109,7 +121,7 @@ public class StockValuationServiceImpl implements StockValuationService {
         try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(StockConstant.PRICE_VALUE);
 
-            for (int i = 40; i < 200; i++) {
+            for (int i = 40; i < 194; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) {
                     log.info("Ko tim thay ma chung khoan");
@@ -148,6 +160,119 @@ public class StockValuationServiceImpl implements StockValuationService {
         } catch (IOException e) {
             e.printStackTrace();
             log.error("Loi trong qua trinh truy xuat file. {}", fsFilePath);
+        }
+    }
+
+    @Override
+    public void getGeneralInfoForAll(String year) {
+        String[] symbols = SymbolConstant.SYMBOLS;
+        try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+
+        for (String symbol : symbols) {
+            String url = bsAPI + "ratio/" + symbol + "?period=Y&size=3";
+
+            AtomicLong dt = new AtomicLong();
+            AtomicLong ln = new AtomicLong();
+            AtomicLong vg = new AtomicLong();
+            AtomicLong vcsh = new AtomicLong();
+            AtomicLong slcp = new AtomicLong();
+
+            try{
+                ResponseEntity<FinancialInfoSheetResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, FinancialInfoSheetResponse.class);
+                FinancialInfoSheetResponse data = response.getBody();
+                if(!Objects.isNull(data)) {
+                    List<FinancialInfoItem> items = data.getData().getItems();
+                    log.info("Truy xuat thong tin nam {} cho ma {}", year, symbol);
+                    items.forEach(item ->{
+                        if(item.getPeriodDate().equals(year)){
+                            dt.set(item.getIs1() / 1000000);
+                            ln.set(item.getBs115() / 1000000);
+                            vcsh.set(item.getBs10() / 1000000);
+                            vg.set(item.getBs11() / 1000000);
+                            slcp.set(item.getOp49());
+                        }
+                    });
+                }
+            } catch (Exception ex){
+                log.error("Loi trong qua trinh truy xuat du lieu");
+                throw new RuntimeException("Loi trong qua trinh truy xuat du lieu");
+            }
+
+            Sheet sheet = workbook.getSheet(year);
+            excelHelper.insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+            excelHelper.updateCellString(row, 1, symbol);
+            excelHelper.updateCellLong(workbook, row, 2, vg.longValue());
+            excelHelper.updateCellLong(workbook, row, 3, vcsh.longValue());
+            excelHelper.updateCellLong(workbook, row, 4, slcp.longValue());
+            excelHelper.updateCellLong(workbook, row, 5, dt.longValue());
+            excelHelper.updateCellLong(workbook, row, 6, ln.longValue());
+        }
+
+        try (FileOutputStream fileOut = new FileOutputStream(fsFilePath)) {
+            workbook.write(fileOut);
+            log.info("Cap nhat du lieu vao file Excel thanh cong.");
+        }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh truy xuat file. {}", fsFilePath);
+            throw new RuntimeException(("Loi trong qua trinh xu ly file"));
+        }
+
+    }
+
+    @Override
+    public void getGeneralInfo(String ticker, String year) {
+        String url = bsAPI + "ratio/" + ticker + "?period=Y&size=3";
+
+        AtomicLong dt = new AtomicLong();
+        AtomicLong ln = new AtomicLong();
+        AtomicLong vg = new AtomicLong();
+        AtomicLong vcsh = new AtomicLong();
+        AtomicLong slcp = new AtomicLong();
+
+        try{
+            ResponseEntity<FinancialInfoSheetResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, FinancialInfoSheetResponse.class);
+            FinancialInfoSheetResponse data = response.getBody();
+            if(!Objects.isNull(data)) {
+                List<FinancialInfoItem> items = data.getData().getItems();
+                items.forEach(item ->{
+                    log.info("Truy xuat thong tin nam {} cho ma {}", year, ticker);
+                    if(item.getPeriodDate().equals(year)){
+                        dt.set(item.getIs1() / 1000000);
+                        ln.set(item.getBs115() / 1000000);
+                        vcsh.set(item.getBs10() / 1000000);
+                        vg.set(item.getBs11() / 1000000);
+                        slcp.set(item.getOp49());
+                    }
+                });
+            }
+        } catch (Exception ex){
+            log.error("Loi trong qua trinh truy xuat du lieu");
+            throw new RuntimeException("Loi trong qua trinh truy xuat du lieu");
+        }
+
+        try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(year);
+            excelHelper.insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+            excelHelper.updateCellString(row, 1, ticker);
+            excelHelper.updateCellLong(workbook, row, 2, vg.longValue());
+            excelHelper.updateCellLong(workbook, row, 3, vcsh.longValue());
+            excelHelper.updateCellLong(workbook, row, 4, slcp.longValue());
+            excelHelper.updateCellLong(workbook, row, 5, dt.longValue());
+            excelHelper.updateCellLong(workbook, row, 6, ln.longValue());
+
+            try (FileOutputStream fileOut = new FileOutputStream(fsFilePath)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh truy xuat file. {}", fsFilePath);
+            throw new RuntimeException(("Loi trong qua trinh xu ly file"));
         }
     }
 }

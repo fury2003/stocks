@@ -12,4 +12,8 @@ public interface StockValuationService {
 
     void updateLatestPrice(String tradingDate);
 
+    void getGeneralInfo(String ticker, String year);
+
+    void getGeneralInfoForAll(String year);
+
 }

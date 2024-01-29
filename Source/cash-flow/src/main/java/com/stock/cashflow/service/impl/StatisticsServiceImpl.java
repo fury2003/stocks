@@ -173,6 +173,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             for (String tradingDate : tradingDates) {
                 String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
+                log.info("Cap nhat du lieu giao dich trong ngay {}", tradingDate);
+
                 ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
 
                 // xu ly cho truong hop nghi le
@@ -194,14 +196,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                 Row row = sheet.getRow(statisticInsertRow);
 
                 if (!Objects.isNull(proprietaryTradingEntity)) {
-                    double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume();
-                    double proprietarySellVolume = proprietaryTradingEntity.getSellVolume();
-                    double proprietaryBuyValue = proprietaryTradingEntity.getBuyValue();
-                    double proprietarySellValue = proprietaryTradingEntity.getSellValue();
+                    double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume() == null ? 0 : proprietaryTradingEntity.getBuyVolume();
+                    double proprietarySellVolume = proprietaryTradingEntity.getSellVolume() == null ? 0 : proprietaryTradingEntity.getSellVolume();
+                    double proprietaryNetValue = proprietaryTradingEntity.getTotalNetValue() == null ? proprietaryTradingEntity.getBuyValue() - proprietaryTradingEntity.getSellValue() : proprietaryTradingEntity.getTotalNetValue();
                     excelHelper.updateCellDouble(workbook, row, proprietaryBuyVolIdx, proprietaryBuyVolume, false);
                     excelHelper.updateCellDouble(workbook, row, proprietarySellVolIdx, proprietarySellVolume, false);
                     excelHelper.updateCellDouble(workbook, row, proprietaryNetVolIdx, proprietaryBuyVolume - proprietarySellVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, proprietaryNetValIdx, proprietaryBuyValue - proprietarySellValue, false);
+                    excelHelper.updateCellDouble(workbook, row, proprietaryNetValIdx, proprietaryNetValue, false);
                 }
 
                 if (!Objects.isNull(orderBookEntity)) {
@@ -275,7 +276,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     if(!Objects.isNull(proprietaryTradingEntity)){
                         double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume() == null ? 0 : proprietaryTradingEntity.getBuyVolume();
                         double proprietarySellVolume = proprietaryTradingEntity.getSellVolume() == null ? 0 : proprietaryTradingEntity.getSellVolume();
-                        double proprietaryNetValue = proprietaryTradingEntity.getTotalNetValue();
+                        double proprietaryNetValue = proprietaryTradingEntity.getTotalNetValue() == null ? proprietaryTradingEntity.getBuyValue() - proprietaryTradingEntity.getSellValue() : proprietaryTradingEntity.getTotalNetValue();
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX), proprietaryBuyVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), proprietarySellVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), proprietaryBuyVolume - proprietarySellVolume, false);

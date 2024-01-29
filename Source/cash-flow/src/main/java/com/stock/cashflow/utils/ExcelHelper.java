@@ -9,6 +9,7 @@ import com.stock.cashflow.persistence.entity.CashFlowEntity;
 import com.stock.cashflow.persistence.entity.IncomeSheetEntity;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +145,14 @@ public class ExcelHelper {
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX), bigSellOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
+
+                if(buyOrder > sellOrder){
+                    String conditionFormula = "L3>M3";
+                    applyConditionalFormattingOrderBookStrongBuy(sheet, conditionFormula);
+                } else if(buyOrder < sellOrder){
+                    String conditionFormula = "L3<M3";
+                    applyConditionalFormattingOrderBookStrongSell(sheet, conditionFormula);
+                }
             }
 
             double totalVolume = data.getTotalVolume();
@@ -335,6 +344,38 @@ public class ExcelHelper {
         numberStyle.setDataFormat(format.getFormat("#,##0"));
         cell.setCellValue(value);
         cell.setCellStyle(numberStyle);
+    }
+
+    public static void applyConditionalFormattingOrderBookStrongBuy(Sheet sheet, String conditionFormula) {
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.GT, conditionFormula, null);
+
+        FontFormatting fontFmt = rule.createFontFormatting();
+        fontFmt.setFontStyle(true, false);
+        fontFmt.setFontColorIndex(IndexedColors.WHITE.index);
+
+        PatternFormatting fillFmt = rule.createPatternFormatting();
+        fillFmt.setFillBackgroundColor(IndexedColors.GREEN.index);
+        fillFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+
+        CellRangeAddress[] order = { CellRangeAddress.valueOf("L3"), CellRangeAddress.valueOf("M3") };
+        sheetCF.addConditionalFormatting(order, rule);
+    }
+
+    public static void applyConditionalFormattingOrderBookStrongSell(Sheet sheet, String conditionFormula) {
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.LT, conditionFormula, null);
+
+        FontFormatting fontFmt = rule.createFontFormatting();
+        fontFmt.setFontStyle(true, false);
+        fontFmt.setFontColorIndex(IndexedColors.WHITE.index);
+
+        PatternFormatting fillFmt = rule.createPatternFormatting();
+        fillFmt.setFillBackgroundColor(IndexedColors.RED.index);
+        fillFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+
+        CellRangeAddress[] order = { CellRangeAddress.valueOf("L3"), CellRangeAddress.valueOf("M3") };
+        sheetCF.addConditionalFormatting(order, rule);
     }
 
     public static void updateCellInt(Workbook workbook, Row row, int columnIndex, int value) {
