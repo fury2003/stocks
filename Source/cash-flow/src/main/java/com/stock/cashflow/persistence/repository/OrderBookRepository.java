@@ -12,5 +12,6 @@ public interface OrderBookRepository extends JpaSpecificationExecutor<OrderBookE
     @Query("select entity from OrderBookEntity entity where entity.symbol=?1 and entity.hashDate =?2")
     OrderBookEntity findOrderBookEntitiesBySymbolAndHashDate(String symbol, String hashDate);
 
-
+    @Query("select entity from OrderBookEntity entity where entity.hashDate =?1")
+    OrderBookEntity findOrderBookEntitiesByHashDate(String hashDate);
 }

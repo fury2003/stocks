@@ -19,7 +19,8 @@ public class IndustryConstant {
             "NHA",
             "HQC",
             "HDG",
-            "AGG"
+            "AGG",
+            "TCH"
     };
 
     public static final String[] STOCKS = {
@@ -66,7 +67,8 @@ public class IndustryConstant {
             "NTC",
             "VGC",
             "GVR",
-            "BCM"
+            "BCM",
+            "IJC"
     };
 
     public static final String[] RETAIL = {
@@ -97,7 +99,8 @@ public class IndustryConstant {
             "TNG",
             "STK",
             "VGT",
-            "EVE"
+            "EVE",
+            "TCM"
     };
 
     public static final String[] SEAFOOD = {
@@ -147,7 +150,8 @@ public class IndustryConstant {
             "BFC",
             "LAS",
             "BMP",
-            "NTP"
+            "NTP",
+            "AAA"
     };
 
     public static final String[] ELECTRIC = {
@@ -186,5 +190,6 @@ public class IndustryConstant {
             "TTF",
             "ACG"
     };
+
 
 }

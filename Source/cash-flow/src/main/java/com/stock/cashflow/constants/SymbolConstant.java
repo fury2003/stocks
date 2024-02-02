@@ -157,7 +157,10 @@ public class SymbolConstant {
             "GDT",
             "VPG",
             "OIL",
-            "VGI"
+            "VGI",
+            "TCM",
+            "TCH",
+            "HNG"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -339,6 +342,9 @@ public class SymbolConstant {
             "MPC",
             "CII",
             "DPG",
-            "DBD"
+            "DBD",
+            "TCM",
+            "TCH",
+            "HNG"
     };
 }

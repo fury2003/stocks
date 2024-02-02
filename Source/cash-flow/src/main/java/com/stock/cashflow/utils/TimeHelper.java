@@ -7,7 +7,7 @@ public class TimeHelper {
     public static void randomSleep() {
         Random random = new Random();
         int minSleepTime = 1000; // 1 second in milliseconds
-        int maxSleepTime = 3000; // 3 seconds in milliseconds
+        int maxSleepTime = 2000; // 3 seconds in milliseconds
 
         try {
             // Generate a random sleep time between 1 and 3 seconds

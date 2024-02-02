@@ -10,9 +10,7 @@ import com.stock.cashflow.utils.DateHelper;
 import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,7 +173,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
                 log.info("Cap nhat du lieu giao dich trong ngay {}", tradingDate);
 
-                ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
+                ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesByHashDate(hashDate);
 
                 // xu ly cho truong hop nghi le
                 if (Objects.isNull(foreignTradingEntity)) {
@@ -183,10 +181,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                     continue;
                 }
 
-                OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
+                OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesByHashDate(hashDate);
 //                IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
                 ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
-                StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
+                StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesByHashDate(hashDate);
 
                 log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
 
@@ -261,11 +259,11 @@ public class StatisticsServiceImpl implements StatisticsService {
                 if(Arrays.asList(symbols).contains(symbol)){
                     log.info("Luu du lieu vao Sheet name {}", symbol);
                     String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
-                    ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesBySymbolAndHashDate(symbol, hashDate);
+                    ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesByHashDate(hashDate);
 //                    IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
-                    OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesBySymbolAndHashDate(symbol, hashDate);
+                    OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesByHashDate(hashDate);
                     ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
-                    StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesBySymbolAndHashDate(symbol, hashDate);
+                    StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesByHashDate(hashDate);
 
                     log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
 
@@ -629,7 +627,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     excelHelper.updateCellDouble(workbook, row, 3, Double.parseDouble(bluechipString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 4, Double.parseDouble(midcapString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 5, Double.parseDouble(smallcapString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 6, Double.parseDouble(bankString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 6,Double.parseDouble(bankString) / 100,true);
                     excelHelper.updateCellDouble(workbook, row, 7, Double.parseDouble(stockString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 8, Double.parseDouble(bdsString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 9, Double.parseDouble(kcnString) / 100, true);

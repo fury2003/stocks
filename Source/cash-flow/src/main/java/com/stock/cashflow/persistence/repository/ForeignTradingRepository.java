@@ -12,5 +12,7 @@ public interface ForeignTradingRepository extends JpaSpecificationExecutor<Forei
     @Query("select entity from ForeignTradingEntity entity where entity.symbol=?1 and entity.hashDate =?2")
     ForeignTradingEntity findForeignTradingEntitiesBySymbolAndHashDate(String symbol, String hashDate);
 
+    @Query("select entity from ForeignTradingEntity entity where entity.hashDate =?1")
+    ForeignTradingEntity findForeignTradingEntitiesByHashDate(String hashDate);
 
 }

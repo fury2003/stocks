@@ -325,6 +325,27 @@ public class ExcelHelper {
 
     }
 
+    public static void updateCellPercentage(Workbook workbook, Row row, int columnIndex, Double value, int color) {
+        Cell cell = row.getCell(columnIndex - 1);
+        if (cell == null) {
+            cell = row.createCell(columnIndex - 1);
+        }
+
+        CellStyle percentageStyle = workbook.createCellStyle();
+        percentageStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+        cell.setCellValue(value);
+
+        if(color == 1){
+            percentageStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
+        } else if(color == 2){
+            percentageStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        }
+
+        percentageStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cell.setCellStyle(percentageStyle);
+
+    }
+
     public static void updateCellDouble(Workbook workbook, Row row, int columnIndex, Double value, boolean isPercentage) {
         Cell cell = row.getCell(columnIndex - 1);
         if (cell == null) {
@@ -350,10 +371,6 @@ public class ExcelHelper {
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
         ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.GT, conditionFormula, null);
 
-        FontFormatting fontFmt = rule.createFontFormatting();
-        fontFmt.setFontStyle(true, false);
-        fontFmt.setFontColorIndex(IndexedColors.WHITE.index);
-
         PatternFormatting fillFmt = rule.createPatternFormatting();
         fillFmt.setFillBackgroundColor(IndexedColors.GREEN.index);
         fillFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
@@ -365,10 +382,6 @@ public class ExcelHelper {
     public static void applyConditionalFormattingOrderBookStrongSell(Sheet sheet, String conditionFormula) {
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
         ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.LT, conditionFormula, null);
-
-        FontFormatting fontFmt = rule.createFontFormatting();
-        fontFmt.setFontStyle(true, false);
-        fontFmt.setFontColorIndex(IndexedColors.WHITE.index);
 
         PatternFormatting fillFmt = rule.createPatternFormatting();
         fillFmt.setFillBackgroundColor(IndexedColors.RED.index);
