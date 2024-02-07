@@ -34,7 +34,8 @@ public class IndustryConstant {
             "SHS",
             "CTS",
             "ORS",
-            "VDS"
+            "VDS",
+            "MBS"
     };
 
     public static final String[] BANKS = {
@@ -53,7 +54,8 @@ public class IndustryConstant {
             "VPB",
             "HDB",
             "LPB",
-            "OCB"
+            "OCB",
+            "BID"
     };
 
     public static final String[] BDS_KCN = {

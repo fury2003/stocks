@@ -23,6 +23,7 @@ public class SymbolConstant {
             "VIB",
             "LPB",
             "MSB",
+            "BID",
             "HDB",
             "TPB",
             "EIB",
@@ -39,6 +40,8 @@ public class SymbolConstant {
             "CTD",
             "VCG",
             "FCN",
+            "CII",
+            "DPG",
             "HHV",
             "CTR",
             "THG",
@@ -160,7 +163,9 @@ public class SymbolConstant {
             "VGI",
             "TCM",
             "TCH",
-            "HNG"
+            "HNG",
+            "MCH",
+            "ASM"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -181,6 +186,7 @@ public class SymbolConstant {
             "ACB",
             "VPB",
             "VIB",
+            "BID",
             "LPB",
             "MSB",
             "HDB",
@@ -345,6 +351,8 @@ public class SymbolConstant {
             "DBD",
             "TCM",
             "TCH",
-            "HNG"
+            "HNG",
+            "MCH",
+            "ASM"
     };
 }

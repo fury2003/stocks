@@ -7,6 +7,7 @@ public class FSConstant {
     public static final String FS_COGS_COL_IDX = "fs.cogs.column.index";
     public static final String FS_GROSS_PROFIT_COL_IDX = "fs.gross.profit.column.index";
     public static final String FS_SELLING_EXPENSES_COL_IDX = "fs.selling.expenses.column.index";
+    public static final String FS_OPERATING_EXPENSES_COL_IDX = "fs.operating.expenses.column.index";
     public static final String FS_INTEREST_COST_COL_IDX = "fs.interest.cost.column.index";
     public static final String FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX = "fs.net.income.attributable.to.parent.after.taxes.column.index";
     public static final String FS_EQUITY_COL_IDX = "fs.equity.column.index";

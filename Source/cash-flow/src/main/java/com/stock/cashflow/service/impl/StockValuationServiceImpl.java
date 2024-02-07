@@ -83,8 +83,22 @@ public class StockValuationServiceImpl implements StockValuationService {
     @Override
     public void writeDataFromQuarterTo(String ticker, String fromQuarter, String toQuarter) {
         List<IncomeSheetEntity> incomeSheetEntities = incomeSheetRepository.findIncomeSheetEntitiesByTickerAndQuarterBetweenOrderByIdDesc(ticker, fromQuarter, toQuarter);
+//        if (!incomeSheetEntities.isEmpty()) {
+//            IncomeSheetEntity firstItem = incomeSheetEntities.remove(0);
+//            incomeSheetEntities.add(firstItem);
+//        }
+
         List<BalanceSheetEntity> balanceSheetEntities = balanceSheetRepository.findBalanceSheetEntitiesByTickerAndQuarterBetweenOrderByIdDesc(ticker, fromQuarter, toQuarter);
+//        if (!balanceSheetEntities.isEmpty()) {
+//            BalanceSheetEntity firstItem = balanceSheetEntities.remove(0);
+//            balanceSheetEntities.add(firstItem);
+//        }
+
         List<CashFlowEntity> cashFlowEntities = cashFlowRepository.findCashFlowEntitiesByTickerAndQuarterBetweenOrderByIdDesc(ticker, fromQuarter, toQuarter);
+//        if (!cashFlowEntities.isEmpty()) {
+//            CashFlowEntity firstItem = cashFlowEntities.remove(0);
+//            cashFlowEntities.add(firstItem);
+//        }
 
         if(!incomeSheetEntities.isEmpty() && !balanceSheetEntities.isEmpty() && !cashFlowEntities.isEmpty())
             excelHelper.writeMultipleQuarterFinancialStatementToFile(ticker, balanceSheetEntities, incomeSheetEntities, cashFlowEntities);
@@ -121,7 +135,7 @@ public class StockValuationServiceImpl implements StockValuationService {
         try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(StockConstant.PRICE_VALUE);
 
-            for (int i = 40; i < 194; i++) {
+            for (int i = 40; i < 200; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) {
                     log.info("Ko tim thay ma chung khoan");
@@ -185,8 +199,10 @@ public class StockValuationServiceImpl implements StockValuationService {
                     log.info("Truy xuat thong tin nam {} cho ma {}", year, symbol);
                     items.forEach(item ->{
                         if(item.getPeriodDate().equals(year)){
-                            dt.set(item.getIs1() / 1000000);
-                            ln.set(item.getBs115() / 1000000);
+                            // bank use is9. other use is1
+                            Long income = item.getIs9() == null ? item.getIs1() : item.getIs9();
+                            dt.set(income / 1000000);
+                            ln.set(item.getIs14() / 1000000);
                             vcsh.set(item.getBs10() / 1000000);
                             vg.set(item.getBs11() / 1000000);
                             slcp.set(item.getOp49());
@@ -240,8 +256,9 @@ public class StockValuationServiceImpl implements StockValuationService {
                 items.forEach(item ->{
                     log.info("Truy xuat thong tin nam {} cho ma {}", year, ticker);
                     if(item.getPeriodDate().equals(year)){
-                        dt.set(item.getIs1() / 1000000);
-                        ln.set(item.getBs115() / 1000000);
+                        Long income = item.getIs9() == null ? item.getIs1() : item.getIs9();
+                        dt.set(income / 1000000);
+                        ln.set(item.getIs14() / 1000000);
                         vcsh.set(item.getBs10() / 1000000);
                         vg.set(item.getBs11() / 1000000);
                         slcp.set(item.getOp49());

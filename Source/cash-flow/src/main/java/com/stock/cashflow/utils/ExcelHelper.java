@@ -1,6 +1,7 @@
 package com.stock.cashflow.utils;
 
 import com.stock.cashflow.constants.FSConstant;
+import com.stock.cashflow.constants.IndustryConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.exception.BadRequestException;
@@ -194,6 +195,7 @@ public class ExcelHelper {
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheet.getNetRevenue());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheet.getCogs());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheet.getGrossProfit());
+
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheet.getInterestCost());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX), incomeSheet.getNetIncomeAttributableToParent());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_EQUITY_COL_IDX), balanceSheet.getEquity());
@@ -236,7 +238,14 @@ public class ExcelHelper {
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheets.get(i).getNetRevenue());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheets.get(i).getCogs());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheets.get(i).getGrossProfit());
-                    updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_SELLING_EXPENSES_COL_IDX), incomeSheets.get(i).getSellingExpenses());
+
+                    // bank, stock
+                    if(checkFinancialStock(IndustryConstant.BANKS, sheetName) || checkFinancialStock(IndustryConstant.STOCKS, sheetName)){
+                        updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_OPERATING_EXPENSES_COL_IDX), incomeSheets.get(i).getOperatingExpenses());
+                    } else {
+                        updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_SELLING_EXPENSES_COL_IDX), incomeSheets.get(i).getSellingExpenses());
+                    }
+
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheets.get(i).getInterestCost());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX), incomeSheets.get(i).getNetIncomeAttributableToParent());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_EQUITY_COL_IDX), balanceSheets.get(i).getEquity());
@@ -270,6 +279,15 @@ public class ExcelHelper {
             log.error("Loi trong qua trinh xu ly file. {}", fsFilePath);
         }
 
+    }
+
+    private static boolean checkFinancialStock(String[] array, String targetValue) {
+        for (String element : array) {
+            if (element.equals(targetValue)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateISSpecificColumnFromTo(String sheetName, String updatedQuarter, int columnIdx, long value) {

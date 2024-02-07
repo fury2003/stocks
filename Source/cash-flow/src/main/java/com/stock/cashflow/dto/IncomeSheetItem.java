@@ -13,6 +13,7 @@ public class IncomeSheetItem {
     private Long is2;
     private Long is4;
     private Long is8;
+    private Long is9;
     private Long is13;
     private Long is14;
     private Long is37;
