@@ -165,7 +165,13 @@ public class SymbolConstant {
             "TCH",
             "HNG",
             "MCH",
-            "ASM"
+            "ASM",
+            "ST8",
+            "NAB",
+            "ORS",
+            "AAA",
+            "VIP",
+            "BWE"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -353,6 +359,15 @@ public class SymbolConstant {
             "TCH",
             "HNG",
             "MCH",
-            "ASM"
+            "ASM",
+            "ACV",
+            "VJC",
+            "ST8",
+            "NAB",
+            "ORS",
+            "AGR",
+            "SKG",
+            "TLG",
+            "SJS"
     };
 }

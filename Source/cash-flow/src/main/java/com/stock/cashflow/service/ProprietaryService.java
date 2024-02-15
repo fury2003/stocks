@@ -5,4 +5,5 @@ public interface ProprietaryService {
     void processFireant();
 
     void processSSI();
+
 }

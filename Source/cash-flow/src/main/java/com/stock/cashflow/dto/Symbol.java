@@ -56,7 +56,7 @@ public class Symbol {
                 entity.setBuyVolume(this.getBuyForeignQuantity());
                 entity.setSellValue(this.getSellForeignValue());
                 entity.setSellVolume(this.getSellForeignQuantity());
-
+                entity.setTotalNetValue(this.getBuyForeignValue() - this.getSellForeignValue());
                 Instant instant = this.getDate().toInstant();
                 LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -87,7 +87,7 @@ public class Symbol {
 
                 entity.setPercentageChange(df.format(percentChange) + "%");
                 entity.setPriceRange(df.format(priceRange) + "%");
-                entity.setPriceChange(DoubleRounder.round(this.getPriceClose() - yesterdayClosedPrice, 2));
+                entity.setPriceChange(this.getPriceClose() - yesterdayClosedPrice);
 
                 Instant instant = this.getDate().toInstant();
                 LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();

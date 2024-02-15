@@ -361,6 +361,17 @@ public class IndexServiceImpl implements IndexService {
                 throw new RuntimeException("Loi trong qua trinh phan tich CHEMISTRY_FERTILIZER/VNINDEX");
             }
 
+            try{
+                String[] animals = IndustryConstant.ANIMALS;
+                long animalsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(animals), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.ANIMALS,  animalsTotalVolume, vnindexTotalVolume);
+                log.info("Saved CHEMISTRY_FERTILIZER ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich CHEMISTRY_FERTILIZER/VNINDEX");
+            }
+
         }
     }
 

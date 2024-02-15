@@ -3,7 +3,7 @@ package com.stock.cashflow.constants;
 public class IndustryConstant {
 
     public static final String[] BDS = {
-            "VHM",
+//            "VHM",
             "DXG",
             "PDR",
             "NLG",
@@ -20,7 +20,8 @@ public class IndustryConstant {
             "HQC",
             "HDG",
             "AGG",
-            "TCH"
+            "TCH",
+            "SJS"
     };
 
     public static final String[] STOCKS = {
@@ -35,7 +36,8 @@ public class IndustryConstant {
             "CTS",
             "ORS",
             "VDS",
-            "MBS"
+            "MBS",
+            "AGR"
     };
 
     public static final String[] BANKS = {
@@ -46,16 +48,17 @@ public class IndustryConstant {
             "ACB",
             "VIB",
             "TPB",
-            "EIB",
+//            "EIB",
             "SHB",
             "MBB",
             "BID",
-            "MSB",
-            "VPB",
+//            "MSB",
+//            "VPB",
             "HDB",
             "LPB",
             "OCB",
-            "BID"
+            "BID",
+            "NAB"
     };
 
     public static final String[] BDS_KCN = {
@@ -74,7 +77,7 @@ public class IndustryConstant {
     };
 
     public static final String[] RETAIL = {
-            "MWG",
+//            "MWG",
             "DGW",
             "VNM",
             "MSN",
@@ -193,5 +196,9 @@ public class IndustryConstant {
             "ACG"
     };
 
-
+    public static final String[] ANIMALS = {
+            "DBC",
+            "BAF",
+            "HAG"
+    };
 }

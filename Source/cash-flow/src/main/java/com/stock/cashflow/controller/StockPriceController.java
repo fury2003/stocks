@@ -27,10 +27,7 @@ public class StockPriceController {
     @GetMapping("/{symbol}/stock-price")
     public ResponseEntity<String> getStockPrice(@PathVariable String symbol, @RequestParam String startDate, @RequestParam String endDate) throws ParseException {
         log.info("Bat dau xu ly cho ma chung khoan: {}", symbol);
-        String start = convertDate(startDate);
-        String end = convertDate(endDate);
-        stockPriceService.process(symbol, start, end);
-
+        stockPriceService.process(symbol, startDate, endDate);
         log.info("Ket thuc xu ly cho ma chung khoan: {}", symbol);
         return ResponseEntity.noContent().build();
     }

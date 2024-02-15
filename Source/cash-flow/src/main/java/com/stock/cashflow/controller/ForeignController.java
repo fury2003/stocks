@@ -37,5 +37,4 @@ public class ForeignController {
         log.info("Ket thuc cap nhat du lieu giao dich cua nuoc ngoai cho ma tu ngay {} den ngay {}", startDate, endDate);
         return ResponseEntity.noContent().build();
     }
-
 }

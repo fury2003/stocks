@@ -135,7 +135,7 @@ public class StockValuationServiceImpl implements StockValuationService {
         try (FileInputStream fileInputStream = new FileInputStream(fsFilePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(StockConstant.PRICE_VALUE);
 
-            for (int i = 40; i < 200; i++) {
+            for (int i = 40; i < 250; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) {
                     log.info("Ko tim thay ma chung khoan");
@@ -144,8 +144,8 @@ public class StockValuationServiceImpl implements StockValuationService {
 
                 Cell symbolCell = row.getCell(0);
                 if (symbolCell != null) {
+                    String symbol = symbolCell.getStringCellValue();
                     try {
-                        String symbol = symbolCell.getStringCellValue();
                         log.info("Symbol: {}", symbol);
                         String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
                         long closePrice = stockPriceRepository.getClosedPriceByHashDate(hashDate);
@@ -158,7 +158,9 @@ public class StockValuationServiceImpl implements StockValuationService {
                             priceCell.setCellValue(closePrice);
                             priceCell.setCellStyle(numberStyle);
                         }
-                    } catch (Exception ex) {
+                    }catch (NullPointerException ex){
+                        log.warn("Can't found close price of symbol {}: ", symbol);
+                    }catch (Exception ex) {
                         ex.printStackTrace();
                         throw new RuntimeException("Loi trong qua trinh cap nhat gia moi nhat");
                     }

@@ -238,3 +238,7 @@ CREATE UNIQUE INDEX index_hash_date ON index_statistic (hash_date);
 
 ALTER TABLE proprietary_trading 
 ADD total_net_value bigint(20);
+
+
+ALTER TABLE foreign_trading 
+ADD total_net_value bigint(20);

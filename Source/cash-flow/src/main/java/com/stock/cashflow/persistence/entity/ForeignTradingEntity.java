@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "foreign_trading", schema = "vnstock")
+
 public class ForeignTradingEntity implements Serializable {
 
     @Id
@@ -35,6 +36,9 @@ public class ForeignTradingEntity implements Serializable {
 
     @Column(name = "hash_date", length = 255, nullable = false)
     private String hashDate;
+
+    @Column(name = "total_net_value")
+    private Double totalNetValue;
 
     // Constructors, getters, and setters
 
@@ -106,5 +110,13 @@ public class ForeignTradingEntity implements Serializable {
 
     public void setHashDate(String hashDate) {
         this.hashDate = hashDate;
+    }
+
+    public Double getTotalNetValue() {
+        return totalNetValue;
+    }
+
+    public void setTotalNetValue(Double totalNetValue) {
+        this.totalNetValue = totalNetValue;
     }
 }

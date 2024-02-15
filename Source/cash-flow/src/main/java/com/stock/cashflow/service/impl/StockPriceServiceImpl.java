@@ -55,27 +55,25 @@ public class StockPriceServiceImpl implements StockPriceService {
         this.stockPriceRepository = stockPriceRepository;
     }
 
+    @Transactional
     @Override
     public void process(String symbol, String startDate, String endDate) {
-//        StockPriceDataResponse latestPriceDataResponse;
-//        try {
-////            latestPriceDataResponse = getStockPriceDataResponse(symbol, startDate, endDate);
-//        } catch (Exception ex) {
-//            log.error("Loi trong qua trinh truy xuat du lieu tu SSI");
-//            log.info(ex.getMessage());
-//            throw ex;
-//        }
-//        if (!Objects.isNull(latestPriceDataResponse.getData())) {
-//            List<StockPrice> prices = latestPriceDataResponse.getData();
-//            try {
-//                saveStockPrice(prices);
-//            } catch (Exception ex) {
-//                log.error("Loi trong qua trinh them du lieu");
-//                log.info(ex.getMessage());
-//                throw ex;
-//            }
-//        } else
-//            log.error("Khong tim thay du lieu thay doi gia cho ma {}", symbol);
+        Symbol[] prices = null;
+        try{
+            prices = getDataFromFireant(symbol, startDate, endDate);
+        }catch (Exception ex){
+            log.error("Loi trong qua trinh truy xuat du lieu tu fireant");
+            throw ex;
+        }
+
+        if(!Objects.isNull(prices)){
+            for (int i = 0; i < prices.length - 1; i++) {
+                StockPriceEntity entity = prices[i].convertToStockPriceEntity(prices[i + 1].getPriceClose());
+                stockPriceRepository.save(entity);
+                log.info("Luu lich su gia cua ngay {} {}", entity.getTradingDate(), symbol);
+            }
+        } else
+            log.error("Khong tim thay du lieu thay doi gia cho ma {}", symbol);
     }
 
     @Transactional
@@ -188,59 +186,6 @@ public class StockPriceServiceImpl implements StockPriceService {
         return response.getBody();
 
     }
-
-
-    //link cu https://iboard-api.ssi.com.vn/statistics/company/stock-price?page=1&pageSize=100&symbol=
-
-//    private StockPriceDataResponse getStockPriceDataResponse(String symbol, String startDate, String endDate) {
-//        String url = stockPriceAPIHost + symbol + "&fromDate=" + startDate + "&toDate=" + endDate;
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Origin", "https://iboard.ssi.com.vn");
-//        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-//        ResponseEntity<StockPriceDataResponse> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, StockPriceDataResponse.class);
-//        return response.getBody();
-//    }
-
-//    private void saveStockPrice(List<StockPrice> prices) {
-//        prices.forEach(price -> {
-//            StockPriceEntity entity = new StockPriceEntity();
-//            double high = Double.parseDouble(price.getHighestPrice());
-//            double low = Double.parseDouble(price.getLowestPrice());
-//            entity.setSymbol(price.getSymbol());
-//            entity.setHighestPrice(high);
-//            entity.setLowestPrice(low);
-//            entity.setOpenPrice(Double.parseDouble(price.getOpenPrice()));
-//            entity.setClosePrice(Double.parseDouble(price.getClosePrice()));
-//            entity.setPriceChange(Double.parseDouble(price.getPriceChange()));
-//            entity.setTotalVolume(Double.parseDouble(price.getTotalMatchVol()));
-//
-//            double priceRange = ((high - low) / high) * 100;
-//            double percentageChange = Double.parseDouble(price.getPerPriceChange()) * 100;
-//            DecimalFormat df = new DecimalFormat("#.##");
-//            df.setRoundingMode(RoundingMode.CEILING);
-//            entity.setPercentageChange(df.format(percentageChange) + "%");
-//            entity.setPriceRange(df.format(priceRange) + "%");
-//
-//            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
-//            Date formatStart = null;
-//            try {
-//                formatStart = inputFormat.parse(price.getTradingDate());
-//            } catch (ParseException e) {
-//                log.error("Loi trong qua trinh parse trading date");
-//                throw new RuntimeException(e);
-//            }
-//            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            String stringDate = outputFormat.format(formatStart);
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            LocalDate today = LocalDate.parse(stringDate, formatter);
-//
-//            entity.setTradingDate(today);
-//            entity.setHashDate(DigestUtils.sha256Hex(today + price.getSymbol()));
-//
-//            stockPriceRepository.save(entity);
-//            log.info("Luu du lieu thay doi gia cho ma {} thanh cong", price.getSymbol());
-//        });
-//    }
 
     private LatestPriceResponse getStockPriceDataResponse(String symbol) {
         String url = stockPriceAPIHost + symbol;
