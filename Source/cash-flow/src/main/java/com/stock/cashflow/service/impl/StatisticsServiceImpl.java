@@ -61,7 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final IndexStatisticRepository indexStatisticRepository;
     private final Environment env;
 
-    @Value("${statistics.file.path}")
+    @Value("${data.trading.file.path}")
     private String statisticFile;
 
     @Value("${derivatives.file.path}")

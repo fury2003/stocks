@@ -1,6 +1,7 @@
 package com.stock.cashflow.controller;
 
 import com.stock.cashflow.dto.IndexDTO;
+import com.stock.cashflow.dto.IntradayDTO;
 import com.stock.cashflow.service.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,16 @@ public class IndexController {
         indexService.analyzeIndex(startDate, endDate);
 
         log.info("Ket thuc phan tich index");
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/intraday-analysis")
+    public ResponseEntity<String> intradayAnalysis(@RequestParam String tradingDate, @RequestBody IntradayDTO dto) {
+        log.info("Bat dau phan tich intraday data");
+
+        indexService.analyzeIntraday(tradingDate, dto);
+
+        log.info("Ket thuc phan tich  intraday data");
         return ResponseEntity.noContent().build();
     }
 

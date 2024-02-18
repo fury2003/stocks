@@ -12,4 +12,5 @@ public interface IndexStatisticRepository extends JpaSpecificationExecutor<Index
 
     @Query("select entity.percentageTakenOnIndex from IndexStatisticEntity entity where entity.hashDate =?1")
     String findPercentageTakenOnIndexByHashDate(String hashDate);
+
 }

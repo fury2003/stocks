@@ -30,7 +30,7 @@ public class ExcelHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ExcelHelper.class);
 
-    @Value("${statistics.file.path}")
+    @Value("${data.trading.file.path}")
     private String statisticFile;
 
     @Value("${fs.file.path}")

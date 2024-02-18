@@ -1,21 +1,26 @@
 package com.stock.cashflow.service.impl;
 
-import com.stock.cashflow.constants.IndustryConstant;
-import com.stock.cashflow.constants.StockConstant;
-import com.stock.cashflow.constants.StockGroupsConstant;
-import com.stock.cashflow.constants.SymbolConstant;
+import com.stock.cashflow.constants.*;
 import com.stock.cashflow.dto.IndexDTO;
+import com.stock.cashflow.dto.IntradayDTO;
 import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.entity.IndexStatisticEntity;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
 import com.stock.cashflow.persistence.repository.ForeignTradingRepository;
 import com.stock.cashflow.persistence.repository.IndexStatisticRepository;
+import com.stock.cashflow.persistence.repository.ProprietaryTradingRepository;
 import com.stock.cashflow.persistence.repository.StockPriceRepository;
 import com.stock.cashflow.service.IndexService;
 import com.stock.cashflow.utils.DateHelper;
+import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -52,20 +60,31 @@ public class IndexServiceImpl implements IndexService {
     @Value("${fireant.token}")
     private String fireantToken;
 
+    @Value("${statistics.file.path}")
+    private String statisticFile;
+
+    @Value("${statistics.insert.new.row.index}")
+    private int statisticsBeginRowIndex;
+
     Environment env;
     private final RestTemplate restTemplate;
     private final StockPriceRepository stockPriceRepository;
     private final ForeignTradingRepository foreignTradingRepository;
     private final IndexStatisticRepository indexStatisticRepository;
+    private final ProprietaryTradingRepository proprietaryTradingRepository;
+    private final ExcelHelper excelHelper;
 
     @Autowired
     public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository,
-                            ForeignTradingRepository foreignTradingRepository, IndexStatisticRepository indexStatisticRepository){
+                            ForeignTradingRepository foreignTradingRepository, IndexStatisticRepository indexStatisticRepository,
+                            ExcelHelper excelHelper, ProprietaryTradingRepository proprietaryTradingRepository){
         this.restTemplate = restTemplate;
         this.env = env;
         this.stockPriceRepository = stockPriceRepository;
         this.foreignTradingRepository = foreignTradingRepository;
         this.indexStatisticRepository = indexStatisticRepository;
+        this.excelHelper = excelHelper;
+        this.proprietaryTradingRepository = proprietaryTradingRepository;
     }
 
     @Transactional
@@ -372,6 +391,63 @@ public class IndexServiceImpl implements IndexService {
                 throw new RuntimeException("Loi trong qua trinh phan tich CHEMISTRY_FERTILIZER/VNINDEX");
             }
 
+        }
+    }
+
+    @Override
+    public void analyzeIntraday(String date, IntradayDTO dto) {
+        LocalDate tradingDate = LocalDate.parse(date);
+
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet("Intraday");
+            excelHelper.insertNewRow(sheet, statisticsBeginRowIndex);
+            Row row = sheet.getRow(statisticsBeginRowIndex);
+
+            Double foreignTNV = foreignTradingRepository.getForeignTotalNetValue(tradingDate);
+            Integer foreignNumberOfBuy = foreignTradingRepository.getNumberOfBuy(tradingDate);
+            Integer foreignNumberOfNoChange = foreignTradingRepository.getNumberOfNoChange(tradingDate);
+            Integer foreignNumberOfSell = foreignTradingRepository.getNumberOfSell(tradingDate);
+
+            Double proprietaryTNV = proprietaryTradingRepository.getForeignTotalNetValue(tradingDate);
+            Integer proprietaryNumberOfBuy = proprietaryTradingRepository.getNumberOfBuy(tradingDate);
+            Integer proprietaryNumberOfNoChange = proprietaryTradingRepository.getNumberOfNoChange(tradingDate);
+            Integer proprietaryNumberOfSell = proprietaryTradingRepository.getNumberOfSell(tradingDate);
+
+            excelHelper.updateCellDate(workbook, row, 1, date);
+            // vnindex
+            excelHelper.updateCellDouble(workbook, row, 2, Double.valueOf(dto.getVnindexPercentageChange())/100, true);
+            excelHelper.updateCellLong(workbook, row, 4, dto.getVnindexUp());
+            excelHelper.updateCellLong(workbook, row, 5, dto.getVnindexNoChange());
+            excelHelper.updateCellLong(workbook, row, 6, dto.getVnindexDown());
+
+            // vn30
+            excelHelper.updateCellDouble(workbook, row, 7, Double.valueOf(dto.getVn30PercentageChange())/100, true);
+            excelHelper.updateCellLong(workbook, row, 9, dto.getVn30Up());
+            excelHelper.updateCellLong(workbook, row, 10, dto.getVn30NoChange());
+            excelHelper.updateCellLong(workbook, row, 11, dto.getVn30Down());
+
+            // foreign
+            excelHelper.updateCellLong(workbook, row, 12, foreignNumberOfBuy);
+            excelHelper.updateCellLong(workbook, row, 13, foreignNumberOfNoChange);
+            excelHelper.updateCellLong(workbook, row, 14, foreignNumberOfSell);
+            excelHelper.updateCellDouble(workbook, row, 15, foreignTNV, false);
+
+            // proprieraty
+            excelHelper.updateCellLong(workbook, row, 17, proprietaryNumberOfBuy);
+            excelHelper.updateCellLong(workbook, row, 18, proprietaryNumberOfNoChange);
+            excelHelper.updateCellLong(workbook, row, 19, proprietaryNumberOfSell);
+            excelHelper.updateCellDouble(workbook, row, 20, proprietaryTNV, false);
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
         }
     }
 
