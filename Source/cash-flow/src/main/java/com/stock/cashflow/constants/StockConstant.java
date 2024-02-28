@@ -93,4 +93,11 @@ public class StockConstant {
     public static final String PRICE_VALUE = "PriceValue";
     public static final String MONEY_FLOW = "MoneyFlow";
 
+    public static final String VOLATILE_FOREIGN_BUY = "Volatile_Foreign_Buy";
+    public static final String VOLATILE_FOREIGN_SELL = "Volatile_Foreign_Sell";
+
+    public static final String VOLATILE_PROPRIETARY_BUY = "Volatile_Proprietary_Buy";
+    public static final String VOLATILE_PROPRIETARY_SELL = "Volatile_Proprietary_Sell";
+
+
 }

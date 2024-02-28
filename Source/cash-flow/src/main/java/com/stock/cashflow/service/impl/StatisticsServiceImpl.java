@@ -62,16 +62,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final Environment env;
 
     @Value("${data.trading.file.path}")
-    private String statisticFile;
+    private String dataFile;
 
+    @Value("${statistics.file.path}")
+    private String statisticFile;
+    
     @Value("${derivatives.file.path}")
     private String derivativesFile;
 
     @Value("${statistics.insert.new.row.index}")
     private int statisticInsertRow;
-
-    @Value("${statistics.moneyflow.insert.new.row.index}")
-    private int moneyflowInsertRow;
 
     @Value("${derivatives.insert.row.index}")
     private int derivativesInsertRow;
@@ -168,7 +168,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         int totalVolumeIdx = Integer.parseInt(env.getProperty(StockConstant.TOTAL_VOL_COLUMN_INDEX));
         int percenChangeIdx = Integer.parseInt(env.getProperty(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX));
 
-        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+        try (FileInputStream fileInputStream = new FileInputStream(dataFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             for (String tradingDate : tradingDates) {
                 String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
                 log.info("Cap nhat du lieu giao dich trong ngay {}", tradingDate);
@@ -234,14 +234,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
 
             // Save the workbook to a file
-            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(dataFile)) {
                 workbook.write(fileOut);
                 log.info("Cap nhat du lieu vao file Excel thanh cong.");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+            log.error("Loi trong qua trinh xu ly file. {}", dataFile);
         }
         log.info("Ghi du lieu giao dich tu ngay {} den ngay {} vao file thanh cong", start, end);
     }
@@ -251,7 +251,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         String[] symbols = SymbolConstant.SYMBOLS;
 
         ZipSecureFile.setMinInflateRatio(0);
-        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+        try (FileInputStream fileInputStream = new FileInputStream(dataFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
 
             List<String> sheetNames = excelHelper.getSheetNames(workbook);
@@ -300,27 +300,28 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
                     String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
 
-                    excelHelper.updateCellDate(workbook, row, tradingDateIdx, foreignTradingEntity.getTradingDate().toString());
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_BUY_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume(), false);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX), foreignTradingEntity.getSellVolume(), false);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume() - foreignTradingEntity.getSellVolume(), false);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX), foreignTradingEntity.getBuyValue() - foreignTradingEntity.getSellValue(), false);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
-                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
-
+                    if(!Objects.isNull(foreignTradingEntity)){
+                        excelHelper.updateCellDate(workbook, row, tradingDateIdx, foreignTradingEntity.getTradingDate().toString());
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_BUY_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume(), false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX), foreignTradingEntity.getSellVolume(), false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume() - foreignTradingEntity.getSellVolume(), false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX), foreignTradingEntity.getBuyValue() - foreignTradingEntity.getSellValue(), false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
+                    }
                 }
             }
 
             // Save the workbook to a file
-            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(dataFile)) {
                 workbook.write(fileOut);
                 log.info("Cap nhat du lieu vao file Excel thanh cong.");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
+            log.error("Loi trong qua trinh truy xuat file. {}", dataFile);
         }
     }
 
@@ -424,10 +425,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
         String dateToFind = DateHelper.parseDateFormat(tradingDate);
-        int cellUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbols[0], tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
+        int cellUpdated = excelHelper.findRowIndexByCellValue(dataFile, symbols[0], tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
 
         ZipSecureFile.setMinInflateRatio(0);
-        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+        try (FileInputStream fileInputStream = new FileInputStream(dataFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             List<String> sheetNames = excelHelper.getSheetNames(workbook);
             for (String symbol : sheetNames) {
                 if(Arrays.asList(symbols).contains(symbol)){
@@ -473,14 +474,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
 
             // Save the workbook to a file
-            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(dataFile)) {
                 workbook.write(fileOut);
                 log.info("Cap nhat du lieu vao file Excel thanh cong.");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
+            log.error("Loi trong qua trinh truy xuat file. {}", dataFile);
         }
 
     }
@@ -493,13 +494,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int tradingDateIdx = Integer.parseInt(env.getProperty(StockConstant.TRADING_DATE_COLUMN_INDEX));
 
-        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+        try (FileInputStream fileInputStream = new FileInputStream(dataFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             log.info("Opened filed");
             boolean fileIsChanged = false;
             for (String tradingDate : tradingDates) {
                 int cidx = columnIdx.get(column);
                 String dateToFind = DateHelper.parseDateFormat(tradingDate);
-                int rowUpdated = excelHelper.findRowIndexByCellValue(statisticFile, symbol, tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
+                int rowUpdated = excelHelper.findRowIndexByCellValue(dataFile, symbol, tradingDateIdx, statisticInsertRow + 1, 100,  dateToFind);
 
                 if(cidx > 17 && cidx < 23 && rowUpdated != -1){
                     String hashDate = DigestUtils.sha256Hex(tradingDate + symbol);
@@ -527,14 +528,14 @@ public class StatisticsServiceImpl implements StatisticsService {
 
             if(fileIsChanged){
                 // Save the workbook to a file
-                try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(dataFile)) {
                     workbook.write(fileOut);
                     log.info("Cap nhat du lieu cua column {} vao file Excel thanh cong.", column);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
+            log.error("Loi trong qua trinh truy xuat file. {}", dataFile);
         }
     }
 
@@ -599,8 +600,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                     ZipSecureFile.setMinInflateRatio(0);
 
                     Sheet sheet = workbook.getSheet(sheetName);
-                    excelHelper.insertNewRow(sheet, moneyflowInsertRow);
-                    Row row = sheet.getRow(moneyflowInsertRow);
+                    excelHelper.insertNewRow(sheet, 2);
+                    Row row = sheet.getRow(2);
 
                     String vn30String = vn30Percentage.replace("%", "");
                     String bluechipString = bluechipPercentage.replace("%", "");
@@ -653,7 +654,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                log.error("Loi trong qua trinh xu ly file. {}", derivativesFile);
+                log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
             }
         }
 

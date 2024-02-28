@@ -242,3 +242,65 @@ ADD total_net_value bigint(20);
 
 ALTER TABLE foreign_trading 
 ADD total_net_value bigint(20);
+
+
+CREATE TABLE foreign_statistic (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	symbol VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	1m_highest_buy_value BIGINT  NULL,
+	1m_highest_buy_trading_date DATE NULL,
+	1m_highest_sell_value BIGINT NULL,
+	1m_highest_sell_trading_date DATE NULL,
+	3m_highest_buy_value BIGINT NULL,
+	3m_highest_buy_trading_date DATE NULL,
+	3m_highest_sell_value BIGINT NULL,
+	3m_highest_sell_trading_date DATE NULL,
+	6m_highest_buy_value BIGINT NULL,
+	6m_highest_buy_trading_date DATE NULL,
+	6m_highest_sell_value BIGINT NULL,
+	6m_highest_sell_trading_date DATE NULL,
+	12m_highest_buy_value BIGINT NULL,
+	12m_highest_buy_trading_date DATE NULL,
+	12m_highest_sell_value BIGINT NULL,
+	12m_highest_sell_trading_date DATE NULL,
+	highest_buy_value BIGINT NULL,
+	highest_buy_trading_date DATE NULL,
+	highest_sell_value BIGINT NULL,
+	highest_sell_trading_date DATE NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;
+
+
+CREATE TABLE proprietary_statistic (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	symbol VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+	1m_highest_buy_value BIGINT  NULL,
+	1m_highest_buy_trading_date DATE NULL,
+	1m_highest_sell_value BIGINT NULL,
+	1m_highest_sell_trading_date DATE NULL,
+	3m_highest_buy_value BIGINT NULL,
+	3m_highest_buy_trading_date DATE NULL,
+	3m_highest_sell_value BIGINT NULL,
+	3m_highest_sell_trading_date DATE NULL,
+	6m_highest_buy_value BIGINT NULL,
+	6m_highest_buy_trading_date DATE NULL,
+	6m_highest_sell_value BIGINT NULL,
+	6m_highest_sell_trading_date DATE NULL,
+	12m_highest_buy_value BIGINT NULL,
+	12m_highest_buy_trading_date DATE NULL,
+	12m_highest_sell_value BIGINT NULL,
+	12m_highest_sell_trading_date DATE NULL,
+	highest_buy_value BIGINT NULL,
+	highest_buy_trading_date DATE NULL,
+	highest_sell_value BIGINT NULL,
+	highest_sell_trading_date DATE NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;

@@ -40,7 +40,7 @@ public class ProprietaryTrade {
 
     public ProprietaryTradingEntity convertToEntity(){
         ProprietaryTradingEntity entity = new ProprietaryTradingEntity();
-        entity.setSymbol(this.getOrganCode());
+        entity.setSymbol(this.getTicker());
         entity.setBuyValue(this.getTotalBuyTradeValue());
         entity.setBuyVolume(this.getTotalBuyTradeVolume());
         entity.setSellValue(this.getTotalSellTradeValue());

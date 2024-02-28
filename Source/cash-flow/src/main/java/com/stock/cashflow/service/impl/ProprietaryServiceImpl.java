@@ -4,10 +4,14 @@ import com.stock.cashflow.constants.FloorConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.constants.SymbolConstant;
 import com.stock.cashflow.dto.*;
+import com.stock.cashflow.persistence.entity.ForeignTradingStatisticEntity;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingEntity;
+import com.stock.cashflow.persistence.entity.ProprietaryTradingStatisticEntity;
 import com.stock.cashflow.persistence.repository.ProprietaryTradingRepository;
+import com.stock.cashflow.persistence.repository.ProprietaryTradingStatisticRepository;
 import com.stock.cashflow.service.ProprietaryService;
 import com.stock.cashflow.utils.DateHelper;
+import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +48,17 @@ public class ProprietaryServiceImpl implements ProprietaryService {
 
     private final RestTemplate restTemplate;
 
+    private final ExcelHelper excelHelper;
+
     private final ProprietaryTradingRepository proprietaryTradingRepository;
 
-    public ProprietaryServiceImpl(RestTemplate restTemplate, ProprietaryTradingRepository proprietaryTradingRepository){
+    private final ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository;
+
+    public ProprietaryServiceImpl(RestTemplate restTemplate, ProprietaryTradingRepository proprietaryTradingRepository, ExcelHelper excelHelper, ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository){
         this.restTemplate = restTemplate;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
+        this. proprietaryTradingStatisticRepository = proprietaryTradingStatisticRepository;
+        this.excelHelper = excelHelper;
     }
 
     @Transactional
@@ -89,7 +99,160 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             newEntity.setHashDate(hashDate);
                             proprietaryTradingRepository.save(newEntity);
                             log.info("Luu du lieu mua ban cua tu doanh voi ma {} thanh cong", symbol.getSymbol());
-                        }else{
+
+                            ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(symbol.getSymbol());
+                            double tnv = symbol.getValue();
+
+                            if(statistic == null){
+                                ProprietaryTradingStatisticEntity newEntityStatistic = new ProprietaryTradingStatisticEntity();
+                                newEntityStatistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                newEntityStatistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                newEntityStatistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                newEntityStatistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                newEntityStatistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                newEntityStatistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                newEntityStatistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                                newEntityStatistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                                newEntityStatistic.setHighestBuyTradingDate(tradingDate);
+                                newEntityStatistic.setHighestSellTradingDate(tradingDate);
+                                newEntityStatistic.setSymbol(symbol.getSymbol());
+
+                                if (tnv > 0) {
+                                    newEntityStatistic.setOneMonthHighestBuyValue(tnv);
+                                    newEntityStatistic.setOneMonthHighestSellValue(0.0);
+                                    newEntityStatistic.setThreeMonthsHighestBuyValue(tnv);
+                                    newEntityStatistic.setThreeMonthsHighestSellValue(0.0);
+                                    newEntityStatistic.setSixMonthsHighestBuyValue(tnv);
+                                    newEntityStatistic.setSixMonthsHighestSellValue(0.0);
+                                    newEntityStatistic.setTwelveMonthsHighestBuyValue(tnv);
+                                    newEntityStatistic.setTwelveMonthsHighestSellValue(0.0);
+                                    newEntityStatistic.setHighestBuyValue(tnv);
+                                    newEntityStatistic.setHighestSellValue(0.0);
+                                } else if (tnv < 0){
+                                    newEntityStatistic.setOneMonthHighestBuyValue(0.0);
+                                    newEntityStatistic.setOneMonthHighestSellValue(tnv);
+                                    newEntityStatistic.setThreeMonthsHighestBuyValue(0.0);
+                                    newEntityStatistic.setThreeMonthsHighestSellValue(tnv);
+                                    newEntityStatistic.setSixMonthsHighestBuyValue(0.0);
+                                    newEntityStatistic.setSixMonthsHighestSellValue(tnv);
+                                    newEntityStatistic.setTwelveMonthsHighestBuyValue(0.0);
+                                    newEntityStatistic.setTwelveMonthsHighestSellValue(tnv);
+                                    newEntityStatistic.setHighestBuyValue(0.0);
+                                    newEntityStatistic.setHighestSellValue(tnv);
+                                }
+
+                                proprietaryTradingStatisticRepository.save(newEntityStatistic);
+                                log.info("Luu thong ke giao dich moi {}", symbol.getSymbol());
+
+                            } else {
+                                if(tnv > 0){
+                                    if (tnv > statistic.getHighestBuyValue()) {
+                                        statistic.setHighestBuyValue(tnv);
+                                        statistic.setHighestBuyTradingDate(tradingDate);
+                                        statistic.setTwelveMonthsHighestBuyValue(tnv);
+                                        statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setSixMonthsHighestBuyValue(tnv);
+                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestBuyValue(tnv);
+                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestBuyValue(tnv);
+                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat");
+                                    } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
+                                        statistic.setTwelveMonthsHighestBuyValue(tnv);
+                                        statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setSixMonthsHighestBuyValue(tnv);
+                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestBuyValue(tnv);
+                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestBuyValue(tnv);
+                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 12 thang");
+                                    } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
+                                        statistic.setSixMonthsHighestBuyValue(tnv);
+                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestBuyValue(tnv);
+                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestBuyValue(tnv);
+                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 6 thang");
+                                    } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
+                                        statistic.setThreeMonthsHighestBuyValue(tnv);
+                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestBuyValue(tnv);
+                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 3 thang");
+                                    } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
+                                        statistic.setOneMonthHighestBuyValue(tnv);
+                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 1 thang");
+                                    }
+
+                                } else if (tnv < 0){
+                                    if (tnv > statistic.getHighestSellValue()) {
+                                        statistic.setHighestSellValue(tnv);
+                                        statistic.setHighestSellTradingDate(tradingDate);
+                                        statistic.setTwelveMonthsHighestSellValue(tnv);
+                                        statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setSixMonthsHighestSellValue(tnv);
+                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestSellValue(tnv);
+                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestSellValue(tnv);
+                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat");
+                                    } else if (tnv > statistic.getTwelveMonthsHighestSellValue()) {
+                                        statistic.setTwelveMonthsHighestSellValue(tnv);
+                                        statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setSixMonthsHighestSellValue(tnv);
+                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestSellValue(tnv);
+                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestSellValue(tnv);
+                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 12 thang");
+                                    } else if (tnv > statistic.getSixMonthsHighestSellValue()) {
+                                        statistic.setSixMonthsHighestSellValue(tnv);
+                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setThreeMonthsHighestSellValue(tnv);
+                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestSellValue(tnv);
+                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 6 thang");
+                                    } else if (tnv > statistic.getThreeMonthsHighestSellValue()) {
+                                        statistic.setThreeMonthsHighestSellValue(tnv);
+                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                        statistic.setOneMonthHighestSellValue(tnv);
+                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 3 thang");
+                                    } else if (tnv > statistic.getOneMonthHighestSellValue()) {
+                                        statistic.setOneMonthHighestSellValue(tnv);
+                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                        statistic.setSymbol(symbol.getSymbol());
+                                        proprietaryTradingStatisticRepository.save(statistic);
+                                        log.info("Luu thong tin giao dich lon nhat 1 thang");
+                                    }
+                                }
+                            }
+                        } else{
                             log.info("Du lieu mua ban cua tu doanh voi ma {} da ton tai", symbol.getSymbol());
                         }
                     });
@@ -98,14 +261,12 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                     throw new RuntimeException(ex.getMessage());
                 }
             }
-
         }
-
     }
 
     @Transactional
     @Override
-    public void processSSI() {
+    public void processAllFloorsFromSSI() {
         String[] floors = FloorConstant.SSI_FLOORS;
 
         for (int i = 0; i < floors.length; i++) {
@@ -138,6 +299,105 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                         ProprietaryTradingEntity entity = sym.convertToEntity();
                         proprietaryTradingRepository.save(entity);
                         log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
+
+                        ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
+                        double tnv = entity.getTotalNetValue();
+                        LocalDate tradingDate = entity.getTradingDate();
+                        if(tnv > 0){
+                            if (tnv > statistic.getHighestBuyValue()) {
+                                statistic.setHighestBuyValue(tnv);
+                                statistic.setHighestBuyTradingDate(tradingDate);
+                                statistic.setTwelveMonthsHighestBuyValue(tnv);
+                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setSixMonthsHighestBuyValue(tnv);
+                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestBuyValue(tnv);
+                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setOneMonthHighestBuyValue(tnv);
+                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat");
+                            } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
+                                statistic.setTwelveMonthsHighestBuyValue(tnv);
+                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setSixMonthsHighestBuyValue(tnv);
+                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestBuyValue(tnv);
+                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setOneMonthHighestBuyValue(tnv);
+                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 12 thang");
+                            } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
+                                statistic.setSixMonthsHighestBuyValue(tnv);
+                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestBuyValue(tnv);
+                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setOneMonthHighestBuyValue(tnv);
+                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 6 thang");
+                            } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
+                                statistic.setThreeMonthsHighestBuyValue(tnv);
+                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                                statistic.setOneMonthHighestBuyValue(tnv);
+                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 3 thang");
+                            } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
+                                statistic.setOneMonthHighestBuyValue(tnv);
+                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 1 thang");
+                            }
+                        } else if (tnv < 0){
+                            if (tnv < statistic.getHighestSellValue()) {
+                                statistic.setHighestSellValue(tnv);
+                                statistic.setHighestSellTradingDate(tradingDate);
+                                statistic.setTwelveMonthsHighestSellValue(tnv);
+                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setSixMonthsHighestSellValue(tnv);
+                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestSellValue(tnv);
+                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setOneMonthHighestSellValue(tnv);
+                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat");
+                            } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
+                                statistic.setTwelveMonthsHighestSellValue(tnv);
+                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setSixMonthsHighestSellValue(tnv);
+                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestSellValue(tnv);
+                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setOneMonthHighestSellValue(tnv);
+                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 12 thang");
+                            } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
+                                statistic.setSixMonthsHighestSellValue(tnv);
+                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setThreeMonthsHighestSellValue(tnv);
+                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setOneMonthHighestSellValue(tnv);
+                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 6 thang");
+                            } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
+                                statistic.setThreeMonthsHighestSellValue(tnv);
+                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                                statistic.setOneMonthHighestSellValue(tnv);
+                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 3 thang");
+                            } else if (tnv < statistic.getOneMonthHighestSellValue()) {
+                                statistic.setOneMonthHighestSellValue(tnv);
+                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                                proprietaryTradingStatisticRepository.save(statistic);
+                                log.info("Luu thong tin giao dich lon nhat 1 thang");
+                            }
+                        }
                     });
 
                     log.info("Ket thuc cap nhat du lieu tu doanh cho sheet");
@@ -147,7 +407,231 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                 log.error("Khong tim thay thong tin giao dich tu doanh");
             }
         }
+    }
 
+    @Override
+    public void processSSI(ProprietaryDataResponse proprietaryTextData) {
+        List<ProprietaryItems> items = proprietaryTextData.getItems();
+        Optional<ProprietaryItems> proprietaryDataOptional = items.stream().findFirst();
+        if (proprietaryDataOptional.isPresent()) {
+            String[] symbols = SymbolConstant.ALL_SYMBOLS;
+            ProprietaryToday proprietaryToday = proprietaryDataOptional.get().getToday();
+            List<ProprietaryTrade> proprietaryTrades = proprietaryToday.getBuy();
+
+            List<ProprietaryTrade> savedData = proprietaryTrades.stream()
+                    .filter(proprietaryTrade ->
+                            Arrays.stream(symbols).anyMatch(sym -> sym.equals(proprietaryTrade.getTicker())))
+                    .collect(Collectors.toList());
+
+            savedData.forEach(sym -> {
+                log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {}", sym.getTicker(), sym.getFromDate());
+                ProprietaryTradingEntity entity = sym.convertToEntity();
+                proprietaryTradingRepository.save(entity);
+                log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
+
+                ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
+
+                double tnv = entity.getTotalNetValue();
+                LocalDate tradingDate = entity.getTradingDate();
+
+                if(statistic == null){
+                    ProprietaryTradingStatisticEntity newEntity = new ProprietaryTradingStatisticEntity();
+                    newEntity.setOneMonthHighestBuyTradingDate(tradingDate);
+                    newEntity.setOneMonthHighestSellTradingDate(tradingDate);
+                    newEntity.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                    newEntity.setThreeMonthsHighestSellTradingDate(tradingDate);
+                    newEntity.setSixMonthsHighestBuyTradingDate(tradingDate);
+                    newEntity.setSixMonthsHighestSellTradingDate(tradingDate);
+                    newEntity.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                    newEntity.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                    newEntity.setHighestBuyTradingDate(tradingDate);
+                    newEntity.setHighestSellTradingDate(tradingDate);
+                    newEntity.setSymbol(sym.getTicker());
+
+                    if (tnv > 0) {
+                        newEntity.setOneMonthHighestBuyValue(tnv);
+                        newEntity.setOneMonthHighestSellValue(0.0);
+                        newEntity.setThreeMonthsHighestBuyValue(tnv);
+                        newEntity.setThreeMonthsHighestSellValue(0.0);
+                        newEntity.setSixMonthsHighestBuyValue(tnv);
+                        newEntity.setSixMonthsHighestSellValue(0.0);
+                        newEntity.setTwelveMonthsHighestBuyValue(tnv);
+                        newEntity.setTwelveMonthsHighestSellValue(0.0);
+                        newEntity.setHighestBuyValue(tnv);
+                        newEntity.setHighestSellValue(0.0);
+                    } else if (tnv < 0){
+                        newEntity.setOneMonthHighestBuyValue(0.0);
+                        newEntity.setOneMonthHighestSellValue(tnv);
+                        newEntity.setThreeMonthsHighestBuyValue(0.0);
+                        newEntity.setThreeMonthsHighestSellValue(tnv);
+                        newEntity.setSixMonthsHighestBuyValue(0.0);
+                        newEntity.setSixMonthsHighestSellValue(tnv);
+                        newEntity.setTwelveMonthsHighestBuyValue(0.0);
+                        newEntity.setTwelveMonthsHighestSellValue(tnv);
+                        newEntity.setHighestBuyValue(0.0);
+                        newEntity.setHighestSellValue(tnv);
+                    }
+
+                    proprietaryTradingStatisticRepository.save(newEntity);
+                    log.info("Luu thong ke giao dich moi {}", sym.getTicker());
+
+                } else {
+                    if (tnv > 0) {
+                        if (tnv > statistic.getHighestBuyValue()) {
+                            statistic.setHighestBuyValue(tnv);
+                            statistic.setHighestBuyTradingDate(tradingDate);
+                            statistic.setTwelveMonthsHighestBuyValue(tnv);
+                            statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setSixMonthsHighestBuyValue(tnv);
+                            statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestBuyValue(tnv);
+                            statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setOneMonthHighestBuyValue(tnv);
+                            statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat");
+                        } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
+                            statistic.setTwelveMonthsHighestBuyValue(tnv);
+                            statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setSixMonthsHighestBuyValue(tnv);
+                            statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestBuyValue(tnv);
+                            statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setOneMonthHighestBuyValue(tnv);
+                            statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 12 thang");
+                        } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
+                            statistic.setSixMonthsHighestBuyValue(tnv);
+                            statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestBuyValue(tnv);
+                            statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setOneMonthHighestBuyValue(tnv);
+                            statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 6 thang");
+                        } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
+                            statistic.setThreeMonthsHighestBuyValue(tnv);
+                            statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
+                            statistic.setOneMonthHighestBuyValue(tnv);
+                            statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 3 thang");
+                        } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
+                            statistic.setOneMonthHighestBuyValue(tnv);
+                            statistic.setOneMonthHighestBuyTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 1 thang");
+                        }
+                    } else if (tnv < 0) {
+                        if (tnv > statistic.getHighestSellValue()) {
+                            statistic.setHighestSellValue(tnv);
+                            statistic.setHighestSellTradingDate(tradingDate);
+                            statistic.setTwelveMonthsHighestSellValue(tnv);
+                            statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setSixMonthsHighestSellValue(tnv);
+                            statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestSellValue(tnv);
+                            statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setOneMonthHighestSellValue(tnv);
+                            statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat");
+                        } else if (tnv > statistic.getTwelveMonthsHighestSellValue()) {
+                            statistic.setTwelveMonthsHighestSellValue(tnv);
+                            statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setSixMonthsHighestSellValue(tnv);
+                            statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestSellValue(tnv);
+                            statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setOneMonthHighestSellValue(tnv);
+                            statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 12 thang");
+                        } else if (tnv > statistic.getSixMonthsHighestSellValue()) {
+                            statistic.setSixMonthsHighestSellValue(tnv);
+                            statistic.setSixMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setThreeMonthsHighestSellValue(tnv);
+                            statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setOneMonthHighestSellValue(tnv);
+                            statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 6 thang");
+                        } else if (tnv > statistic.getThreeMonthsHighestSellValue()) {
+                            statistic.setThreeMonthsHighestSellValue(tnv);
+                            statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
+                            statistic.setOneMonthHighestSellValue(tnv);
+                            statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 3 thang");
+                        } else if (tnv > statistic.getOneMonthHighestSellValue()) {
+                            statistic.setOneMonthHighestSellValue(tnv);
+                            statistic.setOneMonthHighestSellTradingDate(tradingDate);
+                            statistic.setSymbol(entity.getSymbol());
+                            proprietaryTradingStatisticRepository.save(statistic);
+                            log.info("Luu thong tin giao dich lon nhat 1 thang");
+                        }
+                    }
+                }
+            });
+
+            log.info("Ket thuc cap nhat du lieu tu doanh cho sheet");
+        }
+    }
+
+    @Override
+    public void processVolatileTrading(String tradingDate) {
+        LocalDate date = LocalDate.parse(tradingDate);
+        List<ProprietaryTradingStatisticEntity> high1MBuyList = proprietaryTradingStatisticRepository.findByOneMonthHighestBuyTradingDateOrderByOneMonthHighestBuyValueDesc(date);
+        if(high1MBuyList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "", high1MBuyList, true);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "1M", high1MBuyList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high3MBuyList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestBuyTradingDateOrderByThreeMonthsHighestBuyValueDesc(date);
+        if(high3MBuyList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "3M", high3MBuyList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high6MBuyList = proprietaryTradingStatisticRepository.findBySixMonthsHighestBuyTradingDateOrderBySixMonthsHighestBuyValueDesc(date);
+        if(high6MBuyList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "6M", high6MBuyList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high12MBuyList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestBuyTradingDateOrderByTwelveMonthsHighestBuyValueDesc(date);
+        if(high12MBuyList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "12M", high12MBuyList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high1MSellList = proprietaryTradingStatisticRepository.findByOneMonthHighestSellTradingDateOrderByOneMonthHighestSellValueAsc(date);
+        if(high1MSellList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "", high1MSellList, true);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "1M", high1MSellList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high3MSellList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestSellTradingDateOrderByThreeMonthsHighestSellValueAsc(date);
+        if(high3MSellList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "3M", high3MSellList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high6MSellList = proprietaryTradingStatisticRepository.findBySixMonthsHighestSellTradingDateOrderBySixMonthsHighestSellValueAsc(date);
+        if(high6MSellList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "6M", high6MSellList, false);
+        }
+
+        List<ProprietaryTradingStatisticEntity> high12MSellList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestSellTradingDateOrderByTwelveMonthsHighestSellValueAsc(date);
+        if(high12MSellList.size() > 0){
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "12M", high12MSellList, false);
+        }
     }
 
 

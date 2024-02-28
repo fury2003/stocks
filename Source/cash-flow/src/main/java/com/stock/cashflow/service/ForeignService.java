@@ -6,4 +6,6 @@ public interface ForeignService {
 
     void processAll(String startDate, String endDate);
 
+    void processVolatileTrading(String tradingDate);
+
 }

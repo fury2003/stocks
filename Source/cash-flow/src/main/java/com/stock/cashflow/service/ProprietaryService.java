@@ -1,9 +1,14 @@
 package com.stock.cashflow.service;
 
+import com.stock.cashflow.dto.ProprietaryDataResponse;
+
 public interface ProprietaryService {
 
     void processFireant();
 
-    void processSSI();
+    void processAllFloorsFromSSI();
 
+    void processSSI(ProprietaryDataResponse proprietaryTextData);
+
+    void processVolatileTrading(String tradingDate);
 }

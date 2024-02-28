@@ -5,9 +5,7 @@ import com.stock.cashflow.constants.IndustryConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.exception.BadRequestException;
-import com.stock.cashflow.persistence.entity.BalanceSheetEntity;
-import com.stock.cashflow.persistence.entity.CashFlowEntity;
-import com.stock.cashflow.persistence.entity.IncomeSheetEntity;
+import com.stock.cashflow.persistence.entity.*;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -23,6 +21,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Component
@@ -31,6 +32,9 @@ public class ExcelHelper {
     private static final Logger log = LoggerFactory.getLogger(ExcelHelper.class);
 
     @Value("${data.trading.file.path}")
+    private String dataTradingFile;
+
+    @Value("${statistics.file.path}")
     private String statisticFile;
 
     @Value("${fs.file.path}")
@@ -111,7 +115,7 @@ public class ExcelHelper {
 
     public void writeIntradayTradingStatisticsToFile(String sheetName, TradingStatistics data) {
         ZipSecureFile.setMinInflateRatio(0);
-        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+        try (FileInputStream fileInputStream = new FileInputStream(dataTradingFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             insertNewRow(sheet, statisticsBeginRowIndex);
             Row row = sheet.getRow(statisticsBeginRowIndex);
@@ -170,6 +174,72 @@ public class ExcelHelper {
             updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
             updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
             updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(dataTradingFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", dataTradingFile);
+        }
+    }
+
+    public void writeVolatileForeignTradingToFile(String sheetName, String duration, List<ForeignTradingStatisticEntity> updatedList, boolean isTNV) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+
+            Instant instant = new Date().toInstant();
+            LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+            updateCellDate(workbook, row, 1, today.toString());
+            updateCellString(row, 2, duration);
+
+            for (int i = 0; i < updatedList.size(); i++) {
+                if(isTNV){
+                    Double tnv = sheetName.equals(StockConstant.VOLATILE_FOREIGN_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
+                    updateCellDouble(workbook, row, i+3, tnv, false);
+                }else {
+                    updateCellString(row, i+3, updatedList.get(i).getSymbol());
+                }
+            }
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public void writeVolatileProprietaryTradingToFile(String sheetName, String duration, List<ProprietaryTradingStatisticEntity> updatedList, boolean isTNV) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+
+            Instant instant = new Date().toInstant();
+            LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+            updateCellDate(workbook, row, 1, today.toString());
+            updateCellString(row, 2, duration);
+
+            for (int i = 0; i < updatedList.size(); i++) {
+                if(isTNV){
+                    Double tnv = sheetName.equals(StockConstant.VOLATILE_PROPRIETARY_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
+                    updateCellDouble(workbook, row, i+3, tnv, false);
+                }else {
+                    updateCellString(row, i+3, updatedList.get(i).getSymbol());
+                }
+            }
 
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
