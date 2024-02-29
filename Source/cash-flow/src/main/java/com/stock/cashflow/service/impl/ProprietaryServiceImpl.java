@@ -199,7 +199,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                     }
 
                                 } else if (tnv < 0){
-                                    if (tnv > statistic.getHighestSellValue()) {
+                                    if (tnv < statistic.getHighestSellValue()) {
                                         statistic.setHighestSellValue(tnv);
                                         statistic.setHighestSellTradingDate(tradingDate);
                                         statistic.setTwelveMonthsHighestSellValue(tnv);
@@ -213,7 +213,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                         statistic.setSymbol(symbol.getSymbol());
                                         proprietaryTradingStatisticRepository.save(statistic);
                                         log.info("Luu thong tin giao dich lon nhat");
-                                    } else if (tnv > statistic.getTwelveMonthsHighestSellValue()) {
+                                    } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
                                         statistic.setTwelveMonthsHighestSellValue(tnv);
                                         statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
                                         statistic.setSixMonthsHighestSellValue(tnv);
@@ -225,7 +225,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                         statistic.setSymbol(symbol.getSymbol());
                                         proprietaryTradingStatisticRepository.save(statistic);
                                         log.info("Luu thong tin giao dich lon nhat 12 thang");
-                                    } else if (tnv > statistic.getSixMonthsHighestSellValue()) {
+                                    } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
                                         statistic.setSixMonthsHighestSellValue(tnv);
                                         statistic.setSixMonthsHighestSellTradingDate(tradingDate);
                                         statistic.setThreeMonthsHighestSellValue(tnv);
@@ -235,7 +235,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                         statistic.setSymbol(symbol.getSymbol());
                                         proprietaryTradingStatisticRepository.save(statistic);
                                         log.info("Luu thong tin giao dich lon nhat 6 thang");
-                                    } else if (tnv > statistic.getThreeMonthsHighestSellValue()) {
+                                    } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
                                         statistic.setThreeMonthsHighestSellValue(tnv);
                                         statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
                                         statistic.setOneMonthHighestSellValue(tnv);
@@ -243,7 +243,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                         statistic.setSymbol(symbol.getSymbol());
                                         proprietaryTradingStatisticRepository.save(statistic);
                                         log.info("Luu thong tin giao dich lon nhat 3 thang");
-                                    } else if (tnv > statistic.getOneMonthHighestSellValue()) {
+                                    } else if (tnv < statistic.getOneMonthHighestSellValue()) {
                                         statistic.setOneMonthHighestSellValue(tnv);
                                         statistic.setOneMonthHighestSellTradingDate(tradingDate);
                                         statistic.setSymbol(symbol.getSymbol());
@@ -529,7 +529,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             log.info("Luu thong tin giao dich lon nhat 1 thang");
                         }
                     } else if (tnv < 0) {
-                        if (tnv > statistic.getHighestSellValue()) {
+                        if (tnv < statistic.getHighestSellValue()) {
                             statistic.setHighestSellValue(tnv);
                             statistic.setHighestSellTradingDate(tradingDate);
                             statistic.setTwelveMonthsHighestSellValue(tnv);
@@ -543,7 +543,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             statistic.setSymbol(entity.getSymbol());
                             proprietaryTradingStatisticRepository.save(statistic);
                             log.info("Luu thong tin giao dich lon nhat");
-                        } else if (tnv > statistic.getTwelveMonthsHighestSellValue()) {
+                        } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
                             statistic.setTwelveMonthsHighestSellValue(tnv);
                             statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
                             statistic.setSixMonthsHighestSellValue(tnv);
@@ -555,7 +555,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             statistic.setSymbol(entity.getSymbol());
                             proprietaryTradingStatisticRepository.save(statistic);
                             log.info("Luu thong tin giao dich lon nhat 12 thang");
-                        } else if (tnv > statistic.getSixMonthsHighestSellValue()) {
+                        } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
                             statistic.setSixMonthsHighestSellValue(tnv);
                             statistic.setSixMonthsHighestSellTradingDate(tradingDate);
                             statistic.setThreeMonthsHighestSellValue(tnv);
@@ -565,7 +565,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             statistic.setSymbol(entity.getSymbol());
                             proprietaryTradingStatisticRepository.save(statistic);
                             log.info("Luu thong tin giao dich lon nhat 6 thang");
-                        } else if (tnv > statistic.getThreeMonthsHighestSellValue()) {
+                        } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
                             statistic.setThreeMonthsHighestSellValue(tnv);
                             statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
                             statistic.setOneMonthHighestSellValue(tnv);
@@ -573,7 +573,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             statistic.setSymbol(entity.getSymbol());
                             proprietaryTradingStatisticRepository.save(statistic);
                             log.info("Luu thong tin giao dich lon nhat 3 thang");
-                        } else if (tnv > statistic.getOneMonthHighestSellValue()) {
+                        } else if (tnv < statistic.getOneMonthHighestSellValue()) {
                             statistic.setOneMonthHighestSellValue(tnv);
                             statistic.setOneMonthHighestSellTradingDate(tradingDate);
                             statistic.setSymbol(entity.getSymbol());
