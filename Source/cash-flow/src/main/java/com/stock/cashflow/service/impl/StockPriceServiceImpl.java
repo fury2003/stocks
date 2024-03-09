@@ -152,6 +152,10 @@ public class StockPriceServiceImpl implements StockPriceService {
                 log.info("Truy xuat thong tin giao dich khoi ngoai thanh cong");
                 try{
                     long count = Arrays.stream(data).count();
+                     if(count <= 1){
+                        log.info("Ko tim thay du lieu giao dich cua ma {} trong ngay {}", symbols[i], endDate);
+                        continue;
+                    }
                     Symbol yesterdayData =  Arrays.stream(data).skip(count - 1).findFirst().get();
                     if(!Objects.isNull(yesterdayData)){
                         Optional<Symbol> updatedDate = Arrays.stream(data).findFirst();

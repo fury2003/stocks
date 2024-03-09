@@ -260,16 +260,24 @@ public class StatisticsServiceImpl implements StatisticsService {
                     log.info("Luu du lieu vao Sheet name {}", symbol);
                     String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
                     ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesByHashDate(hashDate);
-//                    IntradayOrderEntity intradayOrderEntity = intradayOrderRepository.findIntradayOrderEntitiesBySymbolAndHashDate(symbol, hashDate);
                     OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesByHashDate(hashDate);
                     ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
                     StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesByHashDate(hashDate);
+
+                    if(stockPriceEntity == null){
+                        log.info("Ko tim thay du lieu giao dich {} trong ngay {}", symbol, tradingDate);
+                        continue;
+                    }
 
                     log.info("Ghi du lieu cua ma {} cho ngay {}", symbol, tradingDate);
 
                     Sheet sheet = workbook.getSheet(symbol);
                     excelHelper.insertNewRow(sheet, statisticInsertRow);
                     Row row = sheet.getRow(statisticInsertRow);
+
+                    double totalVolume = stockPriceEntity.getTotalVolume();
+                    String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
+                    String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
 
                     if(!Objects.isNull(proprietaryTradingEntity)){
                         double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume() == null ? 0 : proprietaryTradingEntity.getBuyVolume();
@@ -295,10 +303,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
                     }
-
-                    double totalVolume = stockPriceEntity.getTotalVolume();
-                    String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
-                    String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
 
                     if(!Objects.isNull(foreignTradingEntity)){
                         excelHelper.updateCellDate(workbook, row, tradingDateIdx, foreignTradingEntity.getTradingDate().toString());
