@@ -171,7 +171,8 @@ public class SymbolConstant {
             "ORS",
             "AAA",
             "VIP",
-            "BWE"
+            "BWE",
+            "ELC"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -368,6 +369,7 @@ public class SymbolConstant {
             "AGR",
             "SKG",
             "TLG",
-            "SJS"
+            "SJS",
+            "ELC"
     };
 }
