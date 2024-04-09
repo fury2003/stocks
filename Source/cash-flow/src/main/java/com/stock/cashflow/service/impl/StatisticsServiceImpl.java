@@ -278,7 +278,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                     double totalVolume = stockPriceEntity.getTotalVolume();
                     String percenChange = stockPriceEntity.getPercentageChange().replace("%", "");
                     String priceRange = stockPriceEntity.getPriceRange().replace("%", "");
-
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
+                    excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
+                    
                     if(!Objects.isNull(proprietaryTradingEntity)){
                         double proprietaryBuyVolume = proprietaryTradingEntity.getBuyVolume() == null ? 0 : proprietaryTradingEntity.getBuyVolume();
                         double proprietarySellVolume = proprietaryTradingEntity.getSellVolume() == null ? 0 : proprietaryTradingEntity.getSellVolume();
@@ -310,9 +313,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_SELL_VOL_COLUMN_INDEX), foreignTradingEntity.getSellVolume(), false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VOL_COLUMN_INDEX), foreignTradingEntity.getBuyVolume() - foreignTradingEntity.getSellVolume(), false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.FOREIGN_TOTAL_NET_VAL_COLUMN_INDEX), foreignTradingEntity.getBuyValue() - foreignTradingEntity.getSellValue(), false);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.TOTAL_VOL_COLUMN_INDEX), totalVolume, false);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PERCENTAGE_CHANGE_COLUMN_INDEX), Double.parseDouble(percenChange)/100, true);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PRICE_RANGE_COLUMN_INDEX), Double.parseDouble(priceRange)/100, true);
                     }
                 }
             }
