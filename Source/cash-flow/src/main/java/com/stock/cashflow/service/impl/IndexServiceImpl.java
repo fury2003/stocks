@@ -7,16 +7,13 @@ import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.entity.IndexStatisticEntity;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
-import com.stock.cashflow.persistence.repository.ForeignTradingRepository;
-import com.stock.cashflow.persistence.repository.IndexStatisticRepository;
-import com.stock.cashflow.persistence.repository.ProprietaryTradingRepository;
-import com.stock.cashflow.persistence.repository.StockPriceRepository;
+import com.stock.cashflow.persistence.entity.TradingDateEntity;
+import com.stock.cashflow.persistence.repository.*;
 import com.stock.cashflow.service.IndexService;
 import com.stock.cashflow.utils.DateHelper;
 import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -72,12 +69,13 @@ public class IndexServiceImpl implements IndexService {
     private final ForeignTradingRepository foreignTradingRepository;
     private final IndexStatisticRepository indexStatisticRepository;
     private final ProprietaryTradingRepository proprietaryTradingRepository;
+    private final TradingDateRepository tradingDateRepository;
     private final ExcelHelper excelHelper;
 
     @Autowired
     public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository,
                             ForeignTradingRepository foreignTradingRepository, IndexStatisticRepository indexStatisticRepository,
-                            ExcelHelper excelHelper, ProprietaryTradingRepository proprietaryTradingRepository){
+                            ExcelHelper excelHelper, ProprietaryTradingRepository proprietaryTradingRepository, TradingDateRepository tradingDateRepository){
         this.restTemplate = restTemplate;
         this.env = env;
         this.stockPriceRepository = stockPriceRepository;
@@ -85,6 +83,7 @@ public class IndexServiceImpl implements IndexService {
         this.indexStatisticRepository = indexStatisticRepository;
         this.excelHelper = excelHelper;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
+        this.tradingDateRepository = tradingDateRepository;
     }
 
     @Transactional
@@ -384,11 +383,33 @@ public class IndexServiceImpl implements IndexService {
                 String[] animals = IndustryConstant.ANIMALS;
                 long animalsTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(animals), tradingDate);
                 saveIndexAnalyze(tradingDate, StockConstant.ANIMALS,  animalsTotalVolume, vnindexTotalVolume);
-                log.info("Saved CHEMISTRY_FERTILIZER ");
+                log.info("Saved ANIMALS");
             }catch (Exception ex){
                 ex.printStackTrace();
                 log.error(ex.getMessage());
-                throw new RuntimeException("Loi trong qua trinh phan tich CHEMISTRY_FERTILIZER/VNINDEX");
+                throw new RuntimeException("Loi trong qua trinh phan tich ANIMALS/VNINDEX");
+            }
+
+            try{
+                String[] insurance = IndustryConstant.INSURANCE;
+                long insuranceTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(insurance), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.INSURANCE,  insuranceTotalVolume, vnindexTotalVolume);
+                log.info("Saved INSURANCE ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich INSURANCE/VNINDEX");
+            }
+
+            try{
+                String[] insurance = IndustryConstant.AIRLINE;
+                long insuranceTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(insurance), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.AIRLINE,  insuranceTotalVolume, vnindexTotalVolume);
+                log.info("Saved AIRLINE ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich AIRLINE/VNINDEX");
             }
 
         }
@@ -405,6 +426,7 @@ public class IndexServiceImpl implements IndexService {
             Row row = sheet.getRow(statisticsBeginRowIndex);
 
             Double foreignTNV = foreignTradingRepository.getForeignTotalNetValue(tradingDate);
+            Double foreignTNVExclude = foreignTradingRepository.getForeignTotalNetValueExcludeVin(tradingDate);
             Integer foreignNumberOfBuy = foreignTradingRepository.getNumberOfBuy(tradingDate);
             Integer foreignNumberOfNoChange = foreignTradingRepository.getNumberOfNoChange(tradingDate);
             Integer foreignNumberOfSell = foreignTradingRepository.getNumberOfSell(tradingDate);
@@ -416,13 +438,13 @@ public class IndexServiceImpl implements IndexService {
 
             excelHelper.updateCellDate(workbook, row, 1, date);
             // vnindex
-            excelHelper.updateCellDouble(workbook, row, 2, Double.valueOf(dto.getVnindexPercentageChange())/100, true);
+            excelHelper.updateCellDouble(workbook, row, 2, Double.parseDouble(dto.getVnindexPercentageChange())/100, true);
             excelHelper.updateCellLong(workbook, row, 4, dto.getVnindexUp());
             excelHelper.updateCellLong(workbook, row, 5, dto.getVnindexNoChange());
             excelHelper.updateCellLong(workbook, row, 6, dto.getVnindexDown());
 
             // vn30
-            excelHelper.updateCellDouble(workbook, row, 7, Double.valueOf(dto.getVn30PercentageChange())/100, true);
+            excelHelper.updateCellDouble(workbook, row, 7, Double.parseDouble(dto.getVn30PercentageChange())/100, true);
             excelHelper.updateCellLong(workbook, row, 9, dto.getVn30Up());
             excelHelper.updateCellLong(workbook, row, 10, dto.getVn30NoChange());
             excelHelper.updateCellLong(workbook, row, 11, dto.getVn30Down());
@@ -432,12 +454,13 @@ public class IndexServiceImpl implements IndexService {
             excelHelper.updateCellLong(workbook, row, 13, foreignNumberOfNoChange);
             excelHelper.updateCellLong(workbook, row, 14, foreignNumberOfSell);
             excelHelper.updateCellDouble(workbook, row, 15, foreignTNV, false);
+            excelHelper.updateCellDouble(workbook, row, 17, foreignTNVExclude, false);
 
             // proprieraty
-            excelHelper.updateCellLong(workbook, row, 17, proprietaryNumberOfBuy);
-            excelHelper.updateCellLong(workbook, row, 18, proprietaryNumberOfNoChange);
-            excelHelper.updateCellLong(workbook, row, 19, proprietaryNumberOfSell);
-            excelHelper.updateCellDouble(workbook, row, 20, proprietaryTNV, false);
+            excelHelper.updateCellLong(workbook, row, 19, proprietaryNumberOfBuy);
+            excelHelper.updateCellLong(workbook, row, 20, proprietaryNumberOfNoChange);
+            excelHelper.updateCellLong(workbook, row, 21, proprietaryNumberOfSell);
+            excelHelper.updateCellDouble(workbook, row, 22, proprietaryTNV, false);
 
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
@@ -449,6 +472,14 @@ public class IndexServiceImpl implements IndexService {
             e.printStackTrace();
             log.error("Loi trong qua trinh truy xuat file. {}", statisticFile);
         }
+    }
+
+    @Override
+    public void addTradingDate(String tradingDate) {
+        LocalDate date = LocalDate.parse(tradingDate);
+        TradingDateEntity entity = new TradingDateEntity();
+        entity.setTradingDate(date);
+        tradingDateRepository.save(entity);
     }
 
     private void saveIndexAnalyze(LocalDate tradingDate, String symbol, double groupVolume, double totalVolume){

@@ -16,4 +16,6 @@ public interface StatisticsService {
 
     void writeIndexAnalyzedDateToDate(String startDate, String endDate);
 
+    void writePriceChangeMonthly(String sheetName, String startDate, String endDate);
+
 }

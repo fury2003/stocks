@@ -304,3 +304,13 @@ ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci
 AUTO_INCREMENT=1;
+
+CREATE TABLE trading_date (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	trading_date DATE NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci
+AUTO_INCREMENT=1;

@@ -43,4 +43,10 @@ public class ForeignController {
         foreignService.processVolatileTrading(tradingDate);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("statistic")
+    public ResponseEntity<String> processStatistic(@RequestParam String tradingDate) {
+        foreignService.processStatisticTrading(tradingDate);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -55,4 +55,12 @@ public class ProprietaryController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/statistic")
+    public ResponseEntity<String> processStatistic(@RequestParam String tradingDate) {
+
+        proprietaryService.processStatisticTrading(tradingDate);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -4,11 +4,11 @@ import com.stock.cashflow.constants.FloorConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.constants.SymbolConstant;
 import com.stock.cashflow.dto.*;
-import com.stock.cashflow.persistence.entity.ForeignTradingStatisticEntity;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingEntity;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingStatisticEntity;
 import com.stock.cashflow.persistence.repository.ProprietaryTradingRepository;
 import com.stock.cashflow.persistence.repository.ProprietaryTradingStatisticRepository;
+import com.stock.cashflow.persistence.repository.TradingDateRepository;
 import com.stock.cashflow.service.ProprietaryService;
 import com.stock.cashflow.utils.DateHelper;
 import com.stock.cashflow.utils.ExcelHelper;
@@ -55,11 +55,14 @@ public class ProprietaryServiceImpl implements ProprietaryService {
 
     private final ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository;
 
-    public ProprietaryServiceImpl(RestTemplate restTemplate, ProprietaryTradingRepository proprietaryTradingRepository, ExcelHelper excelHelper, ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository){
+    private final TradingDateRepository tradingDateRepository;
+
+    public ProprietaryServiceImpl(RestTemplate restTemplate, ProprietaryTradingRepository proprietaryTradingRepository, ExcelHelper excelHelper, ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository, TradingDateRepository tradingDateRepository){
         this.restTemplate = restTemplate;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
         this. proprietaryTradingStatisticRepository = proprietaryTradingStatisticRepository;
         this.excelHelper = excelHelper;
+        this.tradingDateRepository = tradingDateRepository;
     }
 
     public static void main(String[] args) {
@@ -105,163 +108,12 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                             newEntity.setHashDate(hashDate);
                             proprietaryTradingRepository.save(newEntity);
                             log.info("Luu du lieu mua ban cua tu doanh voi ma {} thanh cong", symbol.getSymbol());
-
-                            ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(symbol.getSymbol());
-                            double tnv = symbol.getValue();
-
-                            if(statistic == null){
-                                ProprietaryTradingStatisticEntity newEntityStatistic = new ProprietaryTradingStatisticEntity();
-                                newEntityStatistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                newEntityStatistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                newEntityStatistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                newEntityStatistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                newEntityStatistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                newEntityStatistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                newEntityStatistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                newEntityStatistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                newEntityStatistic.setHighestBuyTradingDate(tradingDate);
-                                newEntityStatistic.setHighestSellTradingDate(tradingDate);
-                                newEntityStatistic.setSymbol(symbol.getSymbol());
-
-                                if (tnv > 0) {
-                                    newEntityStatistic.setOneMonthHighestBuyValue(tnv);
-                                    newEntityStatistic.setOneMonthHighestSellValue(0.0);
-                                    newEntityStatistic.setThreeMonthsHighestBuyValue(tnv);
-                                    newEntityStatistic.setThreeMonthsHighestSellValue(0.0);
-                                    newEntityStatistic.setSixMonthsHighestBuyValue(tnv);
-                                    newEntityStatistic.setSixMonthsHighestSellValue(0.0);
-                                    newEntityStatistic.setTwelveMonthsHighestBuyValue(tnv);
-                                    newEntityStatistic.setTwelveMonthsHighestSellValue(0.0);
-                                    newEntityStatistic.setHighestBuyValue(tnv);
-                                    newEntityStatistic.setHighestSellValue(0.0);
-                                } else if (tnv < 0){
-                                    newEntityStatistic.setOneMonthHighestBuyValue(0.0);
-                                    newEntityStatistic.setOneMonthHighestSellValue(tnv);
-                                    newEntityStatistic.setThreeMonthsHighestBuyValue(0.0);
-                                    newEntityStatistic.setThreeMonthsHighestSellValue(tnv);
-                                    newEntityStatistic.setSixMonthsHighestBuyValue(0.0);
-                                    newEntityStatistic.setSixMonthsHighestSellValue(tnv);
-                                    newEntityStatistic.setTwelveMonthsHighestBuyValue(0.0);
-                                    newEntityStatistic.setTwelveMonthsHighestSellValue(tnv);
-                                    newEntityStatistic.setHighestBuyValue(0.0);
-                                    newEntityStatistic.setHighestSellValue(tnv);
-                                }
-
-                                proprietaryTradingStatisticRepository.save(newEntityStatistic);
-                                log.info("Luu thong ke giao dich moi {}", symbol.getSymbol());
-
-                            } else {
-                                if(tnv > 0){
-                                    if (tnv > statistic.getHighestBuyValue()) {
-                                        statistic.setHighestBuyValue(tnv);
-                                        statistic.setHighestBuyTradingDate(tradingDate);
-                                        statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                        statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setSixMonthsHighestBuyValue(tnv);
-                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestBuyValue(tnv);
-                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestBuyValue(tnv);
-                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat");
-                                    } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
-                                        statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                        statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setSixMonthsHighestBuyValue(tnv);
-                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestBuyValue(tnv);
-                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestBuyValue(tnv);
-                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 12 thang");
-                                    } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
-                                        statistic.setSixMonthsHighestBuyValue(tnv);
-                                        statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestBuyValue(tnv);
-                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestBuyValue(tnv);
-                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 6 thang");
-                                    } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
-                                        statistic.setThreeMonthsHighestBuyValue(tnv);
-                                        statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestBuyValue(tnv);
-                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 3 thang");
-                                    } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
-                                        statistic.setOneMonthHighestBuyValue(tnv);
-                                        statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 1 thang");
-                                    }
-
-                                } else if (tnv < 0){
-                                    if (tnv < statistic.getHighestSellValue()) {
-                                        statistic.setHighestSellValue(tnv);
-                                        statistic.setHighestSellTradingDate(tradingDate);
-                                        statistic.setTwelveMonthsHighestSellValue(tnv);
-                                        statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setSixMonthsHighestSellValue(tnv);
-                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestSellValue(tnv);
-                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestSellValue(tnv);
-                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat");
-                                    } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
-                                        statistic.setTwelveMonthsHighestSellValue(tnv);
-                                        statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setSixMonthsHighestSellValue(tnv);
-                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestSellValue(tnv);
-                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestSellValue(tnv);
-                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 12 thang");
-                                    } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
-                                        statistic.setSixMonthsHighestSellValue(tnv);
-                                        statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setThreeMonthsHighestSellValue(tnv);
-                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestSellValue(tnv);
-                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 6 thang");
-                                    } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
-                                        statistic.setThreeMonthsHighestSellValue(tnv);
-                                        statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                        statistic.setOneMonthHighestSellValue(tnv);
-                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 3 thang");
-                                    } else if (tnv < statistic.getOneMonthHighestSellValue()) {
-                                        statistic.setOneMonthHighestSellValue(tnv);
-                                        statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                        statistic.setSymbol(symbol.getSymbol());
-                                        proprietaryTradingStatisticRepository.save(statistic);
-                                        log.info("Luu thong tin giao dich lon nhat 1 thang");
-                                    }
-                                }
-                            }
                         } else{
                             log.info("Du lieu mua ban cua tu doanh voi ma {} da ton tai", symbol.getSymbol());
                         }
                     });
+
+                    filterTrades.clear();
                 }catch (Exception ex){
                     ex.printStackTrace();
                     throw new RuntimeException(ex.getMessage());
@@ -305,105 +157,6 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                         ProprietaryTradingEntity entity = sym.convertToEntity();
                         proprietaryTradingRepository.save(entity);
                         log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
-
-                        ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
-                        double tnv = entity.getTotalNetValue();
-                        LocalDate tradingDate = entity.getTradingDate();
-                        if(tnv > 0){
-                            if (tnv > statistic.getHighestBuyValue()) {
-                                statistic.setHighestBuyValue(tnv);
-                                statistic.setHighestBuyTradingDate(tradingDate);
-                                statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat");
-                            } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
-                                statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 12 thang");
-                            } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 6 thang");
-                            } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 3 thang");
-                            } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 1 thang");
-                            }
-                        } else if (tnv < 0){
-                            if (tnv < statistic.getHighestSellValue()) {
-                                statistic.setHighestSellValue(tnv);
-                                statistic.setHighestSellTradingDate(tradingDate);
-                                statistic.setTwelveMonthsHighestSellValue(tnv);
-                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat");
-                            } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
-                                statistic.setTwelveMonthsHighestSellValue(tnv);
-                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 12 thang");
-                            } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 6 thang");
-                            } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 3 thang");
-                            } else if (tnv < statistic.getOneMonthHighestSellValue()) {
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 1 thang");
-                            }
-                        }
                     });
 
                     log.info("Ket thuc cap nhat du lieu tu doanh cho sheet");
@@ -439,160 +192,6 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                     ProprietaryTradingEntity entity = sym.convertToEntity();
                     proprietaryTradingRepository.save(entity);
                     log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
-
-                    ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
-
-                    double tnv = entity.getTotalNetValue();
-                    LocalDate tradingDate = entity.getTradingDate();
-
-                    if(statistic == null){
-                        ProprietaryTradingStatisticEntity newEntity = new ProprietaryTradingStatisticEntity();
-                        newEntity.setOneMonthHighestBuyTradingDate(tradingDate);
-                        newEntity.setOneMonthHighestSellTradingDate(tradingDate);
-                        newEntity.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                        newEntity.setThreeMonthsHighestSellTradingDate(tradingDate);
-                        newEntity.setSixMonthsHighestBuyTradingDate(tradingDate);
-                        newEntity.setSixMonthsHighestSellTradingDate(tradingDate);
-                        newEntity.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                        newEntity.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                        newEntity.setHighestBuyTradingDate(tradingDate);
-                        newEntity.setHighestSellTradingDate(tradingDate);
-                        newEntity.setSymbol(sym.getTicker());
-
-                        if (tnv > 0) {
-                            newEntity.setOneMonthHighestBuyValue(tnv);
-                            newEntity.setOneMonthHighestSellValue(0.0);
-                            newEntity.setThreeMonthsHighestBuyValue(tnv);
-                            newEntity.setThreeMonthsHighestSellValue(0.0);
-                            newEntity.setSixMonthsHighestBuyValue(tnv);
-                            newEntity.setSixMonthsHighestSellValue(0.0);
-                            newEntity.setTwelveMonthsHighestBuyValue(tnv);
-                            newEntity.setTwelveMonthsHighestSellValue(0.0);
-                            newEntity.setHighestBuyValue(tnv);
-                            newEntity.setHighestSellValue(0.0);
-                        } else if (tnv < 0){
-                            newEntity.setOneMonthHighestBuyValue(0.0);
-                            newEntity.setOneMonthHighestSellValue(tnv);
-                            newEntity.setThreeMonthsHighestBuyValue(0.0);
-                            newEntity.setThreeMonthsHighestSellValue(tnv);
-                            newEntity.setSixMonthsHighestBuyValue(0.0);
-                            newEntity.setSixMonthsHighestSellValue(tnv);
-                            newEntity.setTwelveMonthsHighestBuyValue(0.0);
-                            newEntity.setTwelveMonthsHighestSellValue(tnv);
-                            newEntity.setHighestBuyValue(0.0);
-                            newEntity.setHighestSellValue(tnv);
-                        }
-
-                        proprietaryTradingStatisticRepository.save(newEntity);
-                        log.info("Luu thong ke giao dich moi {}", sym.getTicker());
-
-                    } else {
-                        if (tnv > 0) {
-                            if (tnv > statistic.getHighestBuyValue()) {
-                                statistic.setHighestBuyValue(tnv);
-                                statistic.setHighestBuyTradingDate(tradingDate);
-                                statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat");
-                            } else if (tnv > statistic.getTwelveMonthsHighestBuyValue()) {
-                                statistic.setTwelveMonthsHighestBuyValue(tnv);
-                                statistic.setTwelveMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 12 thang");
-                            } else if (tnv > statistic.getSixMonthsHighestBuyValue()) {
-                                statistic.setSixMonthsHighestBuyValue(tnv);
-                                statistic.setSixMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 6 thang");
-                            } else if (tnv > statistic.getThreeMonthsHighestBuyValue()) {
-                                statistic.setThreeMonthsHighestBuyValue(tnv);
-                                statistic.setThreeMonthsHighestBuyTradingDate(tradingDate);
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 3 thang");
-                            } else if (tnv > statistic.getOneMonthHighestBuyValue()) {
-                                statistic.setOneMonthHighestBuyValue(tnv);
-                                statistic.setOneMonthHighestBuyTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 1 thang");
-                            }
-                        } else if (tnv < 0) {
-                            if (tnv < statistic.getHighestSellValue()) {
-                                statistic.setHighestSellValue(tnv);
-                                statistic.setHighestSellTradingDate(tradingDate);
-                                statistic.setTwelveMonthsHighestSellValue(tnv);
-                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat");
-                            } else if (tnv < statistic.getTwelveMonthsHighestSellValue()) {
-                                statistic.setTwelveMonthsHighestSellValue(tnv);
-                                statistic.setTwelveMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 12 thang");
-                            } else if (tnv < statistic.getSixMonthsHighestSellValue()) {
-                                statistic.setSixMonthsHighestSellValue(tnv);
-                                statistic.setSixMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 6 thang");
-                            } else if (tnv < statistic.getThreeMonthsHighestSellValue()) {
-                                statistic.setThreeMonthsHighestSellValue(tnv);
-                                statistic.setThreeMonthsHighestSellTradingDate(tradingDate);
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 3 thang");
-                            } else if (tnv < statistic.getOneMonthHighestSellValue()) {
-                                statistic.setOneMonthHighestSellValue(tnv);
-                                statistic.setOneMonthHighestSellTradingDate(tradingDate);
-                                statistic.setSymbol(entity.getSymbol());
-                                proprietaryTradingStatisticRepository.save(statistic);
-                                log.info("Luu thong tin giao dich lon nhat 1 thang");
-                            }
-                        }
-                    }
                 }
             });
 
@@ -605,46 +204,153 @@ public class ProprietaryServiceImpl implements ProprietaryService {
         LocalDate date = LocalDate.parse(tradingDate);
         List<ProprietaryTradingStatisticEntity> high1MBuyList = proprietaryTradingStatisticRepository.findByOneMonthHighestBuyTradingDateOrderByOneMonthHighestBuyValueDesc(date);
         if(high1MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "", high1MBuyList, true);
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "1M", high1MBuyList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "", high1MBuyList, true, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "1M", high1MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high3MBuyList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestBuyTradingDateOrderByThreeMonthsHighestBuyValueDesc(date);
         if(high3MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "3M", high3MBuyList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "3M", high3MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high6MBuyList = proprietaryTradingStatisticRepository.findBySixMonthsHighestBuyTradingDateOrderBySixMonthsHighestBuyValueDesc(date);
         if(high6MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "6M", high6MBuyList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "6M", high6MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high12MBuyList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestBuyTradingDateOrderByTwelveMonthsHighestBuyValueDesc(date);
         if(high12MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "12M", high12MBuyList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "12M", high12MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high1MSellList = proprietaryTradingStatisticRepository.findByOneMonthHighestSellTradingDateOrderByOneMonthHighestSellValueAsc(date);
         if(high1MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "", high1MSellList, true);
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "1M", high1MSellList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "", high1MSellList, true, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "1M", high1MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high3MSellList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestSellTradingDateOrderByThreeMonthsHighestSellValueAsc(date);
         if(high3MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "3M", high3MSellList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "3M", high3MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high6MSellList = proprietaryTradingStatisticRepository.findBySixMonthsHighestSellTradingDateOrderBySixMonthsHighestSellValueAsc(date);
         if(high6MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "6M", high6MSellList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "6M", high6MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high12MSellList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestSellTradingDateOrderByTwelveMonthsHighestSellValueAsc(date);
         if(high12MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "12M", high12MSellList, false);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "12M", high12MSellList, false, tradingDate);
         }
     }
 
+    @Transactional
+    @Override
+    public void processStatisticTrading(String tradingDate) {
+        LocalDate date = LocalDate.parse(tradingDate);
+        List<ProprietaryTradingEntity> tradingList = proprietaryTradingRepository.findByTradingDate(date);
+        LocalDate yesterday = date.minusDays(1);
 
+        Long id = tradingDateRepository.getIdByTradingDate(date);
+//        Long idOf1MonthAgo = tradingDateRepository.getIdOfOneMonthAgo();
+        LocalDate dateOf1MonthAgo = tradingDateRepository.getTradingDateById(id-22);
+//        Long idOf3MonthAgo = tradingDateRepository.getIdOfThreeMonthAgo();
+        LocalDate dateOf3MonthAgo = tradingDateRepository.getTradingDateById(id-66);
+//        Long idOf6MonthAgo = tradingDateRepository.getIdOfSixMonthAgo();
+//        LocalDate dateOf6MonthAgo = tradingDateRepository.getTradingDateById(idOf6MonthAgo);
+//        Long idOf12MonthAgo = tradingDateRepository.getIdOfOneYearAgo();
+//        LocalDate dateOf12MonthAgo = tradingDateRepository.getTradingDateById(idOf12MonthAgo);
+
+        for (ProprietaryTradingEntity entity : tradingList) {
+            String symbol = entity.getSymbol();
+            log.info("Comparing for {}", symbol);
+            Double tnv = entity.getTotalNetValue();
+
+            Double max1Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf1MonthAgo, yesterday);
+            if(max1Month == null) {
+                log.info("Trading history not found");
+                continue;
+            }
+            // buy side
+            if(tnv > max1Month){
+                ProprietaryTradingStatisticEntity statisticEntity = proprietaryTradingStatisticRepository.findBySymbol(symbol);
+                statisticEntity.setOneMonthHighestBuyValue(tnv);
+                statisticEntity.setOneMonthHighestBuyTradingDate(date);
+                log.info("Save highest buy of {} in 1 month", symbol);
+
+                Double max3Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf3MonthAgo, yesterday);
+                if(tnv > max3Month){
+                    statisticEntity.setThreeMonthsHighestBuyValue(tnv);
+                    statisticEntity.setThreeMonthsHighestBuyTradingDate(date);
+                    log.info("Save highest buy of {} in 3 month", symbol);
+
+//                    Double max6Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf6MonthAgo, yesterday);
+//                    if(tnv > max6Month){
+//                        statisticEntity.setSixMonthsHighestBuyValue(tnv);
+//                        statisticEntity.setSixMonthsHighestBuyTradingDate(date);
+//                        log.info("Save highest buy of {} in 6 month", symbol);
+//
+//                        Double max12Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf12MonthAgo, yesterday);
+//                        if(tnv > max12Month){
+//                            statisticEntity.setTwelveMonthsHighestBuyValue(tnv);
+//                            statisticEntity.setTwelveMonthsHighestBuyTradingDate(date);
+//                            log.info("Save highest buy of {} in 12 month", symbol);
+//
+                            Double maxTNV = proprietaryTradingRepository.getMaxBuy(symbol, yesterday);
+                            if(tnv > maxTNV){
+                                statisticEntity.setHighestBuyValue(tnv);
+                                statisticEntity.setHighestBuyTradingDate(date);
+                                log.info("Save highest buy of {}", symbol);
+                            }
+//                        }
+//                    }
+                }
+                proprietaryTradingStatisticRepository.save(statisticEntity);
+            }
+
+            Double min1Month = proprietaryTradingRepository.getMaxSellAfterDate(symbol, dateOf1MonthAgo, yesterday);
+            if(min1Month == null) {
+                log.info("Trading history not found");
+                continue;
+            }
+            // sell side
+            if(tnv < min1Month){
+                ProprietaryTradingStatisticEntity statisticEntity = proprietaryTradingStatisticRepository.findBySymbol(symbol);
+                statisticEntity.setOneMonthHighestSellValue(tnv);
+                statisticEntity.setOneMonthHighestSellTradingDate(date);
+                log.info("Save highest sell of {} in 1 month", symbol);
+
+                Double min3Month = proprietaryTradingRepository.getMaxSellAfterDate(symbol, dateOf3MonthAgo, yesterday);
+                if(tnv < min3Month){
+                    statisticEntity.setThreeMonthsHighestSellValue(tnv);
+                    statisticEntity.setThreeMonthsHighestSellTradingDate(date);
+                    log.info("Save highest sell of {} in 3 month", symbol);
+
+//                    Double min6Month = proprietaryTradingRepository.getMaxSellAfterDate(symbol, dateOf6MonthAgo, yesterday);
+//                    if(tnv < min6Month){
+//                        statisticEntity.setSixMonthsHighestSellValue(tnv);
+//                        statisticEntity.setSixMonthsHighestSellTradingDate(date);
+//                        log.info("Save highest sell of {} in 6 month", symbol);
+//
+//                        Double min12Month = proprietaryTradingRepository.getMaxSellAfterDate(symbol, dateOf12MonthAgo, yesterday);
+//                        if(tnv < min12Month){
+//                            statisticEntity.setTwelveMonthsHighestSellValue(tnv);
+//                            statisticEntity.setTwelveMonthsHighestSellTradingDate(date);
+//                            log.info("Save highest sell of {} in 12 month", symbol);
+//
+                            Double minTNV = proprietaryTradingRepository.getMaxSell(symbol, yesterday);
+                            if(tnv < minTNV){
+                                statisticEntity.setHighestSellValue(tnv);
+                                statisticEntity.setHighestSellTradingDate(date);
+                                log.info("Save highest sell of {}", symbol);
+                            }
+//                        }
+//                    }
+                }
+                proprietaryTradingStatisticRepository.save(statisticEntity);
+            }
+        }
+        log.info("Complete statistic");
+    }
 }

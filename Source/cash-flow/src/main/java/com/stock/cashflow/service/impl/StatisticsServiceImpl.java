@@ -118,6 +118,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             data.setProprietarySellVolume(proprietaryTradingEntity.getSellVolume());
             data.setProprietaryBuyValue(proprietaryTradingEntity.getBuyValue());
             data.setProprietarySellValue(proprietaryTradingEntity.getSellValue());
+            data.setProprietaryTotalNetValue(proprietaryTradingEntity.getTotalNetValue());
         }
 
         if(!Objects.isNull(orderBookEntity)){
@@ -290,6 +291,11 @@ public class StatisticsServiceImpl implements StatisticsService {
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), proprietarySellVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), proprietaryBuyVolume - proprietarySellVolume, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), proprietaryNetValue, false);
+                    }else{
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX), 0.0, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), 0.0, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), 0.0, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), 0.0, false);
                     }
 
                     if(!Objects.isNull(orderBookEntity)){
@@ -572,6 +578,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String constructionHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.CONSTRUCTION);
                     String eletricHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.ELECTRIC);
                     String chemistryHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.CHEMISTRY_FERTILIZER);
+                    String animalsHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.ANIMALS);
+                    String insuranceHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.INSURANCE);
+                    String airlineHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.AIRLINE);
 
                     String vn30Percentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(vn30HashDate);
                     String bluechipPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bluechipHashDate);
@@ -592,7 +601,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String constructionPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(constructionHashDate);
                     String eletricPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(eletricHashDate);
                     String chemistryPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(chemistryHashDate);
-
+                    String animalsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(animalsHashDate);
+                    String insurancePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(insuranceHashDate);
+                    String airlinePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(airlineHashDate);
 
                     // xu ly cho truong hop nghi le
                     if (vn30Percentage.isEmpty()) {
@@ -626,6 +637,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String textileString = textilePercentage.replace("%", "");
                     String electricString = eletricPercentage.replace("%", "");
                     String chemistryString = chemistryPercentage.replace("%", "");
+                    String animalsString = animalsPercentage.replace("%", "");
+                    String insuranceString = insurancePercentage.replace("%", "");
+                    String airlineString = airlinePercentage.replace("%", "");
 
                     excelHelper.updateCellDate(workbook, row, 1, tradingDate);
                     excelHelper.updateCellDouble(workbook, row, 2, Double.parseDouble(vn30String) / 100, true);
@@ -647,6 +661,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                     excelHelper.updateCellDouble(workbook, row, 18, Double.parseDouble(materialString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 19, Double.parseDouble(electricString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 20, Double.parseDouble(chemistryString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 21, Double.parseDouble(animalsString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 22, Double.parseDouble(insuranceString) / 100, true);
+                    excelHelper.updateCellDouble(workbook, row, 23, Double.parseDouble(airlineString) / 100, true);
 
                 }
 
@@ -663,6 +680,46 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
 
         log.info("Ghi du lieu phan tich index tu ngay {} den ngay {} vao file thanh cong", from , to);
+    }
+
+    @Override
+    public void writePriceChangeMonthly(String sheetName, String from, String to) {
+        LocalDate startDate = LocalDate.parse(from);
+        LocalDate endDate = LocalDate.parse(to);
+
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+
+            String[] symbols = SymbolConstant.SYMBOLS;
+            Map<String, Double> stockList = new HashMap<>();
+            for (int i = 0; i < symbols.length; i++) {
+                Double percentChange = stockPriceRepository.getMonthlyPercentageChange(symbols[i], startDate, endDate);
+                stockList.put(symbols[i], percentChange);
+            }
+
+            ZipSecureFile.setMinInflateRatio(0);
+            Sheet sheet = workbook.getSheet(sheetName);
+
+
+            stockList.forEach((name, percentage) -> {
+                if(percentage != null){
+                    log.info("Name: " + name + ", Percentage: " + percentage);
+                    excelHelper.insertNewRow(sheet, 1);
+                    Row row = sheet.getRow(1);
+                    excelHelper.updateCellString(row, 1, name);
+                    excelHelper.updateCellDouble(workbook, row, 2, Double.valueOf(percentage)/100, true);
+                }
+            });
+
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+
     }
 
 }

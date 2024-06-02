@@ -39,4 +39,6 @@ public interface ForeignTradingStatisticRepository extends JpaSpecificationExecu
     @Query("select entity from ForeignTradingStatisticEntity entity where entity.twelveMonthsHighestSellTradingDate=?1 and entity.twelveMonthsHighestSellValue < 0 order by entity.twelveMonthsHighestSellValue asc")
     List<ForeignTradingStatisticEntity> findByTwelveMonthsHighestSellTradingDateOrderByTwelveMonthsHighestSellValueAsc(LocalDate tradingDate);
 
+
+
 }

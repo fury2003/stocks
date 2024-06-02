@@ -21,7 +21,8 @@ public class IndustryConstant {
             "HDG",
             "AGG",
             "TCH",
-            "SJS"
+            "SJS",
+            "DXS"
     };
 
     public static final String[] STOCKS = {
@@ -52,8 +53,8 @@ public class IndustryConstant {
             "SHB",
             "MBB",
             "BID",
-//            "MSB",
-//            "VPB",
+            "MSB",
+            "VPB",
             "HDB",
             "LPB",
             "OCB",
@@ -77,13 +78,14 @@ public class IndustryConstant {
     };
 
     public static final String[] RETAIL = {
-//            "MWG",
+            "MWG",
             "DGW",
             "VNM",
             "MSN",
             "PET",
             "FRT",
-            "PNJ"
+            "PNJ",
+            "SAB"
     };
 
     public static final String[] STEELS = {
@@ -143,7 +145,7 @@ public class IndustryConstant {
             "DVP",
             "SGP",
             "VTP",
-            "VIP"
+            "CDN"
     };
 
     public static final String[] CHEMISTRY_FERTILIZER_PLASTIC = {
@@ -156,7 +158,8 @@ public class IndustryConstant {
             "LAS",
             "BMP",
             "NTP",
-            "AAA"
+            "AAA",
+            "PAT"
     };
 
     public static final String[] ELECTRIC = {
@@ -164,7 +167,11 @@ public class IndustryConstant {
             "QTP",
             "REE",
             "GEX",
-            "GEG"
+            "GEG",
+            "EVF",
+            "GEE",
+            "PPC",
+            "BCG"
     };
 
     public static final String[] OIL_GAS = {
@@ -200,5 +207,23 @@ public class IndustryConstant {
             "DBC",
             "BAF",
             "HAG"
+    };
+
+    public static final String[] INSURANCE = {
+            "BVH",
+            "BMI",
+            "MIG",
+            "PVI",
+            "BIC",
+            "VNR"
+    };
+
+    public static final String[] AIRLINE = {
+            "ACV",
+            "HVN",
+            "SAS",
+            "VJC",
+            "SGN",
+            "NCT"
     };
 }

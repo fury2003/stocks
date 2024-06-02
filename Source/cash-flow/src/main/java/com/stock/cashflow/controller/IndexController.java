@@ -51,4 +51,11 @@ public class IndexController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/trading-date")
+    public ResponseEntity<String> addTradingDate(@RequestParam String tradingDate) {
+
+        indexService.addTradingDate(tradingDate);
+        return ResponseEntity.noContent().build();
+    }
+
 }

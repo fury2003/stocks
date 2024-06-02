@@ -126,15 +126,13 @@ public class ExcelHelper {
             double foreignBuyValue = data.getForeignBuyValue();
             double foreignSellValue = data.getForeignSellValue();
 
-            if(!Objects.isNull(data.getProprietaryBuyVolume())){
-                double proprietaryBuyVolume = data.getProprietaryBuyVolume();
-                double proprietarySellVolume = data.getProprietarySellVolume();
-                double proprietaryBuyValue = data.getProprietaryBuyValue();
-                double proprietarySellValue = data.getProprietarySellValue();
+            if(!Objects.isNull(data.getProprietaryTotalNetValue())){
+                double proprietaryBuyVolume = data.getProprietaryBuyVolume() == null ? 0 : data.getProprietaryBuyVolume();
+                double proprietarySellVolume = data.getProprietarySellVolume() == null ? 0 : data.getProprietarySellVolume();;
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_BUY_VOL_COLUMN_INDEX), proprietaryBuyVolume, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_SELL_VOL_COLUMN_INDEX), proprietarySellVolume, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VOL_COLUMN_INDEX), proprietaryBuyVolume - proprietarySellVolume, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), proprietaryBuyValue - proprietarySellValue, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), data.getProprietaryTotalNetValue(), false);
             }
 
             if(!Objects.isNull(data.getBuyOrder())){
@@ -151,13 +149,13 @@ public class ExcelHelper {
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
 
-                if(buyOrder > sellOrder){
-                    String conditionFormula = "L3>M3";
-                    applyConditionalFormattingOrderBookStrongBuy(sheet, conditionFormula);
-                } else if(buyOrder < sellOrder){
-                    String conditionFormula = "L3<M3";
-                    applyConditionalFormattingOrderBookStrongSell(sheet, conditionFormula);
-                }
+//                if(buyOrder > sellOrder){
+//                    String conditionFormula = "L3>M3";
+//                    applyConditionalFormattingOrderBookStrongBuy(sheet, conditionFormula);
+//                } else if(buyOrder < sellOrder){
+//                    String conditionFormula = "L3<M3";
+//                    applyConditionalFormattingOrderBookStrongSell(sheet, conditionFormula);
+//                }
             }
 
             double totalVolume = data.getTotalVolume();
@@ -187,16 +185,14 @@ public class ExcelHelper {
         }
     }
 
-    public void writeVolatileForeignTradingToFile(String sheetName, String duration, List<ForeignTradingStatisticEntity> updatedList, boolean isTNV) {
+    public void writeVolatileForeignTradingToFile(String sheetName, String duration, List<ForeignTradingStatisticEntity> updatedList, boolean isTNV, String tradingDate) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
 
-            Instant instant = new Date().toInstant();
-            LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-            updateCellDate(workbook, row, 1, today.toString());
+            updateCellDate(workbook, row, 1, tradingDate);
             updateCellString(row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
@@ -220,16 +216,14 @@ public class ExcelHelper {
         }
     }
 
-    public void writeVolatileProprietaryTradingToFile(String sheetName, String duration, List<ProprietaryTradingStatisticEntity> updatedList, boolean isTNV) {
+    public void writeVolatileProprietaryTradingToFile(String sheetName, String duration, List<ProprietaryTradingStatisticEntity> updatedList, boolean isTNV, String tradingDate) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
 
-            Instant instant = new Date().toInstant();
-            LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-            updateCellDate(workbook, row, 1, today.toString());
+            updateCellDate(workbook, row, 1, tradingDate);
             updateCellString(row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
@@ -265,6 +259,7 @@ public class ExcelHelper {
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheet.getNetRevenue());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheet.getCogs());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheet.getGrossProfit());
+            updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_SELLING_EXPENSES_COL_IDX), incomeSheet.getSellingExpenses());
 
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INTEREST_COST_COL_IDX), incomeSheet.getInterestCost());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_INCOME_ATTRIBUTEABLE_TO_PARENT_COL_IDX), incomeSheet.getNetIncomeAttributableToParent());
@@ -339,9 +334,10 @@ public class ExcelHelper {
                     workbook.write(fileOut);
                     log.info("Cap nhat du lieu vao file Excel thanh cong.");
                 }
-            }else{
+            }
+            else{
                 log.warn("Du lieu trong balance sheet, income sheet, cash flow ko khop");
-                throw  new RuntimeException("Du lieu trong balance sheet, income sheet, cash flow ko khop");
+                throw new RuntimeException("Du lieu trong balance sheet, income sheet, cash flow ko khop");
             }
 
         }catch (IOException e) {

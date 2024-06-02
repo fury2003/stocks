@@ -31,4 +31,7 @@ public interface StockPriceRepository extends JpaSpecificationExecutor<StockPric
 
     @Query("select entity.closePrice from StockPriceEntity entity where entity.hashDate=?1")
     Long getClosedPriceByHashDate(String hashDate);
+
+    @Query("SELECT SUM(CAST(entity.percentageChange AS FLOAT)) FROM StockPriceEntity entity WHERE entity.symbol = ?1 AND entity.tradingDate >= ?2 AND entity.tradingDate <= ?3")
+    Double getMonthlyPercentageChange(String symbol, LocalDate startDate, LocalDate endDate);
 }

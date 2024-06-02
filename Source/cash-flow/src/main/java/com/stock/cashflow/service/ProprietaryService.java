@@ -11,4 +11,6 @@ public interface ProprietaryService {
     void processSSI(ProprietaryDataResponse proprietaryTextData);
 
     void processVolatileTrading(String tradingDate);
+
+    void processStatisticTrading(String tradingDate);
 }

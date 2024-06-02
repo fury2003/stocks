@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ForeignTradingRepository extends JpaSpecificationExecutor<ForeignTradingEntity>, JpaRepository<ForeignTradingEntity, Long> {
@@ -20,6 +21,9 @@ public interface ForeignTradingRepository extends JpaSpecificationExecutor<Forei
     @Query("select SUM(entity.totalNetValue) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.symbol NOT IN ('VN30', 'VNINDEX')")
     Double getForeignTotalNetValue(LocalDate tradingDate);
 
+    @Query("select SUM(entity.totalNetValue) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.symbol NOT IN ('VN30', 'VNINDEX', 'VIC', 'VHM')")
+    Double getForeignTotalNetValueExcludeVin(LocalDate tradingDate);
+
     @Query("select COUNT(entity.id) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.totalNetValue > 0")
     Integer getNumberOfBuy(LocalDate tradingDate);
 
@@ -28,4 +32,20 @@ public interface ForeignTradingRepository extends JpaSpecificationExecutor<Forei
 
     @Query("select COUNT(entity.id) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.totalNetValue = 0")
     Integer getNumberOfNoChange(LocalDate tradingDate);
+
+    @Query("select entity from ForeignTradingEntity entity where entity.tradingDate =?1 and entity.symbol not in ('VN30', 'VNINDEX')")
+    List<ForeignTradingEntity> findByTradingDate(LocalDate tradingDate);
+
+    @Query("select max(e.totalNetValue) from ForeignTradingEntity e where e.symbol =?1 and e.tradingDate between ?2 and ?3")
+    Double getMaxBuyAfterDate(String symbol, LocalDate start, LocalDate end);
+
+    @Query("select min(e.totalNetValue) from ForeignTradingEntity e where e.symbol =?1 and e.tradingDate between ?2 and ?3")
+    Double getMaxSellAfterDate(String symbol, LocalDate start, LocalDate end);
+
+    @Query("select max(e.totalNetValue) from ForeignTradingEntity e where e.symbol =?1 and e.tradingDate < ?2")
+    Double getMaxBuy(String symbol, LocalDate date);
+
+    @Query("select min(e.totalNetValue) from ForeignTradingEntity e where e.symbol =?1 and e.tradingDate < ?2")
+    Double getMaxSell(String symbol, LocalDate date);
+
 }

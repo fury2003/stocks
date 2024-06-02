@@ -89,4 +89,14 @@ public class StatisticsController {
         log.info("Ket thuc cap nhat du lieu phan tich index");
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/monthly/price-change")
+    public ResponseEntity<String> updatePriceChangeMonthly(@RequestParam String sheetName, @RequestParam String startDate, @RequestParam String endDate) {
+        log.info("Bat dau cap nhat du lieu phan tich index");
+
+        statisticsService.writePriceChangeMonthly(sheetName, startDate, endDate);
+
+        log.info("Ket thuc cap nhat du lieu phan tich index");
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -8,4 +8,6 @@ public interface ForeignService {
 
     void processVolatileTrading(String tradingDate);
 
+    void processStatisticTrading(String tradingDate);
+
 }

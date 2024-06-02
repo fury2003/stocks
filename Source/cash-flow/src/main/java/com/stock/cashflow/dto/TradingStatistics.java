@@ -18,6 +18,7 @@ public class TradingStatistics {
     private Double proprietarySellVolume;
     private Double proprietaryBuyValue;
     private Double proprietarySellValue;
+    private Double proprietaryTotalNetValue;
 
     private Integer buyOrder;
     private Integer sellOrder;

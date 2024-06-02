@@ -2,13 +2,10 @@ package com.stock.cashflow.service.impl;
 
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.constants.SymbolConstant;
-import com.stock.cashflow.dto.StockPrice;
-import com.stock.cashflow.dto.StockPriceDataResponse;
 import com.stock.cashflow.dto.Symbol;
 import com.stock.cashflow.dto.ssi.LatestPriceDTO;
 import com.stock.cashflow.dto.ssi.LatestPriceItem;
 import com.stock.cashflow.dto.ssi.LatestPriceResponse;
-import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.entity.StockPriceEntity;
 import com.stock.cashflow.persistence.repository.StockPriceRepository;
 import com.stock.cashflow.service.StockPriceService;
@@ -24,13 +21,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Service
 public class StockPriceServiceImpl implements StockPriceService {

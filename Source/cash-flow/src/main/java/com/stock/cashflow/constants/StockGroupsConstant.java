@@ -125,7 +125,8 @@ public class StockGroupsConstant {
             "HT1",
             "OIL",
             "KDC",
-            "VGI"
+            "VGI",
+            "SCS"
     };
 
     public static final String[] SMALLCAP = {
@@ -192,7 +193,12 @@ public class StockGroupsConstant {
             "TLH",
             "ACG",
             "AGG",
-            "VIP"
+            "VIP",
+            "CMG",
+            "HPX",
+            "PAT",
+            "PPC",
+            "FOX"
     };
 
 

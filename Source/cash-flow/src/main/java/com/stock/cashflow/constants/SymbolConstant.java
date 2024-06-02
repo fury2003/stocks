@@ -172,7 +172,15 @@ public class SymbolConstant {
             "AAA",
             "VIP",
             "BWE",
-            "ELC"
+            "ELC",
+            "GEE",
+            "SAB",
+            "PAT",
+            "PPC",
+            "FOX",
+            "SCS",
+            "CDN",
+            "HVN"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -370,6 +378,22 @@ public class SymbolConstant {
             "SKG",
             "TLG",
             "SJS",
-            "ELC"
+            "ELC",
+            "GEE",
+            "HPX",
+            "SAB",
+            "PAT",
+            "PPC",
+            "FOX",
+            "SCS",
+            "CDN",
+            "PVI",
+            "BIC",
+            "VNR",
+            "HVN",
+            "SGN",
+            "NCT",
+            "SAS",
+            "CMG"
     };
 }
