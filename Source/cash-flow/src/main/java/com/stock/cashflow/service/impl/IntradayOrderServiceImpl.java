@@ -214,9 +214,12 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                 entity.setSellOrder(report.get(StockConstant.SELL_ORDER));
                 entity.setBuyVolume(report.get(StockConstant.BUY_VOLUME));
                 entity.setSellVolume(report.get(StockConstant.SELL_VOLUME));
-                entity.setBigBuyOrder(report.get(StockConstant.BIG_BUY_ORDER));
-                entity.setBigSellOrder(report.get(StockConstant.BIG_SELL_ORDER));
-
+                entity.setSmallBuyOrder(report.get(StockConstant.SMALL_BUY_ORDER));
+                entity.setSmallSellOrder(report.get(StockConstant.SMALL_SELL_ORDER));
+                entity.setMediumBuyOrder(report.get(StockConstant.MEDIUM_BUY_ORDER));
+                entity.setMediumSellOrder(report.get(StockConstant.MEDIUM_SELL_ORDER));
+                entity.setLargeBuyOrder(report.get(StockConstant.LARGE_BUY_ORDER));
+                entity.setLargeSellOrder(report.get(StockConstant.LARGE_SELL_ORDER));
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(tradingDate, formatter);
                 entity.setTradingDate(date);
@@ -236,8 +239,12 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         int sellOrder = 0;
         int sellVol = 0;
 
-        int bigBuyOrder = 0;
-        int bigSellOrder = 0;
+        int smallBuyOrder = 0;
+        int smallSellOrder = 0;
+        int mediumBuyOrder = 0;
+        int mediumSellOrder = 0;
+        int largeBuyOrder = 0;
+        int largeSellOrder = 0;
 
         try (FileInputStream fis = new FileInputStream(filePath);
              Workbook workbook = new XSSFWorkbook(fis)) {
@@ -257,8 +264,14 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
                         log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
                         log.info("Gia tri giao dich: {}", value);
-                        if( value >= 100000)
-                            bigBuyOrder += 1;
+                        if(value < 100000)
+                            smallBuyOrder += 1;
+
+                        if( value >= 100000 && value < 1000000)
+                            mediumBuyOrder += 1;
+
+                        if(value > 1000000)
+                            largeBuyOrder += 1;
 
                     } if(orderCell.getStringCellValue().equals("B")){
                         sellOrder += 1;
@@ -271,8 +284,15 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
                         log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
                         log.info("Gia tri giao dich: {}", value);
-                        if( value >= 100000)
-                            bigSellOrder += 1;
+                        if(value < 100000)
+                            smallSellOrder += 1;
+
+                        if( value >= 100000 && value < 1000000)
+                            mediumSellOrder += 1;
+
+                        if(value > 1000000)
+                            largeSellOrder += 1;
+
                     }
                 }
             }
@@ -283,9 +303,12 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         report.put(StockConstant.SELL_ORDER, sellOrder);
         report.put(StockConstant.BUY_VOLUME, buyVol);
         report.put(StockConstant.SELL_VOLUME, sellVol);
-        report.put(StockConstant.BIG_BUY_ORDER, bigBuyOrder);
-        report.put(StockConstant.BIG_SELL_ORDER, bigSellOrder);
-
+        report.put(StockConstant.SMALL_BUY_ORDER, smallBuyOrder);
+        report.put(StockConstant.SMALL_SELL_ORDER, smallSellOrder);
+        report.put(StockConstant.MEDIUM_BUY_ORDER, mediumBuyOrder);
+        report.put(StockConstant.MEDIUM_SELL_ORDER, mediumSellOrder);
+        report.put(StockConstant.LARGE_BUY_ORDER, largeBuyOrder);
+        report.put(StockConstant.LARGE_SELL_ORDER, largeSellOrder);
         return report;
     }
 

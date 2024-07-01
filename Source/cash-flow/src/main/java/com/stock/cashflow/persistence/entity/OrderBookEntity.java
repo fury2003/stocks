@@ -1,10 +1,12 @@
 package com.stock.cashflow.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "order_book", schema = "vnstock")
 public class OrderBookEntity implements Serializable {
@@ -29,11 +31,23 @@ public class OrderBookEntity implements Serializable {
     @Column(name = "sell_order", nullable = false)
     private Integer sellOrder;
 
-    @Column(name = "big_buy_order", nullable = false)
-    private Integer bigBuyOrder;
+    @Column(name = "small_buy_order", nullable = false)
+    private Integer smallBuyOrder;
 
-    @Column(name = "big_sell_order", nullable = false)
-    private Integer bigSellOrder;
+    @Column(name = "small_sell_order", nullable = false)
+    private Integer smallSellOrder;
+
+    @Column(name = "medium_buy_order", nullable = false)
+    private Integer mediumBuyOrder;
+
+    @Column(name = "medium_sell_order", nullable = false)
+    private Integer mediumSellOrder;
+
+    @Column(name = "large_buy_order", nullable = false)
+    private Integer largeBuyOrder;
+
+    @Column(name = "large_sell_order", nullable = false)
+    private Integer largeSellOrder;
 
     @Column(name = "trading_date", nullable = false)
     @Temporal(TemporalType.DATE)
@@ -47,84 +61,5 @@ public class OrderBookEntity implements Serializable {
         // Default constructor
     }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public Integer getBuyVolume() {
-        return buyVolume;
-    }
-
-    public void setBuyVolume(Integer buyVolume) {
-        this.buyVolume = buyVolume;
-    }
-
-    public Integer getSellVolume() {
-        return sellVolume;
-    }
-
-    public void setSellVolume(Integer sellVolume) {
-        this.sellVolume = sellVolume;
-    }
-
-    public Integer getBuyOrder() {
-        return buyOrder;
-    }
-
-    public void setBuyOrder(Integer buyOrder) {
-        this.buyOrder = buyOrder;
-    }
-
-    public Integer getSellOrder() {
-        return sellOrder;
-    }
-
-    public void setSellOrder(Integer sellOrder) {
-        this.sellOrder = sellOrder;
-    }
-
-    public LocalDate getTradingDate() {
-        return tradingDate;
-    }
-
-    public void setTradingDate(LocalDate tradingDate) {
-        this.tradingDate = tradingDate;
-    }
-
-    public String getHashDate() {
-        return hashDate;
-    }
-
-    public void setHashDate(String hashDate) {
-        this.hashDate = hashDate;
-    }
-
-    public Integer getBigBuyOrder() {
-        return bigBuyOrder;
-    }
-
-    public void setBigBuyOrder(Integer bigBuyOrder) {
-        this.bigBuyOrder = bigBuyOrder;
-    }
-
-    public Integer getBigSellOrder() {
-        return bigSellOrder;
-    }
-
-    public void setBigSellOrder(Integer bigSellOrder) {
-        this.bigSellOrder = bigSellOrder;
-    }
 }

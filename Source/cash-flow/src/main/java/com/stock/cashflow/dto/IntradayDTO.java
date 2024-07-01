@@ -10,6 +10,7 @@ public class IntradayDTO {
     private Integer vnindexUp;
     private Integer vnindexNoChange;
     private Integer vnindexDown;
+    private Double mfi;
 
     private String vn30PercentageChange;
     private Integer vn30Up;

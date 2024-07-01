@@ -1,12 +1,14 @@
 package com.stock.cashflow.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "proprietary_trading", schema = "vnstock")
+@Data
 public class ProprietaryTradingEntity implements Serializable {
 
     @Id
@@ -39,83 +41,15 @@ public class ProprietaryTradingEntity implements Serializable {
     @Column(name = "hash_date", length = 255, nullable = false)
     private String hashDate;
 
-    // Constructors, getters, and setters
+    @Transient
+    private boolean biggest6M;
 
-    // Constructors
-    public ProprietaryTradingEntity() {
-        // Default constructor
-    }
+    @Transient
+    private boolean biggestATH;
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+    @Transient
+    private boolean smallest6M;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public Double getBuyVolume() {
-        return buyVolume;
-    }
-
-    public void setBuyVolume(Double buyVolume) {
-        this.buyVolume = buyVolume;
-    }
-
-    public Double getSellVolume() {
-        return sellVolume;
-    }
-
-    public void setSellVolume(Double sellVolume) {
-        this.sellVolume = sellVolume;
-    }
-
-    public Double getBuyValue() {
-        return buyValue;
-    }
-
-    public void setBuyValue(Double buyValue) {
-        this.buyValue = buyValue;
-    }
-
-    public Double getSellValue() {
-        return sellValue;
-    }
-
-    public void setSellValue(Double sellValue) {
-        this.sellValue = sellValue;
-    }
-
-    public LocalDate getTradingDate() {
-        return tradingDate;
-    }
-
-    public void setTradingDate(LocalDate tradingDate) {
-        this.tradingDate = tradingDate;
-    }
-
-    public String getHashDate() {
-        return hashDate;
-    }
-
-    public void setHashDate(String hashDate) {
-        this.hashDate = hashDate;
-    }
-
-    public Double getTotalNetValue() {
-        return totalNetValue;
-    }
-
-    public void setTotalNetValue(Double totalNetValue) {
-        this.totalNetValue = totalNetValue;
-    }
+    @Transient
+    private boolean smallestATH;
 }

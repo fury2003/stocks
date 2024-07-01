@@ -22,7 +22,7 @@ public class IndustryConstant {
             "AGG",
             "TCH",
             "SJS",
-            "DXS"
+            "QCG"
     };
 
     public static final String[] STOCKS = {
@@ -38,7 +38,8 @@ public class IndustryConstant {
             "ORS",
             "VDS",
             "MBS",
-            "AGR"
+            "AGR",
+            "TVS"
     };
 
     public static final String[] BANKS = {
@@ -49,17 +50,17 @@ public class IndustryConstant {
             "ACB",
             "VIB",
             "TPB",
-//            "EIB",
+            "EIB",
             "SHB",
             "MBB",
-            "BID",
             "MSB",
             "VPB",
             "HDB",
             "LPB",
             "OCB",
             "BID",
-            "NAB"
+            "NAB",
+            "TIG"
     };
 
     public static final String[] BDS_KCN = {
@@ -74,7 +75,8 @@ public class IndustryConstant {
             "VGC",
             "GVR",
             "BCM",
-            "IJC"
+            "IJC",
+            "ITA"
     };
 
     public static final String[] RETAIL = {
@@ -116,7 +118,8 @@ public class IndustryConstant {
             "IDI",
             "FMC",
             "ACL",
-            "MPC"
+            "MPC",
+            "CMX"
     };
 
     public static final String[] CONSTRUCTION = {
@@ -128,12 +131,12 @@ public class IndustryConstant {
             "DTD",
             "HBC",
             "CII",
-            "THG",
             "CTR",
             "DPG",
             "PC1",
             "TV2",
-            "LCG"
+            "LCG",
+            "HUT"
     };
 
     public static final String[] LOGISTICS = {
@@ -145,10 +148,12 @@ public class IndustryConstant {
             "DVP",
             "SGP",
             "VTP",
-            "CDN"
+            "CDN",
+            "VIP",
+            "TOS"
     };
 
-    public static final String[] CHEMISTRY_FERTILIZER_PLASTIC = {
+    public static final String[] CHEMISTRY_FERTILIZER = {
             "DGC",
             "CSV",
             "DDV",
@@ -156,22 +161,21 @@ public class IndustryConstant {
             "DPM",
             "BFC",
             "LAS",
-            "BMP",
-            "NTP",
-            "AAA",
             "PAT"
     };
+
 
     public static final String[] ELECTRIC = {
             "NT2",
             "QTP",
             "REE",
-            "GEX",
+//            "GEX",
             "GEG",
             "EVF",
             "GEE",
             "PPC",
-            "BCG"
+            "BCG",
+            "POW"
     };
 
     public static final String[] OIL_GAS = {
@@ -183,7 +187,8 @@ public class IndustryConstant {
             "PVB",
             "GAS",
             "PVC",
-            "PSH"
+            "PSH",
+            "CNG"
     };
 
     public static final String[] METARIALS = {
@@ -192,7 +197,10 @@ public class IndustryConstant {
             "HT1",
             "DHA",
             "NNC",
-            "BCC"
+            "BCC",
+            "ACC",
+            "THG",
+            "PLC"
     };
 
     public static final String[] WOOD = {
@@ -200,7 +208,8 @@ public class IndustryConstant {
             "GDT",
             "VCS",
             "TTF",
-            "ACG"
+            "ACG",
+            "GTA"
     };
 
     public static final String[] ANIMALS = {
@@ -224,6 +233,46 @@ public class IndustryConstant {
             "SAS",
             "VJC",
             "SGN",
-            "NCT"
+            "NCT",
+            "SCS"
+    };
+
+    public static final String[] PLASTIC = {
+            "BMP",
+            "NTP",
+            "AAA",
+            "DNP",
+            "DAG",
+            "APH"
+    };
+
+    public static final String[] TECH = {
+            "FPT",
+            "CMG",
+            "ELC",
+            "FOX",
+            "VGI",
+            "ST8"
+    };
+
+    public static final String[] RUBBER = {
+            "DRC",
+            "DRI",
+            "GVR",
+            "CSM",
+            "BRC",
+            "SRC"
+    };
+
+    public static final String[] PHARMACEUTICAL = {
+            "DHG",
+            "DBD",
+            "DBT",
+            "DMC",
+            "IMP",
+            "DCL",
+            "TRA",
+            "TNH",
+            "AMV"
     };
 }

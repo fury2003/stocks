@@ -99,4 +99,24 @@ public class StatisticsController {
         log.info("Ket thuc cap nhat du lieu phan tich index");
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/all/highlight-orderbook")
+    public ResponseEntity<String> highlightOrderBook(@RequestParam String tradingDate) {
+        log.info("Bat dau ghi du lieu cho tat ca ma chung khoan");
+
+        statisticsService.highlightOrderBook(tradingDate);
+
+        log.info("Ket thuc xu ly cho ma chung khoan");
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/top-buy-sell")
+    public ResponseEntity<String> writeTopBuySell(@RequestParam String tradingDate) {
+        log.info("Bat dau ghi du lieu thong khe mua ban");
+
+        statisticsService.writeTopBuySell(tradingDate);
+
+        log.info("Ket thuc ghi du lieu thong khe mua ban");
+        return ResponseEntity.noContent().build();
+    }
 }

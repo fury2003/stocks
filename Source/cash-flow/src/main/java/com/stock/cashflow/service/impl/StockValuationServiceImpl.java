@@ -219,7 +219,7 @@ public class StockValuationServiceImpl implements StockValuationService {
             Sheet sheet = workbook.getSheet(year);
             excelHelper.insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
-            excelHelper.updateCellString(row, 1, symbol);
+            excelHelper.updateCellString(workbook, row, 1, symbol);
             excelHelper.updateCellLong(workbook, row, 2, vg.longValue());
             excelHelper.updateCellLong(workbook, row, 3, vcsh.longValue());
             excelHelper.updateCellLong(workbook, row, 4, slcp.longValue());
@@ -276,7 +276,7 @@ public class StockValuationServiceImpl implements StockValuationService {
             Sheet sheet = workbook.getSheet(year);
             excelHelper.insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
-            excelHelper.updateCellString(row, 1, ticker);
+            excelHelper.updateCellString(workbook, row, 1, ticker);
             excelHelper.updateCellLong(workbook, row, 2, vg.longValue());
             excelHelper.updateCellLong(workbook, row, 3, vcsh.longValue());
             excelHelper.updateCellLong(workbook, row, 4, slcp.longValue());

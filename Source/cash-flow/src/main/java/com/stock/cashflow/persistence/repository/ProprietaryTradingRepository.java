@@ -1,5 +1,6 @@
 package com.stock.cashflow.persistence.repository;
 
+import com.stock.cashflow.persistence.entity.ForeignTradingEntity;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -12,7 +13,10 @@ import java.util.List;
 @Repository
 public interface ProprietaryTradingRepository extends JpaSpecificationExecutor<ProprietaryTradingEntity>, JpaRepository<ProprietaryTradingEntity, Long> {
 
-    @Query("select entity from ProprietaryTradingEntity entity where entity.hashDate =?1")
+    @Query("select e from ProprietaryTradingEntity e where e.tradingDate =?1 and e.symbol=?2")
+    ProprietaryTradingEntity findByTradingDateAndSymbol(LocalDate tradingDate, String symbol);
+
+    @Query("select e from ProprietaryTradingEntity e where e.hashDate =?1")
     ProprietaryTradingEntity findProprietaryTradingEntitiesByHashDate(String hashDate);
 
     @Query("select SUM(entity.totalNetValue) from ProprietaryTradingEntity entity where entity.tradingDate =?1")
@@ -42,5 +46,10 @@ public interface ProprietaryTradingRepository extends JpaSpecificationExecutor<P
     @Query("select min(e.totalNetValue) from ProprietaryTradingEntity e where e.symbol =?1 and e.tradingDate <= ?2")
     Double getMaxSell(String symbol, LocalDate date);
 
+    @Query("select e from ProprietaryTradingEntity e where e.tradingDate = ?1 order by e.totalNetValue desc limit 10")
+    List<ProprietaryTradingEntity> getTop10ProprietaryBuy(LocalDate date);
+
+    @Query("select e from ProprietaryTradingEntity e where e.tradingDate = ?1 order by e.totalNetValue asc limit 10")
+    List<ProprietaryTradingEntity> getTop10ProprietarySell(LocalDate date);
 
 }

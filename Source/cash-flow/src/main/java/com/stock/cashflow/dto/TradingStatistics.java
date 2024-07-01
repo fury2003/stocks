@@ -22,8 +22,10 @@ public class TradingStatistics {
 
     private Integer buyOrder;
     private Integer sellOrder;
-    private Integer bigBuyOrder;
-    private Integer bigSellOrder;
+    private Integer mediumBuyOrder;
+    private Integer mediumSellOrder;
+    private Integer largeBuyOrder;
+    private Integer largeSellOrder;
     private Integer buyOrderVolume;
     private Integer sellOrderVolume;
 

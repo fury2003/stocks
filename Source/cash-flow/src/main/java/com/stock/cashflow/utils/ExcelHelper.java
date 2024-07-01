@@ -138,14 +138,18 @@ public class ExcelHelper {
             if(!Objects.isNull(data.getBuyOrder())){
                 double buyOrder = data.getBuyOrder();
                 double sellOrder = data.getSellOrder();
-                double bigBuyOrderVol = data.getBigBuyOrder();
-                double bigSellOrderVol = data.getBigSellOrder();
+                double mediumBuyOrderVol = data.getMediumBuyOrder();
+                double mediumSellOrderVol = data.getMediumSellOrder();
+                double largeBuyOrderVol = data.getLargeBuyOrder();
+                double largeSellOrderVol = data.getLargeSellOrder();
                 double buyOrderVol = data.getBuyOrderVolume();
                 double sellOrderVol = data.getSellOrderVolume();
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX), buyOrder, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX), sellOrder, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX), bigBuyOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX), bigSellOrderVol, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_BUY_ORDER_COLUMN_INDEX), mediumBuyOrderVol, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_SELL_ORDER_COLUMN_INDEX), mediumSellOrderVol, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_BUY_ORDER_COLUMN_INDEX), mediumBuyOrderVol, false);
+                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_SELL_ORDER_COLUMN_INDEX), mediumSellOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
 
@@ -193,14 +197,14 @@ public class ExcelHelper {
             Row row = sheet.getRow(1);
 
             updateCellDate(workbook, row, 1, tradingDate);
-            updateCellString(row, 2, duration);
+            updateCellString(workbook, row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
                 if(isTNV){
-                    Double tnv = sheetName.equals(StockConstant.VOLATILE_FOREIGN_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
+                    Double tnv = sheetName.equals(StockConstant.STATISTIC_FOREIGN_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
                     updateCellDouble(workbook, row, i+3, tnv, false);
                 }else {
-                    updateCellString(row, i+3, updatedList.get(i).getSymbol());
+                    updateCellString(workbook, row, i+3, updatedList.get(i).getSymbol());
                 }
             }
 
@@ -224,14 +228,14 @@ public class ExcelHelper {
             Row row = sheet.getRow(1);
 
             updateCellDate(workbook, row, 1, tradingDate);
-            updateCellString(row, 2, duration);
+            updateCellString(workbook, row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
                 if(isTNV){
-                    Double tnv = sheetName.equals(StockConstant.VOLATILE_PROPRIETARY_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
+                    Double tnv = sheetName.equals(StockConstant.STATISTIC_PROPRIETARY_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
                     updateCellDouble(workbook, row, i+3, tnv, false);
                 }else {
-                    updateCellString(row, i+3, updatedList.get(i).getSymbol());
+                    updateCellString(workbook, row, i+3, updatedList.get(i).getSymbol());
                 }
             }
 
@@ -255,7 +259,7 @@ public class ExcelHelper {
             Row row = sheet.getRow(fsBeginRowIndex);
             log.info("Mo file va insert dong moi thanh cong");
 
-            updateCellString(row, getExcelColumnIndex(FSConstant.FS_QUARTER_COL_IDX), balanceSheet.getQuarter());
+            updateCellString(workbook, row, getExcelColumnIndex(FSConstant.FS_QUARTER_COL_IDX), balanceSheet.getQuarter());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheet.getNetRevenue());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheet.getCogs());
             updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheet.getGrossProfit());
@@ -299,7 +303,7 @@ public class ExcelHelper {
                 for (int i = 0; i < balanceSheets.size(); i++) {
                     insertNewRow(sheet, fsBeginRowIndex);
                     Row row = sheet.getRow(fsBeginRowIndex);
-                    updateCellString(row, getExcelColumnIndex(FSConstant.FS_QUARTER_COL_IDX), balanceSheets.get(i).getQuarter());
+                    updateCellString(workbook, row, getExcelColumnIndex(FSConstant.FS_QUARTER_COL_IDX), balanceSheets.get(i).getQuarter());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_NET_REVENUE_COL_IDX), incomeSheets.get(i).getNetRevenue());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_COGS_COL_IDX), incomeSheets.get(i).getCogs());
                     updateCellLong(workbook, row, getExcelColumnIndex(FSConstant.FS_GROSS_PROFIT_COL_IDX), incomeSheets.get(i).getGrossProfit());
@@ -409,27 +413,6 @@ public class ExcelHelper {
 
     }
 
-    public static void updateCellPercentage(Workbook workbook, Row row, int columnIndex, Double value, int color) {
-        Cell cell = row.getCell(columnIndex - 1);
-        if (cell == null) {
-            cell = row.createCell(columnIndex - 1);
-        }
-
-        CellStyle percentageStyle = workbook.createCellStyle();
-        percentageStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
-        cell.setCellValue(value);
-
-        if(color == 1){
-            percentageStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-        } else if(color == 2){
-            percentageStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
-        }
-
-        percentageStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cell.setCellStyle(percentageStyle);
-
-    }
-
     public static void updateCellDouble(Workbook workbook, Row row, int columnIndex, Double value, boolean isPercentage) {
         Cell cell = row.getCell(columnIndex - 1);
         if (cell == null) {
@@ -449,30 +432,6 @@ public class ExcelHelper {
         numberStyle.setDataFormat(format.getFormat("#,##0"));
         cell.setCellValue(value);
         cell.setCellStyle(numberStyle);
-    }
-
-    public static void applyConditionalFormattingOrderBookStrongBuy(Sheet sheet, String conditionFormula) {
-        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.GT, conditionFormula, null);
-
-        PatternFormatting fillFmt = rule.createPatternFormatting();
-        fillFmt.setFillBackgroundColor(IndexedColors.GREEN.index);
-        fillFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
-
-        CellRangeAddress[] order = { CellRangeAddress.valueOf("L3"), CellRangeAddress.valueOf("M3") };
-        sheetCF.addConditionalFormatting(order, rule);
-    }
-
-    public static void applyConditionalFormattingOrderBookStrongSell(Sheet sheet, String conditionFormula) {
-        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        ConditionalFormattingRule rule = sheetCF.createConditionalFormattingRule(ComparisonOperator.LT, conditionFormula, null);
-
-        PatternFormatting fillFmt = rule.createPatternFormatting();
-        fillFmt.setFillBackgroundColor(IndexedColors.RED.index);
-        fillFmt.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
-
-        CellRangeAddress[] order = { CellRangeAddress.valueOf("L3"), CellRangeAddress.valueOf("M3") };
-        sheetCF.addConditionalFormatting(order, rule);
     }
 
     public static void updateCellInt(Workbook workbook, Row row, int columnIndex, int value) {
@@ -501,13 +460,17 @@ public class ExcelHelper {
         cell.setCellStyle(numberStyle);
     }
 
-    public static void updateCellString(Row row, int columnIndex, String value) {
+    public static void updateCellString(Workbook workbook, Row row, int columnIndex, String value) {
         Cell cell = row.getCell(columnIndex - 1);
         if (cell == null) {
             cell = row.createCell(columnIndex - 1);
         }
 
+        CellStyle cellstyle = workbook.createCellStyle();
+        cellstyle.setAlignment(HorizontalAlignment.RIGHT);
+
         cell.setCellValue(value);
+        cell.setCellStyle(cellstyle);
     }
 
     public static void updateCellDate(Workbook workbook, Row row, int columnIndex, String value) {
@@ -534,5 +497,183 @@ public class ExcelHelper {
         }
         cell.setCellStyle(dateStyle);
 
+    }
+
+    public static void highlightOrderBook(Workbook workbook, Row row, int colIndex, boolean color){
+        Cell cell = row.getCell(colIndex-1);
+        short backgroundIdx = color ? IndexedColors.GREEN.getIndex() : IndexedColors.RED.getIndex();
+
+        CellStyle cellstyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setColor(backgroundIdx);
+        cellstyle.setFont(font);
+        cell.setCellStyle(cellstyle);
+    }
+
+    public void writeTopBuySellToFile(String sheetName, List<?> buyList, List<?> sellList, boolean isTNV, String tradingDate) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+
+            updateCellDate(workbook, row, 1, tradingDate);
+
+            if(isTNV){
+                // write tnv buy
+                for (int i = 0; i < buyList.size(); i++) {
+                    if (buyList.get(i) instanceof ForeignTradingEntity) {
+                        ForeignTradingEntity entity = (ForeignTradingEntity) buyList.get(i);
+                        updateCellDouble(workbook, row, i+2, entity.getTotalNetValue(), false);
+                    }
+
+                    if (buyList.get(i) instanceof ProprietaryTradingEntity) {
+                        ProprietaryTradingEntity entity = (ProprietaryTradingEntity) buyList.get(i);
+                        updateCellDouble(workbook, row, i+2, entity.getTotalNetValue(), false);
+                    }
+                }
+
+                // write tnv sell
+                for (int i = 0; i < sellList.size(); i++) {
+                    if (sellList.get(i) instanceof ForeignTradingEntity) {
+                        ForeignTradingEntity entity = (ForeignTradingEntity) sellList.get(i);
+                        updateCellDouble(workbook, row, i+13, entity.getTotalNetValue(), false);
+
+                    }
+
+                    if (sellList.get(i) instanceof ProprietaryTradingEntity) {
+                        ProprietaryTradingEntity entity = (ProprietaryTradingEntity) sellList.get(i);
+                        updateCellDouble(workbook, row, i+13, entity.getTotalNetValue(), false);
+
+                    }
+                }
+            }else {
+                // write symbol buy
+                for (int i = 0; i < buyList.size(); i++) {
+                    if (buyList.get(i) instanceof ForeignTradingEntity entity) {
+                        updateCellString(workbook, row, i+2, entity.getSymbol());
+                    }
+
+                    if (sellList.get(i) instanceof ForeignTradingEntity entity) {
+                        updateCellString(workbook, row, i+13, entity.getSymbol());
+                    }
+                }
+
+                // write symbol sell
+                for (int i = 0; i < sellList.size(); i++) {
+                    if (buyList.get(i) instanceof ProprietaryTradingEntity entity) {
+                        updateCellString(workbook, row, i+2, entity.getSymbol());
+                    }
+
+                    if (sellList.get(i) instanceof ProprietaryTradingEntity entity) {
+                        updateCellString(workbook, row, i+13, entity.getSymbol());
+                    }
+                }
+            }
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public void highlightTopBuySell(String sheetName, List<?> buyList, List<?> sellList) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            Row rowMCK = sheet.getRow(1);
+
+            // merge trading_date
+            sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
+
+
+            for (int i = 0; i < buyList.size(); i++) {
+                CellStyle cellstyle = workbook.createCellStyle();
+                cellstyle.setAlignment(HorizontalAlignment.RIGHT);
+
+                Cell buyCell = rowMCK.getCell(i+1);
+                buyCell.setCellStyle(cellstyle);
+                Cell sellCell = rowMCK.getCell(i+12);
+                sellCell.setCellStyle(cellstyle);
+            }
+
+            Row rowTNV = sheet.getRow(2);
+
+            // highlight buy
+            for (int i = 0; i < buyList.size(); i++) {
+                if (buyList.get(i) instanceof ForeignTradingEntity) {
+                    ForeignTradingEntity entity = (ForeignTradingEntity) buyList.get(i);
+                    if(entity.isBiggestATH()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.VIOLET.getIndex());
+                    } else if(entity.isBiggest6M()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.GREEN.getIndex());
+                    }
+                }
+
+                if (buyList.get(i) instanceof ProprietaryTradingEntity) {
+                    ProprietaryTradingEntity entity = (ProprietaryTradingEntity) buyList.get(i);
+                    if(entity.isBiggestATH()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.VIOLET.getIndex());
+                    } else if(entity.isBiggest6M()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.GREEN.getIndex());
+                    }
+                }
+            }
+
+            // highlight sell
+            for (int i = 0; i < sellList.size(); i++) {
+                if (sellList.get(i) instanceof ForeignTradingEntity) {
+                    ForeignTradingEntity entity = (ForeignTradingEntity) sellList.get(i);
+                    if(entity.isSmallestATH()){
+                        Cell cell = rowTNV.getCell(i+12);
+                        highLightNumber(workbook, cell, IndexedColors.TEAL.getIndex());
+                    } else if(entity.isSmallest6M()){
+                        Cell cell = rowTNV.getCell(i+12);
+                        highLightNumber(workbook, cell, IndexedColors.RED.getIndex());
+                    }
+                }
+
+                if (sellList.get(i) instanceof ProprietaryTradingEntity) {
+                    ProprietaryTradingEntity entity = (ProprietaryTradingEntity) sellList.get(i);
+                    if(entity.isSmallestATH()){
+                        Cell cell = rowTNV.getCell(i+12);
+                        highLightNumber(workbook, cell, IndexedColors.TEAL.getIndex());
+                    } else if(entity.isSmallest6M()){
+                        Cell cell = rowTNV.getCell(i+12);
+                        highLightNumber(workbook, cell, IndexedColors.RED.getIndex());
+                    }
+                }
+            }
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    void highLightNumber(Workbook workbook, Cell cell, short color){
+        CellStyle cellstyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setColor(color);
+        cellstyle.setFont(font);
+        DataFormat format = workbook.createDataFormat();
+        cellstyle.setDataFormat(format.getFormat("#,##0"));
+        cell.setCellStyle(cellstyle);
     }
 }

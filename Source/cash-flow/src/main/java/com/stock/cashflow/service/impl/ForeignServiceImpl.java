@@ -134,44 +134,44 @@ public class ForeignServiceImpl implements ForeignService {
         LocalDate date = LocalDate.parse(tradingDate);
         List<ForeignTradingStatisticEntity> high1MBuyList = foreignTradingStatisticRepository.findByOneMonthHighestBuyTradingDateOrderByOneMonthHighestBuyValueDesc(date);
         if(high1MBuyList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_BUY, "", high1MBuyList, true, tradingDate);
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_BUY, "1M", high1MBuyList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_BUY, "", high1MBuyList, true, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_BUY, "1M", high1MBuyList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high3MBuyList = foreignTradingStatisticRepository.findByThreeMonthsHighestBuyTradingDateOrderByThreeMonthsHighestBuyValueDesc(date);
         if(high3MBuyList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_BUY, "3M", high3MBuyList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_BUY, "3M", high3MBuyList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high6MBuyList = foreignTradingStatisticRepository.findBySixMonthsHighestBuyTradingDateOrderBySixMonthsHighestBuyValueDesc(date);
         if(high6MBuyList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_BUY, "6M", high6MBuyList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_BUY, "6M", high6MBuyList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high12MBuyList = foreignTradingStatisticRepository.findByTwelveMonthsHighestBuyTradingDateOrderByTwelveMonthsHighestBuyValueDesc(date);
         if(high12MBuyList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_BUY, "12M", high12MBuyList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_BUY, "12M", high12MBuyList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high1MSellList = foreignTradingStatisticRepository.findByOneMonthHighestSellTradingDateOrderByOneMonthHighestSellValueAsc(date);
         if(high1MSellList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_SELL, "", high1MSellList, true, tradingDate);
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_SELL, "1M", high1MSellList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_SELL, "", high1MSellList, true, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_SELL, "1M", high1MSellList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high3MSellList = foreignTradingStatisticRepository.findByThreeMonthsHighestSellTradingDateOrderByThreeMonthsHighestSellValueAsc(date);
         if(high3MSellList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_SELL, "3M", high3MSellList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_SELL, "3M", high3MSellList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high6MSellList = foreignTradingStatisticRepository.findBySixMonthsHighestSellTradingDateOrderBySixMonthsHighestSellValueAsc(date);
         if(high6MSellList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_SELL, "6M", high6MSellList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_SELL, "6M", high6MSellList, false, tradingDate);
         }
 
         List<ForeignTradingStatisticEntity> high12MSellList = foreignTradingStatisticRepository.findByTwelveMonthsHighestSellTradingDateOrderByTwelveMonthsHighestSellValueAsc(date);
         if(high12MSellList.size() > 0){
-            excelHelper.writeVolatileForeignTradingToFile(StockConstant.VOLATILE_FOREIGN_SELL, "12M", high12MSellList, false, tradingDate);
+            excelHelper.writeVolatileForeignTradingToFile(StockConstant.STATISTIC_FOREIGN_SELL, "12M", high12MSellList, false, tradingDate);
         }
     }
 

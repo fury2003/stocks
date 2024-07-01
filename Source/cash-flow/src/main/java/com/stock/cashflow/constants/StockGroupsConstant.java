@@ -31,7 +31,8 @@ public class StockGroupsConstant {
             "SHB",
             "MSB",
             "BVH",
-            "VJC"
+            "VJC",
+            "HDB"
     };
 
     public static final String[] MIDCAP_NO_BANK = {
@@ -126,20 +127,22 @@ public class StockGroupsConstant {
             "OIL",
             "KDC",
             "VGI",
-            "SCS"
+            "SCS",
+            "CSV",
+            "MCH",
+            "FMC",
+            "HAX",
+            "GIL"
     };
 
     public static final String[] SMALLCAP = {
             "VGT",
             "ADS",
-            "GIL",
-            "CSV",
             "DDV",
             "LAS",
             "BFC",
             "VLB",
             "DHA",
-            "FMC",
             "IDI",
             "VOS",
             "VDS",
@@ -152,14 +155,12 @@ public class StockGroupsConstant {
             "VGS",
             "POM",
             "BCG",
-            "HAX",
             "MIG",
             "HQC",
             "AAA",
             "SCR",
             "DXS",
             "HBC",
-            "HAX",
             "LHG",
             "ACL",
             "TTF",
@@ -198,7 +199,18 @@ public class StockGroupsConstant {
             "HPX",
             "PAT",
             "PPC",
-            "FOX"
+            "FOX",
+            "VNR",
+            "GEE",
+            "CDN",
+            "BIC",
+            "PVI",
+            "ELC",
+            "DAG",
+            "TVS",
+            "DNP",
+            "ST8",
+            "TCM"
     };
 
 

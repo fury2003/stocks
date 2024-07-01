@@ -18,4 +18,8 @@ public interface StatisticsService {
 
     void writePriceChangeMonthly(String sheetName, String startDate, String endDate);
 
+    void highlightOrderBook(String tradingDate);
+
+    void writeTopBuySell(String tradingDate);
+
 }

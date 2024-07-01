@@ -6,6 +6,7 @@ import com.stock.cashflow.constants.SymbolConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingEntity;
 import com.stock.cashflow.persistence.entity.ProprietaryTradingStatisticEntity;
+import com.stock.cashflow.persistence.entity.TradingDateEntity;
 import com.stock.cashflow.persistence.repository.ProprietaryTradingRepository;
 import com.stock.cashflow.persistence.repository.ProprietaryTradingStatisticRepository;
 import com.stock.cashflow.persistence.repository.TradingDateRepository;
@@ -15,6 +16,7 @@ import com.stock.cashflow.utils.ExcelHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,7 +65,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
     }
 
     public static void main(String[] args) {
-        String hashDate = DigestUtils.sha256Hex("2024-03-12" + "VCG");
+        String hashDate = DigestUtils.sha256Hex("2024-06-12" + "CMX");
         log.info(hashDate);
     }
 
@@ -99,7 +98,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                     filterTrades.forEach(symbol -> {
                         LocalDate tradingDate = DateHelper.getCurrentLocalDate();
                         String hashDate = DigestUtils.sha256Hex(tradingDate.toString() + symbol.getSymbol());
-                        ProprietaryTradingEntity entity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
+                        ProprietaryTradingEntity entity = proprietaryTradingRepository.findByTradingDateAndSymbol(tradingDate, symbol.getSymbol());
                         if(Objects.isNull(entity)){
                             ProprietaryTradingEntity newEntity = new ProprietaryTradingEntity();
                             newEntity.setSymbol(symbol.getSymbol());
@@ -186,8 +185,8 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                 log.info("Luu thong tin giao dich tu doanh cua ma {} cho ngay {}", sym.getTicker(), sym.getFromDate());
                 Instant instant = sym.getToDate().toInstant();
                 LocalDate today = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-                String hashDate = today.toString() + sym.getOrganCode();
-                ProprietaryTradingEntity checkSaved = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
+//                String hashDate = today.toString() + sym.getOrganCode();
+                ProprietaryTradingEntity checkSaved = proprietaryTradingRepository.findByTradingDateAndSymbol(today, sym.getOrganCode());
                 if(checkSaved == null){
                     ProprietaryTradingEntity entity = sym.convertToEntity();
                     proprietaryTradingRepository.save(entity);
@@ -204,44 +203,44 @@ public class ProprietaryServiceImpl implements ProprietaryService {
         LocalDate date = LocalDate.parse(tradingDate);
         List<ProprietaryTradingStatisticEntity> high1MBuyList = proprietaryTradingStatisticRepository.findByOneMonthHighestBuyTradingDateOrderByOneMonthHighestBuyValueDesc(date);
         if(high1MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "", high1MBuyList, true, tradingDate);
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "1M", high1MBuyList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_BUY, "", high1MBuyList, true, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_BUY, "1M", high1MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high3MBuyList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestBuyTradingDateOrderByThreeMonthsHighestBuyValueDesc(date);
         if(high3MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "3M", high3MBuyList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_BUY, "3M", high3MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high6MBuyList = proprietaryTradingStatisticRepository.findBySixMonthsHighestBuyTradingDateOrderBySixMonthsHighestBuyValueDesc(date);
         if(high6MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "6M", high6MBuyList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_BUY, "6M", high6MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high12MBuyList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestBuyTradingDateOrderByTwelveMonthsHighestBuyValueDesc(date);
         if(high12MBuyList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_BUY, "12M", high12MBuyList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_BUY, "12M", high12MBuyList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high1MSellList = proprietaryTradingStatisticRepository.findByOneMonthHighestSellTradingDateOrderByOneMonthHighestSellValueAsc(date);
         if(high1MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "", high1MSellList, true, tradingDate);
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "1M", high1MSellList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_SELL, "", high1MSellList, true, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_SELL, "1M", high1MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high3MSellList = proprietaryTradingStatisticRepository.findByThreeMonthsHighestSellTradingDateOrderByThreeMonthsHighestSellValueAsc(date);
         if(high3MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "3M", high3MSellList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_SELL, "3M", high3MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high6MSellList = proprietaryTradingStatisticRepository.findBySixMonthsHighestSellTradingDateOrderBySixMonthsHighestSellValueAsc(date);
         if(high6MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "6M", high6MSellList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_SELL, "6M", high6MSellList, false, tradingDate);
         }
 
         List<ProprietaryTradingStatisticEntity> high12MSellList = proprietaryTradingStatisticRepository.findByTwelveMonthsHighestSellTradingDateOrderByTwelveMonthsHighestSellValueAsc(date);
         if(high12MSellList.size() > 0){
-            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.VOLATILE_PROPRIETARY_SELL, "12M", high12MSellList, false, tradingDate);
+            excelHelper.writeVolatileProprietaryTradingToFile(StockConstant.STATISTIC_PROPRIETARY_SELL, "12M", high12MSellList, false, tradingDate);
         }
     }
 
@@ -258,7 +257,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
 //        Long idOf3MonthAgo = tradingDateRepository.getIdOfThreeMonthAgo();
         LocalDate dateOf3MonthAgo = tradingDateRepository.getTradingDateById(id-66);
 //        Long idOf6MonthAgo = tradingDateRepository.getIdOfSixMonthAgo();
-//        LocalDate dateOf6MonthAgo = tradingDateRepository.getTradingDateById(idOf6MonthAgo);
+        LocalDate dateOf6MonthAgo = tradingDateRepository.getTradingDateById(id-132);
 //        Long idOf12MonthAgo = tradingDateRepository.getIdOfOneYearAgo();
 //        LocalDate dateOf12MonthAgo = tradingDateRepository.getTradingDateById(idOf12MonthAgo);
 
@@ -285,11 +284,11 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                     statisticEntity.setThreeMonthsHighestBuyTradingDate(date);
                     log.info("Save highest buy of {} in 3 month", symbol);
 
-//                    Double max6Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf6MonthAgo, yesterday);
-//                    if(tnv > max6Month){
-//                        statisticEntity.setSixMonthsHighestBuyValue(tnv);
-//                        statisticEntity.setSixMonthsHighestBuyTradingDate(date);
-//                        log.info("Save highest buy of {} in 6 month", symbol);
+                    Double max6Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf6MonthAgo, yesterday);
+                    if(tnv > max6Month){
+                        statisticEntity.setSixMonthsHighestBuyValue(tnv);
+                        statisticEntity.setSixMonthsHighestBuyTradingDate(date);
+                        log.info("Save highest buy of {} in 6 month", symbol);
 //
 //                        Double max12Month = proprietaryTradingRepository.getMaxBuyAfterDate(symbol, dateOf12MonthAgo, yesterday);
 //                        if(tnv > max12Month){
@@ -303,7 +302,7 @@ public class ProprietaryServiceImpl implements ProprietaryService {
                                 statisticEntity.setHighestBuyTradingDate(date);
                                 log.info("Save highest buy of {}", symbol);
                             }
-//                        }
+                        }
 //                    }
                 }
                 proprietaryTradingStatisticRepository.save(statisticEntity);
@@ -353,4 +352,5 @@ public class ProprietaryServiceImpl implements ProprietaryService {
         }
         log.info("Complete statistic");
     }
+
 }

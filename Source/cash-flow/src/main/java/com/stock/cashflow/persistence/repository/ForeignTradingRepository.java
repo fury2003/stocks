@@ -21,7 +21,7 @@ public interface ForeignTradingRepository extends JpaSpecificationExecutor<Forei
     @Query("select SUM(entity.totalNetValue) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.symbol NOT IN ('VN30', 'VNINDEX')")
     Double getForeignTotalNetValue(LocalDate tradingDate);
 
-    @Query("select SUM(entity.totalNetValue) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.symbol NOT IN ('VN30', 'VNINDEX', 'VIC', 'VHM')")
+    @Query("select SUM(entity.totalNetValue) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.symbol NOT IN ('VN30', 'VNINDEX', 'VIC', 'VHM', 'VRE')")
     Double getForeignTotalNetValueExcludeVin(LocalDate tradingDate);
 
     @Query("select COUNT(entity.id) from ForeignTradingEntity entity where entity.tradingDate =?1 AND entity.totalNetValue > 0")
@@ -47,5 +47,11 @@ public interface ForeignTradingRepository extends JpaSpecificationExecutor<Forei
 
     @Query("select min(e.totalNetValue) from ForeignTradingEntity e where e.symbol =?1 and e.tradingDate < ?2")
     Double getMaxSell(String symbol, LocalDate date);
+
+    @Query("select e from ForeignTradingEntity e where e.tradingDate = ?1 and e.symbol not in ('VN30', 'VNINDEX') order by e.totalNetValue desc limit 10")
+    List<ForeignTradingEntity> getTop10ForeignBuy(LocalDate date);
+
+    @Query("select e from ForeignTradingEntity e where e.tradingDate = ?1 and e.symbol not in ('VN30', 'VNINDEX') order by e.totalNetValue asc limit 10")
+    List<ForeignTradingEntity> getTop10ForeignSell(LocalDate date);
 
 }

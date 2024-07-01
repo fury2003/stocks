@@ -54,6 +54,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private final ExcelHelper excelHelper;
     private final ProprietaryTradingRepository proprietaryTradingRepository;
+    private final ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository;
+    private final ForeignTradingStatisticRepository foreignTradingStatisticRepository;
     private final ForeignTradingRepository foreignTradingRepository;
     private final StockPriceRepository stockPriceRepository;
     private final DerivativesTradingRepository derivativesTradingRepository;
@@ -79,7 +81,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     public StatisticsServiceImpl(ExcelHelper excelHelper,
                                  ProprietaryTradingRepository proprietaryTradingRepository,
-                                 StockPriceRepository stockPriceRepository,
+                                 ProprietaryTradingStatisticRepository proprietaryTradingStatisticRepository, ForeignTradingStatisticRepository foreignTradingStatisticRepository, StockPriceRepository stockPriceRepository,
                                  ForeignTradingRepository foreignTradingRepository,
                                  DerivativesTradingRepository derivativesTradingRepository,
                                  OrderBookRepository orderBookRepository,
@@ -88,6 +90,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                                  ){
         this.excelHelper = excelHelper;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
+        this.proprietaryTradingStatisticRepository = proprietaryTradingStatisticRepository;
+        this.foreignTradingStatisticRepository = foreignTradingStatisticRepository;
         this.foreignTradingRepository = foreignTradingRepository;
         this.stockPriceRepository = stockPriceRepository;
         this.derivativesTradingRepository = derivativesTradingRepository;
@@ -124,8 +128,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         if(!Objects.isNull(orderBookEntity)){
             data.setBuyOrder(orderBookEntity.getBuyOrder());
             data.setSellOrder(orderBookEntity.getSellOrder());
-            data.setBigBuyOrder(orderBookEntity.getBigBuyOrder());
-            data.setBigSellOrder(orderBookEntity.getBigSellOrder());
+            data.setMediumBuyOrder(orderBookEntity.getMediumBuyOrder());
+            data.setMediumSellOrder(orderBookEntity.getMediumSellOrder());
             data.setBuyOrderVolume(orderBookEntity.getBuyVolume());
             data.setSellOrderVolume(orderBookEntity.getSellVolume());
         }
@@ -161,8 +165,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int orderBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX));
         int orderSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX));
-        int orderBigBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX));
-        int orderBigSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX));
+        int orderMediumBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_MEDIUM_BUY_ORDER_COLUMN_INDEX));
+        int orderMediumSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_MEDIUM_SELL_ORDER_COLUMN_INDEX));
+        int orderLargeBuyIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_LARGE_BUY_ORDER_COLUMN_INDEX));
+        int orderLargeSellIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_LARGE_SELL_ORDER_COLUMN_INDEX));
         int orderBuyVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX));
         int orderSellVolIdx = Integer.parseInt(env.getProperty(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX));
 
@@ -207,14 +213,18 @@ public class StatisticsServiceImpl implements StatisticsService {
                 if (!Objects.isNull(orderBookEntity)) {
                     double buyOrder = orderBookEntity.getBuyOrder();
                     double sellOrder = orderBookEntity.getSellOrder();
-                    double bigBuyOrder = orderBookEntity.getBigBuyOrder();
-                    double bigSellOrder = orderBookEntity.getBigSellOrder();
+                    double mediumBuyOrder = orderBookEntity.getMediumBuyOrder();
+                    double mediumSellOrder = orderBookEntity.getMediumSellOrder();
+                    double largeBuyOrder = orderBookEntity.getLargeBuyOrder();
+                    double largeSellOrder = orderBookEntity.getLargeSellOrder();
                     double buyOrderVol = orderBookEntity.getBuyVolume();
                     double sellOrderVol = orderBookEntity.getSellVolume();
                     excelHelper.updateCellDouble(workbook, row, orderBuyIdx, buyOrder, false);
                     excelHelper.updateCellDouble(workbook, row, orderSellIdx, sellOrder, false);
-                    excelHelper.updateCellDouble(workbook, row, orderBigBuyIdx, bigBuyOrder, false);
-                    excelHelper.updateCellDouble(workbook, row, orderBigSellIdx, bigSellOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderMediumBuyIdx, mediumBuyOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderMediumSellIdx, mediumSellOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderLargeBuyIdx, largeBuyOrder, false);
+                    excelHelper.updateCellDouble(workbook, row, orderLargeSellIdx, largeSellOrder, false);
                     excelHelper.updateCellDouble(workbook, row, orderBuyVolIdx, buyOrderVol, false);
                     excelHelper.updateCellDouble(workbook, row, orderSellVolIdx, sellOrderVol, false);
                 }
@@ -262,7 +272,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String hashDate = DigestUtils.sha256Hex(tradingDate +  symbol);
                     ForeignTradingEntity foreignTradingEntity = foreignTradingRepository.findForeignTradingEntitiesByHashDate(hashDate);
                     OrderBookEntity orderBookEntity = orderBookRepository.findOrderBookEntitiesByHashDate(hashDate);
-                    ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findProprietaryTradingEntitiesByHashDate(hashDate);
+                    ProprietaryTradingEntity proprietaryTradingEntity = proprietaryTradingRepository.findByTradingDateAndSymbol(LocalDate.parse(tradingDate), symbol);
                     StockPriceEntity stockPriceEntity = stockPriceRepository.findStockPriceEntitiesByHashDate(hashDate);
 
                     if(stockPriceEntity == null){
@@ -301,14 +311,18 @@ public class StatisticsServiceImpl implements StatisticsService {
                     if(!Objects.isNull(orderBookEntity)){
                         double buyOrder = orderBookEntity.getBuyOrder();
                         double sellOrder = orderBookEntity.getSellOrder();
-                        double bigBuyOrder = orderBookEntity.getBigBuyOrder();
-                        double bigSellOrder = orderBookEntity.getBigSellOrder();
+                        double mediumBuyOrder = orderBookEntity.getMediumBuyOrder();
+                        double mediumSellOrder = orderBookEntity.getMediumSellOrder();
+                        double largeBuyOrder = orderBookEntity.getLargeBuyOrder();
+                        double largeSellOrder = orderBookEntity.getLargeSellOrder();
                         double buyOrderVol = orderBookEntity.getBuyVolume();
                         double sellOrderVol = orderBookEntity.getSellVolume();
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX), buyOrder, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX), sellOrder, false);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_BUY_ORDER_COLUMN_INDEX), bigBuyOrder, false);
-                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BIG_SELL_ORDER_COLUMN_INDEX), bigSellOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_BUY_ORDER_COLUMN_INDEX), mediumBuyOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_SELL_ORDER_COLUMN_INDEX), mediumSellOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_BUY_ORDER_COLUMN_INDEX), largeBuyOrder, false);
+                        excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_SELL_ORDER_COLUMN_INDEX), largeSellOrder, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
                         excelHelper.updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
                     }
@@ -465,13 +479,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                                     break;
 
                                 case 14:
-                                    double bigBuyOrder = orderBookEntity.getBigBuyOrder() ;
-                                    excelHelper.updateCellDouble(workbook, row, cidx, bigBuyOrder, false);
+                                    double mediumBuyOrder = orderBookEntity.getMediumBuyOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, mediumBuyOrder, false);
                                     break;
 
                                 case 15:
-                                    double bigSellOrder = orderBookEntity.getBigSellOrder() ;
-                                    excelHelper.updateCellDouble(workbook, row, cidx, bigSellOrder, false);
+                                    double mediumSellOrder = orderBookEntity.getMediumSellOrder() ;
+                                    excelHelper.updateCellDouble(workbook, row, cidx, mediumSellOrder, false);
                                     break;
 
                                 default:
@@ -581,29 +595,113 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String animalsHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.ANIMALS);
                     String insuranceHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.INSURANCE);
                     String airlineHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.AIRLINE);
+                    String plasticHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.PLASTIC);
+                    String techHashDate = DigestUtils.sha256Hex(tradingDate + StockConstant.TECH);
 
                     String vn30Percentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(vn30HashDate);
                     String bluechipPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bluechipHashDate);
                     String midcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(midcapHashDate);
                     String smallcapPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(smallcapHashDate);
+
+                    // bank
                     String bankPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bankHashDate);
+                    Integer bankBuyVol = orderBookRepository.getBankBuyVolume(startDate);
+                    Integer bankSellVol = orderBookRepository.getBankSellVolume(startDate);
+
+                    // stock
                     String stockPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(stockHashDate);
+                    Integer stockBuyVol = orderBookRepository.getStockBuyVolume(startDate);
+                    Integer stockSellVol = orderBookRepository.getStockSellVolume(startDate);
+
+                    // real estate
                     String bdsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(bdsHashDate);
+                    Integer bdsBuyVol = orderBookRepository.getRealEstateBuyVolume(startDate);
+                    Integer bdsSellVol = orderBookRepository.getRealEstateSellVolume(startDate);
+
+                    // kcn
                     String kcnPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(kcnHashDate);
-                    String retailPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(retailHashDate);
-                    String logisticsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(logisticsHashDate);
-                    String textilePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(textileHashDate);
-                    String woodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(woodHashDate);
-                    String oilPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(oilHashDate);
-                    String seafoodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(seadfoodHashDate);
-                    String materialsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(materialsHashDate);
+                    Integer kcnBuyVol = orderBookRepository.getKCNBuyVolume(startDate);
+                    Integer kcnSellVol = orderBookRepository.getKCNSellVolume(startDate);
+
+                    // steels
                     String steelPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(steelHashDate);
+                    Integer steelBuyVol = orderBookRepository.getSteelBuyVolume(startDate);
+                    Integer steelSellVol = orderBookRepository.getSteelSellVolume(startDate);
+
+                    // retails
+                    String retailPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(retailHashDate);
+                    Integer retailBuyVol = orderBookRepository.getRetailsBuyVolume(startDate);
+                    Integer retailSellVol = orderBookRepository.getRetailsSellVolume(startDate);
+
+                    // logistics
+                    String logisticsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(logisticsHashDate);
+                    Integer logisticBuyVol = orderBookRepository.getLogisticBuyVolume(startDate);
+                    Integer logisticSellVol = orderBookRepository.getLogisticSellVolume(startDate);
+
+                    // textile
+                    String textilePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(textileHashDate);
+                    Integer textileBuyVol = orderBookRepository.getTextileBuyVolume(startDate);
+                    Integer textileSellVol = orderBookRepository.getTextileSellVolume(startDate);
+
+                    // wood
+                    String woodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(woodHashDate);
+                    Integer woodBuyVol = orderBookRepository.getWoodBuyVolume(startDate);
+                    Integer woodSellVol = orderBookRepository.getWoodSellVolume(startDate);
+
+                    // oil
+                    String oilPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(oilHashDate);
+                    Integer oilBuyVol = orderBookRepository.getOilBuyVolume(startDate);
+                    Integer oilSellVol = orderBookRepository.getOilSellVolume(startDate);
+
+                    // seafood
+                    String seafoodPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(seadfoodHashDate);
+                    Integer seafoodBuyVol = orderBookRepository.getSeafoodBuyVolume(startDate);
+                    Integer seafoodSellVol = orderBookRepository.getSeafoodSellVolume(startDate);
+
+                    // materials
+                    String materialsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(materialsHashDate);
+                    Integer materialBuyVol = orderBookRepository.getMaterialBuyVolume(startDate);
+                    Integer materialSellVol = orderBookRepository.getMaterialSellVolume(startDate);
+
+                    // construction
                     String constructionPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(constructionHashDate);
-                    String eletricPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(eletricHashDate);
+                    Integer constructionBuyVol = orderBookRepository.getConstructionBuyVolume(startDate);
+                    Integer constructionSellVol = orderBookRepository.getConstructionSellVolume(startDate);
+
+                    // electric
+                    String electricPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(eletricHashDate);
+                    Integer electricBuyVol = orderBookRepository.getElectricBuyVolume(startDate);
+                    Integer electricSellVol = orderBookRepository.getElectricSellVolume(startDate);
+
+                    // chemistry
                     String chemistryPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(chemistryHashDate);
+                    Integer chemistryBuyVol = orderBookRepository.getChemistryBuyVolume(startDate);
+                    Integer chemistrySellVol = orderBookRepository.getChemistrySellVolume(startDate);
+
+                    // animals
                     String animalsPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(animalsHashDate);
+                    Integer animalsBuyVol = orderBookRepository.getAnimalsBuyVolume(startDate);
+                    Integer animalsSellVol = orderBookRepository.getAnimalsSellVolume(startDate);
+
+                    // insurance
                     String insurancePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(insuranceHashDate);
+                    Integer insuranceBuyVol = orderBookRepository.getInsuranceBuyVolume(startDate);
+                    Integer insuranceSellVol = orderBookRepository.getInsuranceSellVolume(startDate);
+
+                    // airline
                     String airlinePercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(airlineHashDate);
+                    Integer airlineBuyVol = orderBookRepository.getAirlineBuyVolume(startDate);
+                    Integer airlineSellVol = orderBookRepository.getAirlineSellVolume(startDate);
+
+                    // plastic
+                    String plasticPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(plasticHashDate);
+                    Integer plasticBuyVol = orderBookRepository.getPlasticBuyVolume(startDate);
+                    Integer plasticSellVol = orderBookRepository.getPlasticSellVolume(startDate);
+
+                    // tech
+                    String techPercentage = indexStatisticRepository.findPercentageTakenOnIndexByHashDate(techHashDate);
+                    Integer techBuyVol = orderBookRepository.getTechBuyVolume(startDate);
+                    Integer techSellVol = orderBookRepository.getTechSellVolume(startDate);
 
                     // xu ly cho truong hop nghi le
                     if (vn30Percentage.isEmpty()) {
@@ -635,36 +733,99 @@ public class StatisticsServiceImpl implements StatisticsService {
                     String materialString = materialsPercentage.replace("%", "");
                     String constructionString = constructionPercentage.replace("%", "");
                     String textileString = textilePercentage.replace("%", "");
-                    String electricString = eletricPercentage.replace("%", "");
+                    String electricString = electricPercentage.replace("%", "");
                     String chemistryString = chemistryPercentage.replace("%", "");
                     String animalsString = animalsPercentage.replace("%", "");
                     String insuranceString = insurancePercentage.replace("%", "");
                     String airlineString = airlinePercentage.replace("%", "");
+                    String plasticString = plasticPercentage.replace("%", "");
+                    String techString = techPercentage.replace("%", "");
 
                     excelHelper.updateCellDate(workbook, row, 1, tradingDate);
                     excelHelper.updateCellDouble(workbook, row, 2, Double.parseDouble(vn30String) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 3, Double.parseDouble(bluechipString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 4, Double.parseDouble(midcapString) / 100, true);
                     excelHelper.updateCellDouble(workbook, row, 5, Double.parseDouble(smallcapString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 6,Double.parseDouble(bankString) / 100,true);
-                    excelHelper.updateCellDouble(workbook, row, 7, Double.parseDouble(stockString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 8, Double.parseDouble(bdsString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 9, Double.parseDouble(kcnString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 10, Double.parseDouble(steelString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 11, Double.parseDouble(retailString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 12, Double.parseDouble(oilString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 13, Double.parseDouble(constructionString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 14, Double.parseDouble(logisticsString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 15, Double.parseDouble(textileString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 16, Double.parseDouble(seafoodString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 17, Double.parseDouble(woodString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 18, Double.parseDouble(materialString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 19, Double.parseDouble(electricString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 20, Double.parseDouble(chemistryString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 21, Double.parseDouble(animalsString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 22, Double.parseDouble(insuranceString) / 100, true);
-                    excelHelper.updateCellDouble(workbook, row, 23, Double.parseDouble(airlineString) / 100, true);
 
+                    excelHelper.updateCellDouble(workbook, row, 6,Double.parseDouble(bankString) / 100,true);
+                    excelHelper.updateCellInt(workbook, row, 7, bankBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 8, bankSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 9, Double.parseDouble(stockString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 10, stockBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 11, stockSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 12, Double.parseDouble(bdsString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 13, bdsBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 14, bdsSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 15, Double.parseDouble(kcnString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 16, kcnBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 17, kcnSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 18, Double.parseDouble(steelString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 19, steelBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 20, steelSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 21, Double.parseDouble(retailString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 22, retailBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 23, retailSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 24, Double.parseDouble(oilString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 25, oilBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 26, oilSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 27, Double.parseDouble(constructionString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 28, constructionBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 29, constructionSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 30, Double.parseDouble(logisticsString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 31, logisticBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 32, logisticSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 33, Double.parseDouble(textileString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 34, textileBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 35, textileSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 36, Double.parseDouble(seafoodString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 37, seafoodBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 38, seafoodSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 39, Double.parseDouble(woodString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 40, woodBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 41, woodSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 42, Double.parseDouble(materialString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 43, materialBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 44, materialSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 45, Double.parseDouble(electricString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 46, electricBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 47, electricSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 48, Double.parseDouble(chemistryString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 49, chemistryBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 50, chemistrySellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 51, Double.parseDouble(animalsString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 52, animalsBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 53, animalsSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 54, Double.parseDouble(insuranceString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 55, insuranceBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 56, insuranceSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 57, Double.parseDouble(airlineString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 58, airlineBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 59, airlineSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 60, Double.parseDouble(plasticString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 61, plasticBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 62, plasticSellVol);
+
+                    excelHelper.updateCellDouble(workbook, row, 63, Double.parseDouble(techString) / 100, true);
+                    excelHelper.updateCellInt(workbook, row, 64, techBuyVol);
+                    excelHelper.updateCellInt(workbook, row, 65, techSellVol);
                 }
 
                 // Save the workbook to a file
@@ -705,7 +866,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     log.info("Name: " + name + ", Percentage: " + percentage);
                     excelHelper.insertNewRow(sheet, 1);
                     Row row = sheet.getRow(1);
-                    excelHelper.updateCellString(row, 1, name);
+                    excelHelper.updateCellString(workbook, row, 1, name);
                     excelHelper.updateCellDouble(workbook, row, 2, Double.valueOf(percentage)/100, true);
                 }
             });
@@ -719,6 +880,115 @@ public class StatisticsServiceImpl implements StatisticsService {
             e.printStackTrace();
             log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
         }
+
+    }
+
+    @Override
+    public void highlightOrderBook(String tradingDate) {
+        LocalDate date = LocalDate.parse(tradingDate);
+        List<String> symbolsBuy = orderBookRepository.getStrongBuy(date);
+        List<String> symbolsSell = orderBookRepository.getStrongSell(date);
+
+        Integer mediumBuy = getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_BUY_ORDER_COLUMN_INDEX);
+        Integer mediumSell = getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_SELL_ORDER_COLUMN_INDEX);
+        Integer largeBuy = getExcelColumnIndex(StockConstant.INTRADAY_LARGE_BUY_ORDER_COLUMN_INDEX);
+        Integer largeSell = getExcelColumnIndex(StockConstant.INTRADAY_LARGE_SELL_ORDER_COLUMN_INDEX);
+
+        try (FileInputStream fileInputStream = new FileInputStream(dataFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            ZipSecureFile.setMinInflateRatio(0);
+            for (String symbol : symbolsBuy) {
+                Sheet sheet = workbook.getSheet(symbol);
+                if(sheet == null) {
+                    log.info("Sheet {} not exist", symbol);
+                    continue;
+                }
+                log.info("Highlight {}", symbol);
+                Row updateRow = sheet.getRow(2);
+                excelHelper.highlightOrderBook(workbook, updateRow, mediumBuy, true);
+                excelHelper.highlightOrderBook(workbook, updateRow, largeBuy, true);
+            }
+
+            for (String symbol : symbolsSell) {
+                Sheet sheet = workbook.getSheet(symbol);
+                if(sheet == null) {
+                    log.info("Sheet {} not exist", symbol);
+                    continue;
+                }
+                log.info("Highlight {}", symbol);
+
+                Row updateRow = sheet.getRow(2);
+                excelHelper.highlightOrderBook(workbook, updateRow, mediumSell, false);
+                excelHelper.highlightOrderBook(workbook, updateRow, largeSell, false);
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(dataFile)) {
+                workbook.write(fileOut);
+                log.info("highligh thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", dataFile);
+        }
+    }
+
+    @Override
+    public void writeTopBuySell(String tradingDate) {
+        LocalDate date = LocalDate.parse(tradingDate);
+
+        // Foreign buy/sell
+        List<ForeignTradingEntity> topForeignBuy = foreignTradingRepository.getTop10ForeignBuy(date);
+        for (ForeignTradingEntity entity : topForeignBuy){
+            ForeignTradingStatisticEntity statistic = foreignTradingStatisticRepository.findBySymbol(entity.getSymbol());
+            if(entity.getTotalNetValue() >= statistic.getHighestBuyValue())
+                    entity.setBiggestATH(true);
+            else if(entity.getTotalNetValue() >= statistic.getSixMonthsHighestBuyValue())
+                entity.setBiggest6M(true);
+        }
+
+        List<ForeignTradingEntity> topForeignSell = foreignTradingRepository.getTop10ForeignSell(date);
+        for (ForeignTradingEntity entity : topForeignSell){
+            ForeignTradingStatisticEntity statistic = foreignTradingStatisticRepository.findBySymbol(entity.getSymbol());
+            if(entity.getTotalNetValue() <= statistic.getHighestSellValue())
+                    entity.setSmallestATH(true);
+            else if(entity.getTotalNetValue() <= statistic.getSixMonthsHighestSellValue())
+                entity.setSmallest6M(true);
+
+        }
+
+        // Proprietary buy/sell
+        List<ProprietaryTradingEntity> topProprietaryBuy = proprietaryTradingRepository.getTop10ProprietaryBuy(date);
+        for (ProprietaryTradingEntity entity : topProprietaryBuy){
+            ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
+            if(entity.getTotalNetValue() >= statistic.getHighestBuyValue())
+                entity.setBiggestATH(true);
+            else if(entity.getTotalNetValue() >= statistic.getSixMonthsHighestBuyValue())
+                entity.setBiggest6M(true);
+
+        }
+
+        List<ProprietaryTradingEntity> topProprietarySell = proprietaryTradingRepository.getTop10ProprietarySell(date);
+        for (ProprietaryTradingEntity entity : topProprietarySell){
+            ProprietaryTradingStatisticEntity statistic = proprietaryTradingStatisticRepository.findBySymbol(entity.getSymbol());
+            if(entity.getTotalNetValue() <= statistic.getHighestSellValue())
+                entity.setSmallestATH(true);
+            else if(entity.getTotalNetValue() <= statistic.getSixMonthsHighestSellValue()){
+                entity.setSmallest6M(true);
+            }
+        }
+
+        excelHelper.writeTopBuySellToFile(StockConstant.TOP_FOREIGN_INTRADAY_SHEET, topForeignBuy, topForeignSell,true, tradingDate);
+        excelHelper.writeTopBuySellToFile(StockConstant.TOP_FOREIGN_INTRADAY_SHEET, topForeignBuy, topForeignSell, false, tradingDate);
+        log.info("Hoan thanh thong ke mua ban cua khoi ngoai vao sheet: {}", StockConstant.TOP_FOREIGN_INTRADAY_SHEET);
+
+
+        excelHelper.writeTopBuySellToFile(StockConstant.TOP_PROPRIETARY_INTRADAY_SHEET, topProprietaryBuy, topProprietarySell,true, tradingDate);
+        excelHelper.writeTopBuySellToFile(StockConstant.TOP_PROPRIETARY_INTRADAY_SHEET, topProprietaryBuy, topProprietarySell, false, tradingDate);
+        log.info("Hoan thanh thong ke mua ban cua khoi ngoai vao sheet: {}", StockConstant.TOP_PROPRIETARY_INTRADAY_SHEET);
+
+        excelHelper.highlightTopBuySell(StockConstant.TOP_FOREIGN_INTRADAY_SHEET, topForeignBuy, topForeignSell);
+        excelHelper.highlightTopBuySell(StockConstant.TOP_PROPRIETARY_INTRADAY_SHEET, topProprietaryBuy, topProprietarySell);
+        log.info("Hoan thanh format mua ban ki luc vao sheet: {}", StockConstant.TOP_PROPRIETARY_INTRADAY_SHEET);
 
     }
 

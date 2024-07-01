@@ -180,7 +180,12 @@ public class SymbolConstant {
             "FOX",
             "SCS",
             "CDN",
-            "HVN"
+            "HVN",
+            "VDS",
+            "CMX",
+            "TOS",
+            "CNG",
+            "GTA"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -394,6 +399,17 @@ public class SymbolConstant {
             "SGN",
             "NCT",
             "SAS",
-            "CMG"
+            "CMG",
+            "NNC",
+            "ACC",
+            "TVS",
+            "DAG",
+            "DNP",
+            "ST8",
+            "VDS",
+            "CMX",
+            "TOS",
+            "GTA",
+            "CNG"
     };
 }

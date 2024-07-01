@@ -70,12 +70,13 @@ public class IndexServiceImpl implements IndexService {
     private final IndexStatisticRepository indexStatisticRepository;
     private final ProprietaryTradingRepository proprietaryTradingRepository;
     private final TradingDateRepository tradingDateRepository;
+    private final OrderBookRepository orderBookRepository;
     private final ExcelHelper excelHelper;
 
     @Autowired
     public IndexServiceImpl(RestTemplate restTemplate, Environment env, StockPriceRepository stockPriceRepository,
                             ForeignTradingRepository foreignTradingRepository, IndexStatisticRepository indexStatisticRepository,
-                            ExcelHelper excelHelper, ProprietaryTradingRepository proprietaryTradingRepository, TradingDateRepository tradingDateRepository){
+                            ExcelHelper excelHelper, ProprietaryTradingRepository proprietaryTradingRepository, TradingDateRepository tradingDateRepository, OrderBookRepository orderBookRepository){
         this.restTemplate = restTemplate;
         this.env = env;
         this.stockPriceRepository = stockPriceRepository;
@@ -84,6 +85,7 @@ public class IndexServiceImpl implements IndexService {
         this.excelHelper = excelHelper;
         this.proprietaryTradingRepository = proprietaryTradingRepository;
         this.tradingDateRepository = tradingDateRepository;
+        this.orderBookRepository = orderBookRepository;
     }
 
     @Transactional
@@ -369,7 +371,7 @@ public class IndexServiceImpl implements IndexService {
             }
 
             try{
-                String[] chemistryFertilizer = IndustryConstant.CHEMISTRY_FERTILIZER_PLASTIC;
+                String[] chemistryFertilizer = IndustryConstant.CHEMISTRY_FERTILIZER;
                 long chemistryFertilizerTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(chemistryFertilizer), tradingDate);
                 saveIndexAnalyze(tradingDate, StockConstant.CHEMISTRY_FERTILIZER,  chemistryFertilizerTotalVolume, vnindexTotalVolume);
                 log.info("Saved CHEMISTRY_FERTILIZER ");
@@ -412,6 +414,28 @@ public class IndexServiceImpl implements IndexService {
                 throw new RuntimeException("Loi trong qua trinh phan tich AIRLINE/VNINDEX");
             }
 
+            try{
+                String[] plastic = IndustryConstant.PLASTIC;
+                long plasticTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(plastic), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.PLASTIC,  plasticTotalVolume, vnindexTotalVolume);
+                log.info("Saved PLASTIC ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich PLASTIC/VNINDEX");
+            }
+
+            try{
+                String[] tech = IndustryConstant.TECH;
+                long techTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(tech), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.TECH,  techTotalVolume, vnindexTotalVolume);
+                log.info("Saved TECH ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich TECH/VNINDEX");
+            }
+
         }
     }
 
@@ -428,13 +452,16 @@ public class IndexServiceImpl implements IndexService {
             Double foreignTNV = foreignTradingRepository.getForeignTotalNetValue(tradingDate);
             Double foreignTNVExclude = foreignTradingRepository.getForeignTotalNetValueExcludeVin(tradingDate);
             Integer foreignNumberOfBuy = foreignTradingRepository.getNumberOfBuy(tradingDate);
-            Integer foreignNumberOfNoChange = foreignTradingRepository.getNumberOfNoChange(tradingDate);
+            // Integer foreignNumberOfNoChange = foreignTradingRepository.getNumberOfNoChange(tradingDate);
             Integer foreignNumberOfSell = foreignTradingRepository.getNumberOfSell(tradingDate);
 
             Double proprietaryTNV = proprietaryTradingRepository.getForeignTotalNetValue(tradingDate);
             Integer proprietaryNumberOfBuy = proprietaryTradingRepository.getNumberOfBuy(tradingDate);
-            Integer proprietaryNumberOfNoChange = proprietaryTradingRepository.getNumberOfNoChange(tradingDate);
+            // Integer proprietaryNumberOfNoChange = proprietaryTradingRepository.getNumberOfNoChange(tradingDate);
             Integer proprietaryNumberOfSell = proprietaryTradingRepository.getNumberOfSell(tradingDate);
+
+            Integer strongBuy = orderBookRepository.strongBuy(tradingDate);
+            Integer strongSell = orderBookRepository.strongSell(tradingDate);
 
             excelHelper.updateCellDate(workbook, row, 1, date);
             // vnindex
@@ -451,17 +478,20 @@ public class IndexServiceImpl implements IndexService {
 
             // foreign
             excelHelper.updateCellLong(workbook, row, 12, foreignNumberOfBuy);
-            excelHelper.updateCellLong(workbook, row, 13, foreignNumberOfNoChange);
+            // excelHelper.updateCellLong(workbook, row, 13, foreignNumberOfNoChange);
             excelHelper.updateCellLong(workbook, row, 14, foreignNumberOfSell);
             excelHelper.updateCellDouble(workbook, row, 15, foreignTNV, false);
             excelHelper.updateCellDouble(workbook, row, 17, foreignTNVExclude, false);
 
             // proprieraty
             excelHelper.updateCellLong(workbook, row, 19, proprietaryNumberOfBuy);
-            excelHelper.updateCellLong(workbook, row, 20, proprietaryNumberOfNoChange);
+            // excelHelper.updateCellLong(workbook, row, 20, proprietaryNumberOfNoChange);
             excelHelper.updateCellLong(workbook, row, 21, proprietaryNumberOfSell);
             excelHelper.updateCellDouble(workbook, row, 22, proprietaryTNV, false);
+            excelHelper.updateCellLong(workbook, row, 24, strongBuy);
+            excelHelper.updateCellLong(workbook, row, 25, strongSell);
 
+            excelHelper.updateCellDouble(workbook, row, 27, dto.getMfi(), false);
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
                 workbook.write(fileOut);
