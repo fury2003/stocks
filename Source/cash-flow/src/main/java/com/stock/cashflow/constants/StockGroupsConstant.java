@@ -213,5 +213,8 @@ public class StockGroupsConstant {
             "TCM"
     };
 
+    public static final String[] VN30 = {
+            "HPG", "BVH", "GAS", "PLX", "MSN", "MWG", "POW", "VRE", "VIC", "VHM", "SSI", "VJC", "BCM", "GVR", "VNM", "FPT", "MBB", "TCB", "VPB", "STB", "TPB", "VCB", "BID", "CTG", "SAB", "VIB", "SSB", "SHB", "HDB", "ACB"
+    };
 
-}
+    }

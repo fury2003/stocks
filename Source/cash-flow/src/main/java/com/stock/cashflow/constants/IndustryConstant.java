@@ -22,7 +22,9 @@ public class IndustryConstant {
             "AGG",
             "TCH",
             "SJS",
-            "QCG"
+            "QCG",
+            "TIG",
+            "KHG"
     };
 
     public static final String[] STOCKS = {
@@ -59,8 +61,7 @@ public class IndustryConstant {
             "LPB",
             "OCB",
             "BID",
-            "NAB",
-            "TIG"
+            "NAB"
     };
 
     public static final String[] BDS_KCN = {
@@ -109,7 +110,10 @@ public class IndustryConstant {
             "STK",
             "VGT",
             "EVE",
-            "TCM"
+            "TCM",
+            "M10",
+            "PPH",
+            "HTG"
     };
 
     public static final String[] SEAFOOD = {
@@ -234,7 +238,8 @@ public class IndustryConstant {
             "VJC",
             "SGN",
             "NCT",
-            "SCS"
+            "SCS",
+            "SKG"
     };
 
     public static final String[] PLASTIC = {
@@ -262,6 +267,14 @@ public class IndustryConstant {
             "CSM",
             "BRC",
             "SRC"
+    };
+
+    public static final String[] SUGAR = {
+            "SLS",
+            "LSS",
+            "SBT",
+            "QNS",
+            "KTS"
     };
 
     public static final String[] PHARMACEUTICAL = {

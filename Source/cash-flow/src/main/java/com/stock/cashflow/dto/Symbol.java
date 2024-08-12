@@ -81,7 +81,7 @@ public class Symbol {
                         ? (this.getPriceClose() - yesterdayClosedPrice) / yesterdayClosedPrice * 100
                         : -((yesterdayClosedPrice - this.getPriceClose()) / this.getPriceClose()) * 100;
 
-                double priceRange = ((this.getPriceHigh() - this.getPriceLow()) / this.getPriceHigh()) * 100;
+                double priceRange = ((this.getPriceHigh() - this.getPriceLow()) / this.getPriceLow()) * 100;
                 DecimalFormat df = new DecimalFormat("#.##");
                 df.setRoundingMode(RoundingMode.CEILING);
 

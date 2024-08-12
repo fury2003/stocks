@@ -72,13 +72,13 @@ public class ForeignTradingStatisticEntity implements Serializable {
     @Column(name = "highest_buy_value")
     private Double highestBuyValue;
 
-    @Column(name = "highest_buy_trading_date", nullable = false)
+    @Column(name = "highest_buy_trading_date")
     private LocalDate highestBuyTradingDate;
 
     @Column(name = "highest_sell_value")
     private Double highestSellValue;
 
-    @Column(name = "highest_sell_trading_date", nullable = false)
+    @Column(name = "highest_sell_trading_date")
     private LocalDate highestSellTradingDate;
 
     // Constructors

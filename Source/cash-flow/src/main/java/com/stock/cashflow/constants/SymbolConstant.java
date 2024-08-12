@@ -167,7 +167,7 @@ public class SymbolConstant {
             "MCH",
             "ASM",
             "ST8",
-//            "NAB",
+            "NAB",
             "ORS",
             "AAA",
             "VIP",
@@ -185,7 +185,35 @@ public class SymbolConstant {
             "CMX",
             "TOS",
             "CNG",
-            "GTA"
+            "GTA",
+            "ACG",
+            "SGN",
+            "NCT",
+            "SAS",
+            "CMG",
+            "NNC",
+            "ACC",
+            "TVS",
+            "DAG",
+            "DNP",
+            "MPC",
+            "M10",
+            "PPH",
+            "HTG",
+            "OCB",
+            "SHB",
+            "NHA",
+            "AGG",
+            "SJS",
+            "AGR",
+            "SKG",
+            "VNR",
+            "PVI",
+            "BIC",
+            "KHG",
+            "TLH",
+            "PVC",
+            "KTS"
     };
 
     public static final String[] ALL_SYMBOLS = {
@@ -377,7 +405,7 @@ public class SymbolConstant {
             "ACV",
             "VJC",
             "ST8",
-//            "NAB",
+            "NAB",
             "ORS",
             "AGR",
             "SKG",
@@ -410,6 +438,7 @@ public class SymbolConstant {
             "CMX",
             "TOS",
             "GTA",
-            "CNG"
+            "CNG",
+            "SHB"
     };
 }

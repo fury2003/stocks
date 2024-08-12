@@ -318,3 +318,12 @@ ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci
 AUTO_INCREMENT=1;
+
+ALTER TABLE trading_date
+ADD week varchar(20) NOT NULL;
+
+ALTER TABLE order_book
+ADD ato_volume BIGINT UNSIGNED NULL;
+
+ALTER TABLE order_book
+ADD atc_volume BIGINT UNSIGNED NULL;

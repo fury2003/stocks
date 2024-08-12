@@ -143,7 +143,7 @@ public class StockPriceServiceImpl implements StockPriceService {
             }
 
             if(!Objects.isNull(data)){
-                log.info("Truy xuat thong tin giao dich khoi ngoai thanh cong");
+                log.info("Truy xuat thong tin giao dich thanh cong");
                 try{
                     long count = Arrays.stream(data).count();
                      if(count <= 1){
@@ -158,10 +158,10 @@ public class StockPriceServiceImpl implements StockPriceService {
 
                         StockPriceEntity entity = updatedDate.get().convertToStockPriceEntity(yesterdayData.getPriceClose());
                         stockPriceRepository.save(entity);
-                        log.info("Luu thong tin giao dich khoi ngoai cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
+                        log.info("Luu thong tin giao dich cua ma {} cho ngay {} thanh cong", entity.getSymbol(), entity.getTradingDate());
                     }
                 }catch (Exception ex){
-                    log.error("Loi trong qua trinh luu du lieu giao dich cua khoi ngoai");
+                    log.error("Loi trong qua trinh luu du lieu giao dich");
                     ex.printStackTrace();
                     throw ex;
                 }

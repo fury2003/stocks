@@ -11,6 +11,6 @@ public interface IndexService {
 
     void analyzeIntraday(String tradingDate, IntradayDTO dto);
 
-    void addTradingDate(String tradingDate);
+    void addTradingDate(String tradingDate, String tradingWeek);
 
 }

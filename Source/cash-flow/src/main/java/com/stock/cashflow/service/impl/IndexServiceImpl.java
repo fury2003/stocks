@@ -168,11 +168,8 @@ public class IndexServiceImpl implements IndexService {
         for (String date : tradingDates) {
             log.info("Phan tich index ngay {}", date);
             LocalDate tradingDate = LocalDate.parse(date);
-            String vnindexHashDate = DigestUtils.sha256Hex(date + StockConstant.VNINDEX);
-            String vn30HashDate = DigestUtils.sha256Hex(date + StockConstant.VN30);
-
-            Double vnindexTotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndHashDate(StockConstant.VNINDEX, vnindexHashDate);
-            Double vn30TotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndHashDate(StockConstant.VN30, vn30HashDate);
+            Double vnindexTotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndTradingDate(StockConstant.VNINDEX, tradingDate);
+            Double vn30TotalVolume = stockPriceRepository.findTotalVolumeBySymbolAndTradingDate(StockConstant.VN30, tradingDate);
 
             try{
                 saveIndexAnalyze(tradingDate, StockConstant.VN30,  vn30TotalVolume, vnindexTotalVolume);
@@ -436,6 +433,28 @@ public class IndexServiceImpl implements IndexService {
                 throw new RuntimeException("Loi trong qua trinh phan tich TECH/VNINDEX");
             }
 
+            try{
+                String[] pharma = IndustryConstant.PHARMACEUTICAL;
+                long pharmaTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(pharma), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.PHARMA,  pharmaTotalVolume, vnindexTotalVolume);
+                log.info("Saved PHARMA ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich PHARMA/VNINDEX");
+            }
+
+            try{
+                String[] sugar = IndustryConstant.SUGAR;
+                long sugarTotalVolume = stockPriceRepository.getTotalVolumeSum(List.of(sugar), tradingDate);
+                saveIndexAnalyze(tradingDate, StockConstant.SUGAR,  sugarTotalVolume, vnindexTotalVolume);
+                log.info("Saved PHARMA ");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                log.error(ex.getMessage());
+                throw new RuntimeException("Loi trong qua trinh phan tich SUGAR/VNINDEX");
+            }
+
         }
     }
 
@@ -449,19 +468,18 @@ public class IndexServiceImpl implements IndexService {
             excelHelper.insertNewRow(sheet, statisticsBeginRowIndex);
             Row row = sheet.getRow(statisticsBeginRowIndex);
 
-            Double foreignTNV = foreignTradingRepository.getForeignTotalNetValue(tradingDate);
+            Double foreignTNV = foreignTradingRepository.getSumForeignTotalNetValue(tradingDate);
             Double foreignTNVExclude = foreignTradingRepository.getForeignTotalNetValueExcludeVin(tradingDate);
             Integer foreignNumberOfBuy = foreignTradingRepository.getNumberOfBuy(tradingDate);
-            // Integer foreignNumberOfNoChange = foreignTradingRepository.getNumberOfNoChange(tradingDate);
             Integer foreignNumberOfSell = foreignTradingRepository.getNumberOfSell(tradingDate);
 
             Double proprietaryTNV = proprietaryTradingRepository.getForeignTotalNetValue(tradingDate);
             Integer proprietaryNumberOfBuy = proprietaryTradingRepository.getNumberOfBuy(tradingDate);
-            // Integer proprietaryNumberOfNoChange = proprietaryTradingRepository.getNumberOfNoChange(tradingDate);
             Integer proprietaryNumberOfSell = proprietaryTradingRepository.getNumberOfSell(tradingDate);
 
             Integer strongBuy = orderBookRepository.strongBuy(tradingDate);
             Integer strongSell = orderBookRepository.strongSell(tradingDate);
+            Double vnindexVolume = stockPriceRepository.findTotalVolumeBySymbolAndTradingDate(StockConstant.VNINDEX, tradingDate);
 
             excelHelper.updateCellDate(workbook, row, 1, date);
             // vnindex
@@ -476,22 +494,23 @@ public class IndexServiceImpl implements IndexService {
             excelHelper.updateCellLong(workbook, row, 10, dto.getVn30NoChange());
             excelHelper.updateCellLong(workbook, row, 11, dto.getVn30Down());
 
+            excelHelper.updateCellLong(workbook, row, 12, strongBuy);
+            excelHelper.updateCellLong(workbook, row, 13, strongSell);
+
             // foreign
-            excelHelper.updateCellLong(workbook, row, 12, foreignNumberOfBuy);
-            // excelHelper.updateCellLong(workbook, row, 13, foreignNumberOfNoChange);
-            excelHelper.updateCellLong(workbook, row, 14, foreignNumberOfSell);
-            excelHelper.updateCellDouble(workbook, row, 15, foreignTNV, false);
-            excelHelper.updateCellDouble(workbook, row, 17, foreignTNVExclude, false);
+            excelHelper.updateCellLong(workbook, row, 14, foreignNumberOfBuy);
+            excelHelper.updateCellLong(workbook, row, 15, foreignNumberOfSell);
+            excelHelper.updateCellDouble(workbook, row, 16, foreignTNV, false);
+            excelHelper.updateCellDouble(workbook, row, 18, foreignTNVExclude, false);
 
             // proprieraty
-            excelHelper.updateCellLong(workbook, row, 19, proprietaryNumberOfBuy);
-            // excelHelper.updateCellLong(workbook, row, 20, proprietaryNumberOfNoChange);
+            excelHelper.updateCellLong(workbook, row, 20, proprietaryNumberOfBuy);
             excelHelper.updateCellLong(workbook, row, 21, proprietaryNumberOfSell);
             excelHelper.updateCellDouble(workbook, row, 22, proprietaryTNV, false);
-            excelHelper.updateCellLong(workbook, row, 24, strongBuy);
-            excelHelper.updateCellLong(workbook, row, 25, strongSell);
 
-            excelHelper.updateCellDouble(workbook, row, 27, dto.getMfi(), false);
+            excelHelper.updateCellDouble(workbook, row, 24, vnindexVolume, false);
+            excelHelper.updateCellDouble(workbook, row, 26, dto.getMfi(), false);
+
             // Save the workbook to a file
             try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
                 workbook.write(fileOut);
@@ -505,10 +524,11 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public void addTradingDate(String tradingDate) {
+    public void addTradingDate(String tradingDate, String tradingWeek) {
         LocalDate date = LocalDate.parse(tradingDate);
         TradingDateEntity entity = new TradingDateEntity();
         entity.setTradingDate(date);
+        entity.setTradingWeek(tradingWeek);
         tradingDateRepository.save(entity);
     }
 

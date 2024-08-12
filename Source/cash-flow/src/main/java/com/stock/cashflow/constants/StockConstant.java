@@ -33,6 +33,9 @@ public class StockConstant {
 
     public static final String INTRADAY_BUY_VOLUME_COLUMN_INDEX = "intraday.buy.volume.column.index";
     public static final String INTRADAY_SELL_VOLUME_COLUMN_INDEX = "intraday.sell.volume.column.index";
+    public static final String INTRADAY_ATC_VOLUME_COLUMN_INDEX = "intraday.atc.volume.column.index";
+    public static final String INTRADAY_PERCENTAGE_CHANGE_COLUMN_INDEX = "intraday.percentage.change.column.index";
+    public static final String INTRADAY_TOTAL_VOLUME_COLUMN_INDEX = "intraday.total.volume.column.index";
 
     public static final String DERIVATIVES_TRADING_DATE_COLUMN_INDEX = "derivatives.trading.date.column.index";
 
@@ -68,12 +71,15 @@ public class StockConstant {
     public static final String SELL_ORDER = "SellOrder";
     public static final String BUY_VOLUME = "BuyVolume";
     public static final String SELL_VOLUME = "SellVolume";
+    public static final String ATO_VOLUME = "ATO_Volume";
+    public static final String ATC_VOLUME = "ATC_Volume";
     public static final String SMALL_BUY_ORDER = "Small_Buy_Order";
     public static final String SMALL_SELL_ORDER = "Small_Sell_Order";
     public static final String MEDIUM_BUY_ORDER = "Medium_Buy_Order";
     public static final String MEDIUM_SELL_ORDER = "Medium_Sell_Order";
     public static final String LARGE_BUY_ORDER = "Large_Buy_Order";
     public static final String LARGE_SELL_ORDER = "Large_Sell_Order";
+
 
     public static final String VNINDEX = "VNINDEX";
     public static final String VN30 = "VN30";
@@ -100,19 +106,26 @@ public class StockConstant {
     public static final String AIRLINE = "AIRLINE";
     public static final String PLASTIC = "PLASTIC";
     public static final String TECH = "TECH";
+    public static final String PHARMA = "PHARMA";
+    public static final String SUGAR = "SUGAR";
 
     public static final String PRICE_VALUE = "PriceValue";
     public static final String MONEY_FLOW = "MoneyFlow";
 
-    public static final String STATISTIC_FOREIGN_BUY = "Statistic_F_Buy";
-    public static final String STATISTIC_FOREIGN_SELL = "Statistic_F_Sell";
+    public static final String TOP_NN_MUA = "Top_NN_Mua";
+    public static final String TOP_NN_BAN = "Top_NN_Ban";
 
-    public static final String TOP_FOREIGN_INTRADAY_SHEET = "Foreign_Intraday";
-    public static final String TOP_PROPRIETARY_INTRADAY_SHEET = "Proprietary_Intraday";
+    public static final String NN_MUA_SHEET = "NN_Mua";
+    public static final String NN_BAN_SHEET = "NN_Ban";
 
+    public static final String TD_MUA_SHEET = "TD_Mua";
+    public static final String TD_BAN_SHEET = "TD_Ban";
 
-    public static final String STATISTIC_PROPRIETARY_BUY = "Statistic_P_Buy";
-    public static final String STATISTIC_PROPRIETARY_SELL = "Statistic_P_Sell";
+    public static final String TOP_TD_MUA = "Top_TD_Mua";
+    public static final String TOP_TD_BAN = "Top_TD_Ban";
+
+    public static final String BREAK_HIGH = "BreakHigh";
+    public static final String BREAK_LOW = "BreakLow";
 
 
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface TradingDateRepository extends JpaRepository<TradingDateEntity, Long> {
@@ -27,4 +28,9 @@ public interface TradingDateRepository extends JpaRepository<TradingDateEntity, 
 
     @Query("select td.id from TradingDateEntity td where td.tradingDate = ?1")
     Long getIdByTradingDate(LocalDate date);
+
+    TradingDateEntity getTradingDateEntityByTradingDate(LocalDate date);
+
+    List<TradingDateEntity> getTradingDateEntitiesByTradingWeek(String tradingWeek);
+
 }

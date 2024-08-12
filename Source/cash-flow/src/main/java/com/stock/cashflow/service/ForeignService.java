@@ -6,8 +6,14 @@ public interface ForeignService {
 
     void processAll(String startDate, String endDate);
 
-    void processVolatileTrading(String tradingDate);
+    void writeTopBuy(String tradingDate);
+
+    void writeTopSell(String tradingDate);
 
     void processStatisticTrading(String tradingDate);
+
+    void resetStatistic();
+
+    void resetTopBuySell(String tradingDate);
 
 }

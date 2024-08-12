@@ -40,13 +40,30 @@ public class ForeignController {
 
     @PostMapping("volatile-trading")
     public ResponseEntity<String> getVolatileTrading(@RequestParam String tradingDate) {
-        foreignService.processVolatileTrading(tradingDate);
+        foreignService.writeTopBuy(tradingDate);
+        foreignService.writeTopSell(tradingDate);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("statistic")
     public ResponseEntity<String> processStatistic(@RequestParam String tradingDate) {
         foreignService.processStatisticTrading(tradingDate);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/statistic/reset")
+    public ResponseEntity<String> resetStatistic() {
+
+        foreignService.resetStatistic();
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/statistic/reset-top-buy-sell")
+    public ResponseEntity<String> resetTopBuySell(@RequestParam String tradingDate) {
+
+        foreignService.resetTopBuySell(tradingDate);
+
         return ResponseEntity.noContent().build();
     }
 }

@@ -4,6 +4,7 @@ import com.stock.cashflow.persistence.entity.OrderBookEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -12,16 +13,18 @@ import java.util.List;
 @Repository
 public interface OrderBookRepository extends JpaSpecificationExecutor<OrderBookEntity>, JpaRepository<OrderBookEntity, Long> {
 
-    @Query("select entity from OrderBookEntity entity where entity.symbol=?1 and entity.hashDate =?2")
-    OrderBookEntity findOrderBookEntitiesBySymbolAndHashDate(String symbol, String hashDate);
+    @Query("select entity from OrderBookEntity entity where entity.tradingDate =?1")
+    List<OrderBookEntity> getOrderBookEntitiesByTradingDate(LocalDate date);
 
     @Query("select entity from OrderBookEntity entity where entity.hashDate =?1")
     OrderBookEntity findOrderBookEntitiesByHashDate(String hashDate);
 
-    @Query("select count(e) from OrderBookEntity e where e.tradingDate =?1 and e.buyVolume > e.sellVolume and e.mediumBuyOrder > e.mediumSellOrder and e.buyVolume > e.sellVolume")
+    OrderBookEntity findOrderBookEntitiesBySymbolAndTradingDate(String symbol, LocalDate tradingDate);
+
+    @Query("select count(e) from OrderBookEntity e where e.tradingDate =?1 and e.buyOrder > e.sellOrder and e.mediumBuyOrder > e.mediumSellOrder and e.buyVolume > e.sellVolume")
     Integer strongBuy(LocalDate tradingDate);
 
-    @Query("select count(e) from OrderBookEntity e where e.tradingDate =?1 and e.buyVolume < e.sellVolume and e.mediumBuyOrder < e.mediumSellOrder and e.buyVolume < e.sellVolume")
+    @Query("select count(e) from OrderBookEntity e where e.tradingDate =?1 and e.buyOrder < e.sellOrder and e.mediumBuyOrder < e.mediumSellOrder and e.buyVolume < e.sellVolume")
     Integer strongSell(LocalDate tradingDate);
 
     @Query("select e.symbol from OrderBookEntity e where e.tradingDate =?1 and e.mediumBuyOrder > e.mediumSellOrder and e.largeBuyOrder > e.largeSellOrder and e.buyVolume > e.sellVolume")
@@ -66,16 +69,16 @@ public interface OrderBookRepository extends JpaSpecificationExecutor<OrderBookE
     @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('HPG', 'NLG', 'HSG', 'POM', 'VGS', 'SMC', 'TLH', 'VPG')")
     Integer getSteelSellVolume(LocalDate tradingDate);
 
-    @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('GMD', 'HAH', 'VOS', 'VSC', 'PVT', 'DVP', 'SGP', 'CDN', 'VIP')")
+    @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('GMD', 'HAH', 'VOS', 'VSC', 'PVT', 'DVP', 'SGP', 'CDN', 'VIP', 'TOS')")
     Integer getLogisticBuyVolume(LocalDate tradingDate);
 
-    @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('GMD', 'HAH', 'VOS', 'VSC', 'PVT', 'DVP', 'SGP', 'CDN', 'VIP')")
+    @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('GMD', 'HAH', 'VOS', 'VSC', 'PVT', 'DVP', 'SGP', 'CDN', 'VIP', 'TOS')")
     Integer getLogisticSellVolume(LocalDate tradingDate);
 
-    @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('STK', 'MSH', 'VGT', 'TNG', 'TCM', 'ADS', 'GIL', 'EVE')")
+    @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('STK', 'MSH', 'VGT', 'TNG', 'TCM', 'ADS', 'GIL', 'EVE', 'M10', 'PPH', 'HTG')")
     Integer getTextileBuyVolume(LocalDate tradingDate);
 
-    @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('STK', 'MSH', 'VGT', 'TNG', 'TCM', 'ADS', 'GIL', 'EVE')")
+    @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('STK', 'MSH', 'VGT', 'TNG', 'TCM', 'ADS', 'GIL', 'EVE', 'M10', 'PPH', 'HTG')")
     Integer getTextileSellVolume(LocalDate tradingDate);
 
     @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('PTB', 'TTF', 'GDT', 'VCS', 'ACG', 'GTA')")
@@ -149,6 +152,25 @@ public interface OrderBookRepository extends JpaSpecificationExecutor<OrderBookE
 
     @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('FPT', 'CMG', 'ELC', 'FOX', 'VGI', 'ST8')")
     Integer getTechSellVolume(LocalDate tradingDate);
+
+    @Query("select sum(e.buyVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('DHG', 'DBD', 'DBT', 'DMC', 'IMP', 'DCL', 'TRA', 'TNH', 'AMV')")
+    Integer getPharmaBuyVolume(LocalDate tradingDate);
+
+    @Query("select sum(e.sellVolume) from OrderBookEntity e where e.tradingDate =?1 and e.symbol IN ('DHG', 'DBD', 'DBT', 'DMC', 'IMP', 'DCL', 'TRA', 'TNH', 'AMV')")
+    Integer getPharmaSellVolume(LocalDate tradingDate);
+
+
+    @Query("SELECT SUM(e.buyVolume) " +
+            "FROM OrderBookEntity e " +
+            "WHERE e.symbol IN :symbols AND e.tradingDate = :tradingDate")
+    Integer getBuyVolume(@Param("symbols") List<String> symbols,
+                           @Param("tradingDate") LocalDate tradingDate);
+
+    @Query("SELECT SUM(e.sellVolume) " +
+            "FROM OrderBookEntity e " +
+            "WHERE e.symbol IN :symbols AND e.tradingDate = :tradingDate")
+    Integer getSellVolume(@Param("symbols") List<String> symbols,
+                           @Param("tradingDate") LocalDate tradingDate);
 
 }
 

@@ -56,6 +56,9 @@ public class OrderBookEntity implements Serializable {
     @Column(name = "hash_date", length = 255, nullable = false)
     private String hashDate;
 
+    @Column(name = "atc_volume")
+    private Integer atc_volume;
+
     // Constructors
     public OrderBookEntity() {
         // Default constructor

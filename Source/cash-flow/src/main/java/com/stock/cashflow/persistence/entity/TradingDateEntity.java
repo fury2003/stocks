@@ -18,4 +18,7 @@ public class TradingDateEntity {
     @Temporal(TemporalType.DATE)
     private LocalDate tradingDate;
 
+    @Column(name = "trading_week", length = 20, nullable = false)
+    private String tradingWeek;
+
 }

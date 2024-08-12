@@ -11,6 +11,7 @@ import com.stock.cashflow.persistence.repository.OrderBookRepository;
 import com.stock.cashflow.service.IntradayOrderService;
 import com.stock.cashflow.utils.FileHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -207,7 +208,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
             String symbol = filePath.substring(filePath.length() - 16, filePath.length() - 13);
 //            String symbol = filePath.substring(filePath.length() - 8, filePath.length() - 5);
             try {
-                HashMap<String, Integer> report = processExcelFile(filePath, volumeColumnIdx + 1, volumeColumnIdx, volumeColumnIdx + 4);
+                HashMap<String, Integer> report = processExcelFile(filePath, 1, 2, 5);
                 OrderBookEntity entity = new OrderBookEntity();
                 entity.setSymbol(symbol);
                 entity.setBuyOrder(report.get(StockConstant.BUY_ORDER));
@@ -220,6 +221,7 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
                 entity.setMediumSellOrder(report.get(StockConstant.MEDIUM_SELL_ORDER));
                 entity.setLargeBuyOrder(report.get(StockConstant.LARGE_BUY_ORDER));
                 entity.setLargeSellOrder(report.get(StockConstant.LARGE_SELL_ORDER));
+                entity.setAtc_volume(report.get(StockConstant.ATC_VOLUME));
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(tradingDate, formatter);
                 entity.setTradingDate(date);
@@ -233,7 +235,9 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
 
     }
 
-    public static HashMap<String, Integer> processExcelFile(String filePath, int priceColumnIdx, int volColumnIdx, int sideColumnIdx) throws IOException {
+    public static HashMap<String, Integer> processExcelFile(String filePath, int volColumnIdx, int priceColumnIdx, int sideColumnIdx) throws IOException {
+        int atoVol = 0;
+        int atcVol = 0;
         int buyOrder = 0;
         int buyVol = 0;
         int sellOrder = 0;
@@ -246,24 +250,32 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         int largeBuyOrder = 0;
         int largeSellOrder = 0;
 
+        ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fis = new FileInputStream(filePath);
              Workbook workbook = new XSSFWorkbook(fis)) {
             Sheet sheet = workbook.getSheet("Sheet1");
 
             for (Row row : sheet) {
-                Cell orderCell = row.getCell(sideColumnIdx - 1);
+                if (row.getRowNum() == 0)
+                    continue;
+
+                if(row.getRowNum() == row.getFirstCellNum() + 1){
+                    Cell volCell = row.getCell(volColumnIdx);
+                    atcVol = (int) volCell.getNumericCellValue();
+                    continue;
+                }
+
+                Cell orderCell = row.getCell(sideColumnIdx);
                 if (orderCell != null) {
                     if(orderCell.getStringCellValue().equals("M")){
                         buyOrder += 1;
-                        Cell volCell = row.getCell(volColumnIdx - 1);
+                        Cell volCell = row.getCell(volColumnIdx);
                         buyVol += volCell.getNumericCellValue();
 
-                        Cell priceCell = row.getCell(priceColumnIdx - 1);
+                        Cell priceCell = row.getCell(priceColumnIdx);
                         String priceString = priceCell.getStringCellValue();
                         String price = priceString.substring(0, priceString.indexOf(".")).replace(",", ".") ;
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
-                        log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
-                        log.info("Gia tri giao dich: {}", value);
                         if(value < 100000)
                             smallBuyOrder += 1;
 
@@ -275,15 +287,13 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
 
                     } if(orderCell.getStringCellValue().equals("B")){
                         sellOrder += 1;
-                        Cell volCell = row.getCell(volColumnIdx - 1);
+                        Cell volCell = row.getCell(volColumnIdx);
                         sellVol += volCell.getNumericCellValue();
 
-                        Cell priceCell = row.getCell(priceColumnIdx - 1);
+                        Cell priceCell = row.getCell(priceColumnIdx);
                         String priceString = priceCell.getStringCellValue();
                         String price = priceString.substring(0, priceString.indexOf(".")).replace(",", ".") ;
                         double value = Double.parseDouble(price) * volCell.getNumericCellValue();
-                        log.info("Khoi luong giao dich: {}", volCell.getNumericCellValue());
-                        log.info("Gia tri giao dich: {}", value);
                         if(value < 100000)
                             smallSellOrder += 1;
 
@@ -309,6 +319,8 @@ public class IntradayOrderServiceImpl implements IntradayOrderService {
         report.put(StockConstant.MEDIUM_SELL_ORDER, mediumSellOrder);
         report.put(StockConstant.LARGE_BUY_ORDER, largeBuyOrder);
         report.put(StockConstant.LARGE_SELL_ORDER, largeSellOrder);
+        report.put(StockConstant.ATO_VOLUME, atoVol);
+        report.put(StockConstant.ATC_VOLUME, atcVol);
         return report;
     }
 

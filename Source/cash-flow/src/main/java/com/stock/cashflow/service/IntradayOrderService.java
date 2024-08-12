@@ -8,4 +8,5 @@ public interface IntradayOrderService {
     void downloadOrderReport(String symbol);
 
     void analyzeOrder(String tradingDate);
+
 }

@@ -5,6 +5,7 @@ import com.stock.cashflow.constants.IndustryConstant;
 import com.stock.cashflow.constants.StockConstant;
 import com.stock.cashflow.dto.*;
 import com.stock.cashflow.exception.BadRequestException;
+import com.stock.cashflow.persistence.dto.SymbolTotalNetValueDTO;
 import com.stock.cashflow.persistence.entity.*;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.*;
@@ -21,10 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Component
 public class ExcelHelper {
@@ -63,7 +62,7 @@ public class ExcelHelper {
 
                     if (cell != null) {
                         try {
-                            if (targetValue.equals(cell.getStringCellValue()))
+                            if(targetValue.equals(cell.getStringCellValue()))
                                 return rowIndex;
                         } catch (IllegalStateException ex) {
                             log.error("Format date khong dung o cot date trong file Excel. {}", cell.getStringCellValue());
@@ -79,26 +78,6 @@ public class ExcelHelper {
             e.printStackTrace();
             // Handle the exception according to your needs
             return -1;
-        }
-    }
-
-
-    public static List<String> getsheetNames(String filePath) {
-        ZipSecureFile.setMinInflateRatio(0);
-        try (FileInputStream fileInputStream = new FileInputStream(filePath); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-
-            List<String> sheetNames = getSheetNames(workbook);
-            List<String> output = new ArrayList<>();
-            for (String sheetName : sheetNames) {
-                if(!sheetName.contains(StockConstant.STATISTIC_INGORE_SHEET)){
-                    output.add(sheetName.replace("-Q4", ""));
-                }
-            }
-            return output;
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("Loi trong qua trinh truy xuat file. {}", filePath);
-            return null;
         }
     }
 
@@ -135,33 +114,6 @@ public class ExcelHelper {
                 updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.PROPRIETARY_TOTAL_NET_VALUE_COLUMN_INDEX), data.getProprietaryTotalNetValue(), false);
             }
 
-            if(!Objects.isNull(data.getBuyOrder())){
-                double buyOrder = data.getBuyOrder();
-                double sellOrder = data.getSellOrder();
-                double mediumBuyOrderVol = data.getMediumBuyOrder();
-                double mediumSellOrderVol = data.getMediumSellOrder();
-                double largeBuyOrderVol = data.getLargeBuyOrder();
-                double largeSellOrderVol = data.getLargeSellOrder();
-                double buyOrderVol = data.getBuyOrderVolume();
-                double sellOrderVol = data.getSellOrderVolume();
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_ORDER_COLUMN_INDEX), buyOrder, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_ORDER_COLUMN_INDEX), sellOrder, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_BUY_ORDER_COLUMN_INDEX), mediumBuyOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_MEDIUM_SELL_ORDER_COLUMN_INDEX), mediumSellOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_BUY_ORDER_COLUMN_INDEX), mediumBuyOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_LARGE_SELL_ORDER_COLUMN_INDEX), mediumSellOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_BUY_VOLUME_COLUMN_INDEX), buyOrderVol, false);
-                updateCellDouble(workbook, row, getExcelColumnIndex(StockConstant.INTRADAY_SELL_VOLUME_COLUMN_INDEX), sellOrderVol, false);
-
-//                if(buyOrder > sellOrder){
-//                    String conditionFormula = "L3>M3";
-//                    applyConditionalFormattingOrderBookStrongBuy(sheet, conditionFormula);
-//                } else if(buyOrder < sellOrder){
-//                    String conditionFormula = "L3<M3";
-//                    applyConditionalFormattingOrderBookStrongSell(sheet, conditionFormula);
-//                }
-            }
-
             double totalVolume = data.getTotalVolume();
             String percenChange = data.getPercentageChange().replace("%", "");
             String priceRange = data.getPriceRange().replace("%", "");
@@ -189,23 +141,20 @@ public class ExcelHelper {
         }
     }
 
-    public void writeVolatileForeignTradingToFile(String sheetName, String duration, List<ForeignTradingStatisticEntity> updatedList, boolean isTNV, String tradingDate) {
+    public void writeTotalNetValueToFile(String sheetName, String duration, List<Double> updatedList, String tradingDate) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
 
-            updateCellDate(workbook, row, 1, tradingDate);
+            if(duration.isEmpty())
+                updateCellDate(workbook, row, 1, tradingDate);
+
             updateCellString(workbook, row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
-                if(isTNV){
-                    Double tnv = sheetName.equals(StockConstant.STATISTIC_FOREIGN_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
-                    updateCellDouble(workbook, row, i+3, tnv, false);
-                }else {
-                    updateCellString(workbook, row, i+3, updatedList.get(i).getSymbol());
-                }
+                updateCellDouble(workbook, row, i+3, updatedList.get(i), false);
             }
 
             // Save the workbook to a file
@@ -220,23 +169,60 @@ public class ExcelHelper {
         }
     }
 
-    public void writeVolatileProprietaryTradingToFile(String sheetName, String duration, List<ProprietaryTradingStatisticEntity> updatedList, boolean isTNV, String tradingDate) {
+    public void writeVolatileForeignTradingToFile(String sheetName, String duration, List<ForeignTradingStatisticEntity> orderList, List<ForeignTradingStatisticEntity> updatedList) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
             insertNewRow(sheet, 1);
             Row row = sheet.getRow(1);
 
-            updateCellDate(workbook, row, 1, tradingDate);
             updateCellString(workbook, row, 2, duration);
 
             for (int i = 0; i < updatedList.size(); i++) {
-                if(isTNV){
-                    Double tnv = sheetName.equals(StockConstant.STATISTIC_PROPRIETARY_BUY) ? updatedList.get(i).getOneMonthHighestBuyValue() :  updatedList.get(i).getOneMonthHighestSellValue();
-                    updateCellDouble(workbook, row, i+3, tnv, false);
-                }else {
-                    updateCellString(workbook, row, i+3, updatedList.get(i).getSymbol());
+                String symbol = updatedList.get(i).getSymbol();
+                int updatedClx = i+3;
+                OptionalInt optionalIndex = IntStream.range(0, orderList.size())
+                        .filter(j -> orderList.get(j).getSymbol().equals(symbol))
+                        .findFirst();
+                if (optionalIndex.isPresent()) {
+                    updatedClx = optionalIndex.getAsInt() + 3;
                 }
+                updateCellString(workbook, row, updatedClx, symbol);
+                log.info("Cap nhat du lieu cua ma ck {} vao cot {}.",symbol, updatedClx);
+            }
+
+            // Save the workbook to a file
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public void writeVolatileProprietaryTradingToFile(String sheetName, String duration, List<ProprietaryTradingStatisticEntity> orderList, List<ProprietaryTradingStatisticEntity> updatedList) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            insertNewRow(sheet, 1);
+            Row row = sheet.getRow(1);
+
+            updateCellString(workbook, row, 2, duration);
+
+            for (int i = 0; i < updatedList.size(); i++) {
+                String symbol = updatedList.get(i).getSymbol();
+                int updatedClx = i+3;
+                OptionalInt optionalIndex = IntStream.range(0, orderList.size())
+                        .filter(j -> orderList.get(j).getSymbol().equals(symbol))
+                        .findFirst();
+                if (optionalIndex.isPresent()) {
+                    updatedClx = optionalIndex.getAsInt() + 3;
+                }
+                updateCellString(workbook, row, updatedClx, symbol);
+                log.info("Cap nhat du lieu cua ma ck {} vao cot {}.",symbol, updatedClx);
             }
 
             // Save the workbook to a file
@@ -510,7 +496,7 @@ public class ExcelHelper {
         cell.setCellStyle(cellstyle);
     }
 
-    public void writeTopBuySellToFile(String sheetName, List<?> buyList, List<?> sellList, boolean isTNV, String tradingDate) {
+    public void writeDailyTopTradeToFile(String sheetName, List<?> tradeList, boolean isTNV, String tradingDate) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
@@ -521,52 +507,26 @@ public class ExcelHelper {
 
             if(isTNV){
                 // write tnv buy
-                for (int i = 0; i < buyList.size(); i++) {
-                    if (buyList.get(i) instanceof ForeignTradingEntity) {
-                        ForeignTradingEntity entity = (ForeignTradingEntity) buyList.get(i);
+                for (int i = 0; i < tradeList.size(); i++) {
+                    if (tradeList.get(i) instanceof ForeignTradingEntity) {
+                        ForeignTradingEntity entity = (ForeignTradingEntity) tradeList.get(i);
                         updateCellDouble(workbook, row, i+2, entity.getTotalNetValue(), false);
                     }
 
-                    if (buyList.get(i) instanceof ProprietaryTradingEntity) {
-                        ProprietaryTradingEntity entity = (ProprietaryTradingEntity) buyList.get(i);
+                    if (tradeList.get(i) instanceof ProprietaryTradingEntity) {
+                        ProprietaryTradingEntity entity = (ProprietaryTradingEntity) tradeList.get(i);
                         updateCellDouble(workbook, row, i+2, entity.getTotalNetValue(), false);
                     }
                 }
 
-                // write tnv sell
-                for (int i = 0; i < sellList.size(); i++) {
-                    if (sellList.get(i) instanceof ForeignTradingEntity) {
-                        ForeignTradingEntity entity = (ForeignTradingEntity) sellList.get(i);
-                        updateCellDouble(workbook, row, i+13, entity.getTotalNetValue(), false);
-
-                    }
-
-                    if (sellList.get(i) instanceof ProprietaryTradingEntity) {
-                        ProprietaryTradingEntity entity = (ProprietaryTradingEntity) sellList.get(i);
-                        updateCellDouble(workbook, row, i+13, entity.getTotalNetValue(), false);
-
-                    }
-                }
             }else {
-                // write symbol buy
-                for (int i = 0; i < buyList.size(); i++) {
-                    if (buyList.get(i) instanceof ForeignTradingEntity entity) {
+                for (int i = 0; i < tradeList.size(); i++) {
+                    if (tradeList.get(i) instanceof ForeignTradingEntity entity) {
                         updateCellString(workbook, row, i+2, entity.getSymbol());
                     }
 
-                    if (sellList.get(i) instanceof ForeignTradingEntity entity) {
-                        updateCellString(workbook, row, i+13, entity.getSymbol());
-                    }
-                }
-
-                // write symbol sell
-                for (int i = 0; i < sellList.size(); i++) {
-                    if (buyList.get(i) instanceof ProprietaryTradingEntity entity) {
+                    if (tradeList.get(i) instanceof ProprietaryTradingEntity entity) {
                         updateCellString(workbook, row, i+2, entity.getSymbol());
-                    }
-
-                    if (sellList.get(i) instanceof ProprietaryTradingEntity entity) {
-                        updateCellString(workbook, row, i+13, entity.getSymbol());
                     }
                 }
             }
@@ -583,7 +543,7 @@ public class ExcelHelper {
         }
     }
 
-    public void highlightTopBuySell(String sheetName, List<?> buyList, List<?> sellList) {
+    public void highlightTopTrade(String sheetName, List<?> tradeList) {
         ZipSecureFile.setMinInflateRatio(0);
         try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = workbook.getSheet(sheetName);
@@ -592,23 +552,19 @@ public class ExcelHelper {
             // merge trading_date
             sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
 
-
-            for (int i = 0; i < buyList.size(); i++) {
+            for (int i = 0; i < tradeList.size(); i++) {
                 CellStyle cellstyle = workbook.createCellStyle();
                 cellstyle.setAlignment(HorizontalAlignment.RIGHT);
 
                 Cell buyCell = rowMCK.getCell(i+1);
                 buyCell.setCellStyle(cellstyle);
-                Cell sellCell = rowMCK.getCell(i+12);
-                sellCell.setCellStyle(cellstyle);
             }
 
             Row rowTNV = sheet.getRow(2);
 
-            // highlight buy
-            for (int i = 0; i < buyList.size(); i++) {
-                if (buyList.get(i) instanceof ForeignTradingEntity) {
-                    ForeignTradingEntity entity = (ForeignTradingEntity) buyList.get(i);
+            for (int i = 0; i < tradeList.size(); i++) {
+                if (tradeList.get(i) instanceof ForeignTradingEntity) {
+                    ForeignTradingEntity entity = (ForeignTradingEntity) tradeList.get(i);
                     if(entity.isBiggestATH()){
                         Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.VIOLET.getIndex());
@@ -616,40 +572,31 @@ public class ExcelHelper {
                         Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.GREEN.getIndex());
                     }
-                }
 
-                if (buyList.get(i) instanceof ProprietaryTradingEntity) {
-                    ProprietaryTradingEntity entity = (ProprietaryTradingEntity) buyList.get(i);
-                    if(entity.isBiggestATH()){
-                        Cell cell = rowTNV.getCell(i+1);
-                        highLightNumber(workbook, cell, IndexedColors.VIOLET.getIndex());
-                    } else if(entity.isBiggest6M()){
-                        Cell cell = rowTNV.getCell(i+1);
-                        highLightNumber(workbook, cell, IndexedColors.GREEN.getIndex());
-                    }
-                }
-            }
-
-            // highlight sell
-            for (int i = 0; i < sellList.size(); i++) {
-                if (sellList.get(i) instanceof ForeignTradingEntity) {
-                    ForeignTradingEntity entity = (ForeignTradingEntity) sellList.get(i);
                     if(entity.isSmallestATH()){
-                        Cell cell = rowTNV.getCell(i+12);
+                        Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.TEAL.getIndex());
                     } else if(entity.isSmallest6M()){
-                        Cell cell = rowTNV.getCell(i+12);
+                        Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.RED.getIndex());
                     }
                 }
 
-                if (sellList.get(i) instanceof ProprietaryTradingEntity) {
-                    ProprietaryTradingEntity entity = (ProprietaryTradingEntity) sellList.get(i);
+                if (tradeList.get(i) instanceof ProprietaryTradingEntity) {
+                    ProprietaryTradingEntity entity = (ProprietaryTradingEntity) tradeList.get(i);
+                    if(entity.isBiggestATH()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.VIOLET.getIndex());
+                    } else if(entity.isBiggest6M()){
+                        Cell cell = rowTNV.getCell(i+1);
+                        highLightNumber(workbook, cell, IndexedColors.GREEN.getIndex());
+                    }
+
                     if(entity.isSmallestATH()){
-                        Cell cell = rowTNV.getCell(i+12);
+                        Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.TEAL.getIndex());
                     } else if(entity.isSmallest6M()){
-                        Cell cell = rowTNV.getCell(i+12);
+                        Cell cell = rowTNV.getCell(i+1);
                         highLightNumber(workbook, cell, IndexedColors.RED.getIndex());
                     }
                 }
@@ -661,6 +608,58 @@ public class ExcelHelper {
                 log.info("Cap nhat du lieu vao file Excel thanh cong.");
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public void mergeCell(String sheetName, int startRow, int endRow, int startCol, int endCol) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, startCol, endCol));
+
+            log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
+        }
+    }
+
+    public void writeTopWeekTradeToFile(String sheetName, List<?> tradeList, boolean isTNV, String tradingWeek) {
+        ZipSecureFile.setMinInflateRatio(0);
+        try (FileInputStream fileInputStream = new FileInputStream(statisticFile); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            Row symbolRow = sheet.getRow(1);
+            Row tnvRow = sheet.getRow(2);
+
+            updateCellDate(workbook, symbolRow, 14, tradingWeek);
+            updateCellDate(workbook, tnvRow, 14, tradingWeek);
+
+            if(isTNV) {
+                for (int i = 0; i < tradeList.size(); i++) {
+                    if (tradeList.get(i) instanceof SymbolTotalNetValueDTO entity)
+                        updateCellDouble(workbook, tnvRow, i+15, entity.getTotalNetValueSum(), false);
+                }
+            } else {
+                for (int i = 0; i < tradeList.size(); i++) {
+                    if (tradeList.get(i) instanceof SymbolTotalNetValueDTO entity)
+                        updateCellString(workbook, symbolRow, i+15, entity.getSymbol());
+                }
+            }
+
+
+            try (FileOutputStream fileOut = new FileOutputStream(statisticFile)) {
+                workbook.write(fileOut);
+                log.info("Cap nhat du lieu vao file Excel thanh cong.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             log.error("Loi trong qua trinh xu ly file. {}", statisticFile);
@@ -676,4 +675,5 @@ public class ExcelHelper {
         cellstyle.setDataFormat(format.getFormat("#,##0"));
         cell.setCellStyle(cellstyle);
     }
+
 }

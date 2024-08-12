@@ -41,7 +41,8 @@ public class ProprietaryController {
 
     @PostMapping("volatile-trading")
     public ResponseEntity<String> getVolatileTrading(@RequestParam String tradingDate) {
-        proprietaryService.processVolatileTrading(tradingDate);
+        proprietaryService.writeTopBuy(tradingDate);
+        proprietaryService.writeTopSell(tradingDate);
         return ResponseEntity.noContent().build();
     }
 
@@ -59,6 +60,22 @@ public class ProprietaryController {
     public ResponseEntity<String> processStatistic(@RequestParam String tradingDate) {
 
         proprietaryService.processStatisticTrading(tradingDate);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/statistic/reset")
+    public ResponseEntity<String> resetStatistic() {
+
+        proprietaryService.resetStatistic();
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/statistic/reset-top-buy-sell")
+    public ResponseEntity<String> resetTopBuySell(@RequestParam String tradingDate) {
+
+        proprietaryService.resetTopBuySell(tradingDate);
 
         return ResponseEntity.noContent().build();
     }
